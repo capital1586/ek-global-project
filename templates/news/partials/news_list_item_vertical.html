@@ -1,0 +1,43 @@
+{% comment %} news/templates/news/partials/news_list_item_vertical.html {% endcomment %}
+{% load static %}
+
+<article class="news-list-item-v2">
+    {# Top row: Tags and Meta #}
+    <div class="item-header-v2">
+        <div class="item-tags-v2">
+             {% if item.category_list %}
+                 {% for cat in item.category_list|slice:":3" %}
+                    <a href="{% url 'news:news_list' %}?category={{ cat|urlencode }}" class="item-tag-v2">{{ cat }}</a>
+                 {% endfor %}
+             {% endif %}
+             {# Add Region/Sector tags here if implemented #}
+        </div>
+        <div class="item-meta-v2">
+            {% if item.news_date %}
+                <span class="item-date-v2"><i class="far fa-calendar-alt fa-fw"></i> {{ item.news_date|date:"M d, Y" }}</span>
+            {% endif %}
+             {% if item.source_domain %}
+                <span class="item-source-v2" title="Source: {{ item.source_domain }}"><i class="fas fa-globe fa-fw"></i> {{ item.source_domain|truncatechars:20 }}</span>
+             {% endif %}
+             {# Placeholder for Read Time #}
+             {# <span class="item-read-time-v2"><i class="far fa-clock fa-fw"></i> 5m</span> #}
+        </div>
+    </div>
+
+    {# Main Title (Linked to detail) #}
+    <h3 class="item-title-v2">
+        <a href="{{ item.get_absolute_url }}">{{ item.headline|safe }}</a>
+    </h3>
+
+    {# Description #}
+    <p class="item-description-v2">
+        {{ item.description|safe|truncatewords_html:25 }} {# Slightly longer description? #}
+    </p>
+
+    {# Bottom row: Action Icons #}
+    <div class="item-actions-v2">
+        <button aria-label="Share" title="Share"><i class="fas fa-share-alt"></i></button>
+        <button aria-label="Bookmark" title="Bookmark"><i class="far fa-bookmark"></i></button>
+        <button aria-label="More options" title="More Options"><i class="fas fa-ellipsis-h"></i></button>
+    </div>
+</article>

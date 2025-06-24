@@ -1,0 +1,2415 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block stylesheets %}
+{{ block.super }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+    /* Enhanced professional styles */
+        :root {
+            /* Light Theme (Default) */
+            --primary-color: #1e3a8a; /* Deep Blue */
+            --primary-light: #3b82f6; /* Brighter Blue */
+            --primary-hover: #2563eb; /* Hover Blue */
+            --secondary-color: #10b981; /* Teal */
+            --light-gray: #f3f4f6; /* Very Light Gray */
+            --medium-gray: #e5e7eb; /* Light Gray */
+            --dark-gray: #6b7280; /* Medium Gray */
+            --text-color: #334155; /* Dark Slate */
+            --text-light: #4b5563; /* Lighter Slate */
+            --text-inverted: #ffffff; /* White */
+            --background-color: #f8fafc; /* Off White */
+            --content-bg: #ffffff; /* White */
+            --positive: #16a34a; /* Green */
+            --negative: #dc2626; /* Red */
+            --border-color: #e5e7eb; /* Light Border */
+            --tab-hover: #f9fafb;
+            --header-bg: #f8fafc;
+            --table-header-bg: #f1f5f9; /* Very Light Blue-Gray */
+            --table-stripe-odd: #f9fafb; /* Off White */
+            --table-stripe-even: #ffffff; /* White */
+            --table-hover: #eef2ff; /* Very Light Indigo */
+            --filter-header-bg: #e5e7eb;
+            --filter-row-bg: #f9fafb;
+            --table-header-color: #1e3a8a;
+            --table-header-hover: #3b82f6;
+            --positive-bg: rgba(22, 163, 74, 0.1);
+            --negative-bg: rgba(220, 38, 38, 0.1);
+            --primary: var(--primary-color);
+            --primary-dark: #1a2e6b; /* Darker Blue */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --input-bg: #ffffff;
+            --input-border: var(--border-color);
+            --input-focus-border: var(--primary-light);
+            --input-focus-shadow: rgba(59, 130, 246, 0.15);
+            --select-arrow-color: '#343a40'; /* Color needs to be hex for SVG URL */
+            --link-color: var(--primary-color);
+            --link-hover-color: var(--primary-hover);
+            --tooltip-bg: #334155;
+            --tooltip-text: #ffffff;
+            --spinner-bg: rgba(255, 255, 255, 0.8);
+            --spinner-color: var(--primary-color);
+            --spinner-track-color: rgba(30, 58, 138, 0.1);
+
+            --transition: all 0.2s ease;
+            --radius-sm: 0.25rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+        }
+
+        /* Dark Theme Variables */
+        body.dark-theme {
+            --primary-color: #60a5fa; /* Lighter Blue */
+            --primary-light: #93c5fd;
+            --primary-hover: #3b82f6;
+            --secondary-color: #14b8a6; /* Keep Teal or slightly adjust */
+            --light-gray: #4b5563; /* Dark Gray */
+            --medium-gray: #374151; /* Darker Gray */
+            --dark-gray: #9ca3af; /* Light Gray (for text) */
+            --text-color: #e5e7eb; /* Very Light Gray */
+            --text-light: #d1d5db; /* Lighter Gray */
+            --text-inverted: #1f2937; /* Dark Gray */
+            --background-color: #111827; /* Very Dark Blue/Gray */
+            --content-bg: #1f2937; /* Dark Blue/Gray */
+            --positive: #22c55e; /* Brighter Green */
+            --negative: #ef4444; /* Brighter Red */
+            --border-color: #374151; /* Dark Gray Border */
+            --tab-hover: #374151;
+            --header-bg: #1f2937;
+            --table-header-bg: #374151; /* Dark Gray */
+            --table-stripe-odd: #1f2937; /* Dark Blue/Gray */
+            --table-stripe-even: #212936; /* Slightly Lighter Dark */
+            --table-hover: #374151; /* Dark Gray */
+            --filter-header-bg: #4b5563;
+            --filter-row-bg: #374151;
+            --table-header-color: #e5e7eb; /* Light Text */
+            --table-header-hover: #ffffff;
+            --positive-bg: rgba(34, 197, 94, 0.15);
+            --negative-bg: rgba(239, 68, 68, 0.15);
+            --primary: var(--primary-color);
+            --primary-dark: #3b82f6; /* Match hover for dark mode */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.15);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -2px rgba(0,0,0,0.2);
+            --input-bg: #374151;
+            --input-border: #4b5563;
+            --input-focus-border: var(--primary-light);
+            --input-focus-shadow: rgba(147, 197, 253, 0.2);
+            --select-arrow-color: '#9ca3af'; /* Light Gray for arrow */
+            --link-color: var(--primary-light);
+            --link-hover-color: #dbeafe; /* Very Light Blue */
+            --tooltip-bg: #e5e7eb;
+            --tooltip-text: #1f2937;
+            --spinner-bg: rgba(17, 24, 39, 0.8);
+            --spinner-color: var(--primary-light);
+            --spinner-track-color: rgba(96, 165, 250, 0.2);
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
+        }
+        
+        /* Screener layout */
+        .screener-container {
+            margin: 1.5rem auto;
+            max-width: 100%;
+            font-size: 0.9rem;
+            background-color: var(--content-bg);
+            box-shadow: var(--shadow-md);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color); /* Subtle border */
+        }
+        
+        /* Header styles */
+        .screener-header {
+            padding: 1.25rem;
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .header-controls span {
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-group {
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        
+        .control-select,
+        .control-input {
+            height: 2.25rem;
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius-md);
+            padding: 0 0.75rem;
+            font-size: 0.875rem;
+            background-color: var(--input-bg);
+            color: var(--text-color); /* Ensure text is readable */
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .control-select {
+            min-width: 120px;
+            -webkit-appearance: none;
+            appearance: none; /* Standard property */
+            /* Dynamic SVG background using CSS variable */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='{--select-arrow-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e".replace('{--select-arrow-color}', getComputedStyle(document.documentElement).getPropertyValue('--select-arrow-color').trim().replace('#', '%23')));
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 16px 12px;
+            padding-right: 2rem;
+        }
+
+        /* Need JS to update SVG on theme change, or use a more robust method */
+        /* Alternative: Use a static SVG suitable for both or use :after pseudo-element */
+        /* For simplicity, we'll assume JS updates it or use a neutral color initially */
+        .control-select {
+             /* Example using a neutral color */
+             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        }
+        body.dark-theme .control-select {
+             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        }
+
+
+        .control-input {
+            flex-grow: 1;
+        }
+        .control-input::placeholder { /* Style placeholder */
+            color: var(--dark-gray);
+            opacity: 0.7;
+        }
+
+        
+        .search-input-group {
+            display: flex;
+            flex-grow: 1;
+        }
+        .search-input-group .control-input {
+             border-radius: var(--radius-md) 0 0 var(--radius-md);
+        }
+        
+        .search-input-group .btn-filter {
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin-left: -1px; /* Overlap borders */
+        }
+        
+        .filter-status {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--dark-gray);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .me-1 {
+            margin-right: 0.25rem;
+        }
+        
+        .filter-icon {
+            margin-left: 0.25rem;
+        }
+        
+        /* Filter tabs */
+        .filter-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--table-header-bg); /* Match table header */
+            padding: 0 1rem;
+        }
+        
+        .filter-tab {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            margin-right: 0.25rem;
+            margin-bottom: -1px; /* Overlap bottom border */
+            font-weight: 500;
+            transition: var(--transition);
+            color: var(--text-light);
+        }
+        
+        .filter-tab:hover {
+            background-color: var(--tab-hover);
+            color: var(--link-hover-color);
+        }
+        
+        .filter-tab.active {
+            background-color: var(--content-bg); /* Match main content background */
+            border-color: var(--border-color);
+            border-bottom: 2px solid var(--content-bg); /* Hide bottom border segment */
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Filter rows */
+        .filter-section {
+            background-color: var(--content-bg);
+            padding: 0; /* Padding handled by grid cells */
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+        }
+        
+        .filter-count-header {
+            background-color: var(--filter-header-bg);
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Responsive grid */
+            gap: 0; /* Use borders for separation */
+            width: 100%;
+        }
+        
+        .filter-cell {
+            display: flex;
+            flex-direction: column;
+            padding: 0.6rem;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--filter-row-bg);
+            /* Remove border on last column of each row - complex with auto-fill */
+            /* Simpler: rely on container border */
+        }
+        /* Remove right border on the very last cell if needed */
+         .filter-grid .filter-cell:last-child {
+             /* border-right: none; Might not be accurate with auto-fill */
+         }
+         /* Remove bottom border for cells in the last row - complex */
+
+        
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+            margin-bottom: 0.25rem;
+        }
+        
+        .filter-value select {
+            width: 100%;
+            height: 2rem;
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius-sm);
+            padding: 0 0.5rem;
+            font-size: 0.75rem;
+            background-color: var(--input-bg);
+            color: var(--text-color); /* Text color for select */
+            -webkit-appearance: none;
+             appearance: none;
+             /* Re-apply dynamic background */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 12px 10px;
+            padding-right: 1.5rem;
+        }
+        body.dark-theme .filter-value select {
+             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        }
+
+        
+        .filter-value select:focus {
+            border-color: var(--input-focus-border);
+            outline: none;
+            box-shadow: 0 0 0 2px var(--input-focus-shadow);
+        }
+        
+        /* Buttons */
+        .btn-filter {
+            background-color: var(--primary-color);
+            color: var(--text-inverted);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            min-height: 2.25rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn-filter:hover {
+            background-color: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+        body.dark-theme .btn-filter {
+            color: var(--text-inverted); /* Ensure contrast if primary color is light */
+        }
+
+        
+        .btn-reset {
+            background-color: var(--light-gray);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-top: 0.75rem; /* Adjust as needed */
+            font-size: 0.875rem;
+        }
+        
+        .btn-reset:hover {
+            background-color: var(--medium-gray);
+            color: var(--text-color);
+        }
+        
+        /* Stock table */
+        .stock-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem; /* Slightly smaller */
+            /* Removed shadow, relying on container */
+            margin-bottom: 1.5rem;
+            border-top: 1px solid var(--border-color); /* Add top border */
+        }
+        
+        .stock-table thead th {
+            background-color: var(--table-header-bg);
+            color: var(--table-header-color);
+            font-weight: 600;
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color); /* Slightly thicker bottom border */
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            white-space: nowrap; /* Prevent header wrapping */
+        }
+        
+        .stock-table thead th.sorting-enabled {
+            cursor: pointer;
+        }
+        
+        .stock-table thead th.sorting-enabled:hover {
+            background-color: var(--medium-gray); /* Subtle hover */
+            color: var(--table-header-hover);
+        }
+        body.dark-theme .stock-table thead th.sorting-enabled:hover {
+             background-color: var(--light-gray); /* Adjust dark hover */
+        }
+        
+        .stock-table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            position: relative;
+        }
+        .stock-table tbody tr:nth-child(odd) {
+            background-color: var(--table-stripe-odd);
+        }
+        .stock-table tbody tr:nth-child(even) {
+            background-color: var(--table-stripe-even);
+        }
+        
+        .stock-table tbody tr:hover {
+            background-color: var(--table-hover);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            /* transform: translateY(-1px); Remove slight jump */
+            z-index: 1;
+        }
+        body.dark-theme .stock-table tbody tr:hover {
+             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stock-table td {
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+
+        .stock-table .text-right {
+            text-align: right;
+        }
+        
+        .stock-table .stock-link {
+            position: relative; /* Needed for preview positioning */
+            color: var(--link-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .stock-table .stock-link:hover {
+            color: var(--link-hover-color);
+            text-decoration: underline;
+        }
+        
+        /* Remove the old tooltip style */
+        .stock-table .stock-link::after {
+            /* content: attr(data-symbol); */
+            /* display: none; Replaced by preview */
+        }
+
+        
+        .stock-table .positive {
+            color: var(--positive);
+            font-weight: 500;
+        }
+        
+        .stock-table .negative {
+            color: var(--negative);
+            font-weight: 500;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 0.3rem; /* Reduced gap */
+            margin: 1.5rem 0;
+            padding: 0 1rem; /* Add padding for small screens */
+        }
+        
+        .pagination .page-item {
+            list-style: none;
+        }
+        
+        .pagination .page-link {
+            display: inline-block;
+            padding: 0.4rem 0.75rem; /* Slightly smaller padding */
+            text-decoration: none;
+            color: var(--link-color);
+            background-color: var(--content-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); /* Smaller radius */
+            transition: var(--transition);
+            font-size: 0.85rem;
+        }
+        
+        .pagination .page-link:hover {
+            background-color: var(--light-gray);
+            color: var(--link-hover-color);
+            border-color: var(--medium-gray);
+        }
+        
+        .pagination .active .page-link {
+            background-color: var(--primary-color);
+            color: var(--text-inverted);
+            border-color: var(--primary-color);
+            font-weight: 600;
+        }
+        body.dark-theme .pagination .active .page-link {
+            color: var(--text-inverted); /* Ensure contrast */
+        }
+        
+        .pagination .disabled .page-link {
+            color: var(--dark-gray);
+            pointer-events: none;
+            background-color: var(--content-bg);
+            border-color: var(--border-color);
+            opacity: 0.6;
+        }
+        
+        /* Stock results header */
+        .stock-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 0.75rem; /* Add gap for wrapped items */
+            padding: 0.75rem 1.25rem; /* Reduced padding */
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            /* Removed border-radius as it's part of the main container */
+        }
+        
+        .stock-results-header a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .stock-results-header a:hover {
+            color: var(--link-hover-color);
+            text-decoration: underline;
+        }
+        
+        /* Badge styles */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.2rem 0.6rem; /* Adjusted padding */
+            font-size: 0.7rem; /* Smaller font */
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 9999px; /* Pill shape */
+            background-color: var(--primary-light);
+            color: var(--text-inverted);
+            margin: 0 0.25rem; /* Add spacing */
+        }
+        body.dark-theme .badge {
+            background-color: var(--primary);
+            color: var(--text-inverted); /* Ensure contrast */
+        }
+
+
+        /* Dashboard tabs (if needed elsewhere) */
+        .dashboard-tabs {
+            margin-top: 1.5rem;
+        }
+        
+        /* Utilities */
+        .text-center { text-align: center; }
+        .mt-3 { margin-top: 1rem; }
+        .d-flex { display: flex; }
+        .justify-content-between { justify-content: space-between; }
+        .my-2 { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .filter-grid {
+                /* Already responsive with auto-fill */
+            }
+            .header-controls {
+                flex-direction: column;
+                align-items: stretch; /* Stretch items full width */
+            }
+             .control-group {
+                 width: 100%; /* Make control groups take full width */
+                 justify-content: space-between; /* Space out labels and selects */
+             }
+             .search-group {
+                 max-width: none; /* Remove max-width */
+            }
+        }
+        
+        .control-select:focus, .control-input:focus {
+            border-color: var(--input-focus-border);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--input-focus-shadow);
+        }
+        
+        .filter-status .badge {
+            margin-left: 0.5rem;
+        }
+
+        /* Statistics Bar */
+        .statistics-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 1rem; /* Gap between items */
+            background-color: var(--header-bg); /* Use header background */
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1.25rem;
+            margin: 0; /* Integrate into flow */
+            font-size: 0.85rem; /* Slightly smaller */
+        }
+
+        .filter-summary, .market-stats {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap; /* Allow inner wrapping */
+            gap: 0.75rem;
+        }
+
+        .market-stats {
+            gap: 1.5rem; /* Larger gap between market stats */
+        }
+
+        .stats-label {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .stats-value {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .filter-count {
+            /* Use badge style but maybe slightly larger */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            color: var(--text-inverted);
+            font-weight: 600;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 11px;
+            padding: 0 7px;
+            font-size: 0.75rem;
+        }
+        body.dark-theme .filter-count {
+             color: var(--text-inverted);
+        }
+
+        .stats-value.positive { color: var(--positive); }
+        .stats-value.negative { color: var(--negative); }
+
+        @media (max-width: 768px) {
+            .statistics-bar {
+                /* Already wraps */
+                 justify-content: flex-start; /* Align left when wrapped */
+            }
+        }
+
+        /* Market Chart Styles */
+        .market-chart-section {
+            margin: 1.5rem 0 0 0; /* Adjust margin */
+            background-color: var(--content-bg);
+            border-radius: 0; /* Remove radius if inside main container */
+            border: none; /* Remove border if inside main container */
+            border-top: 1px solid var(--border-color); /* Add separator */
+            overflow: hidden;
+        }
+
+        .chart-toggle {
+            display: flex;
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem 1rem; /* Adjust padding */
+            overflow-x: auto; /* Allow horizontal scroll on mobile */
+            white-space: nowrap;
+        }
+
+        .chart-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            margin-right: 0.25rem; /* Add space between buttons */
+        }
+
+        .chart-btn:hover {
+            background-color: var(--medium-gray);
+            color: var(--text-color);
+        }
+
+        .chart-btn.active {
+            background-color: var(--primary-color);
+            color: var(--text-inverted);
+        }
+        body.dark-theme .chart-btn.active {
+            color: var(--text-inverted);
+        }
+
+        .chart-container {
+            padding: 1rem;
+            height: 250px;
+            background-color: var(--content-bg); /* Ensure bg color */
+        }
+
+        /* Placeholder Chart SVG */
+        #market-chart {
+            width: 100%;
+            height: 100%;
+             /* Use CSS gradients or a theme-aware SVG if possible */
+             /* Simple placeholder background */
+            background: linear-gradient(to top, var(--primary-bg-light) 0%, var(--content-bg) 70%);
+            border: 1px dashed var(--border-color); /* Indicate placeholder */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-gray);
+            font-style: italic;
+        }
+        #market-chart::before {
+             content: 'Market Chart Placeholder';
+        }
+        /* Remove the complex SVG background */
+
+
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 200px;
+            }
+        }
+
+        /* Company Profile Preview */
+        .stock-preview {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            width: 280px; /* Slightly wider */
+            background-color: var(--content-bg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg); /* Use defined shadow */
+            padding: 1rem;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px) scale(0.95); /* Add scale */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            font-size: 0.85rem;
+            margin-top: 8px; /* Increased margin */
+            border: 1px solid var(--border-color);
+            color: var(--text-color); /* Ensure text color */
+        }
+
+        .stock-link:hover .stock-preview {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem; /* Increased margin */
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .preview-logo {
+            width: 32px; /* Slightly larger */
+            height: 32px;
+            background-color: var(--light-gray); /* Use variable */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--primary-color); /* Use variable */
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        .preview-name {
+            font-weight: 600;
+            font-size: 1rem; /* Larger name */
+            color: var(--text-color); /* Use variable */
+            line-height: 1.2;
+        }
+
+        .preview-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem; /* Increased gap */
+            margin-bottom: 0.75rem;
+        }
+
+        .preview-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-label {
+            font-size: 0.7rem; /* Smaller label */
+            color: var(--dark-gray); /* Use variable */
+            text-transform: uppercase; /* Uppercase label */
+            margin-bottom: 0.1rem;
+        }
+
+        .preview-value {
+            font-weight: 500;
+            font-size: 0.9rem; /* Slightly larger value */
+            color: var(--text-color); /* Use variable */
+        }
+        .preview-value.positive { color: var(--positive); }
+        .preview-value.negative { color: var(--negative); }
+
+
+        .preview-desc {
+            font-size: 0.8rem; /* Adjusted size */
+            color: var(--text-light); /* Use variable */
+            line-height: 1.4;
+            margin-top: 0.75rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Loading spinner */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--spinner-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .spinner-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--spinner-track-color);
+            border-radius: 50%;
+            border-top-color: var(--spinner-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Theme Toggle Button Style */
+        .btn-theme-toggle {
+            background: none;
+            border: 1px solid var(--input-border);
+            color: var(--text-light);
+            padding: 0.4rem 0.6rem; /* Adjust padding */
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem; /* Adjust icon size */
+            line-height: 1; /* Ensure icon fits */
+            margin-left: auto; /* Push to the right if possible */
+        }
+
+        .btn-theme-toggle:hover {
+            background-color: var(--light-gray);
+            border-color: var(--medium-gray);
+            color: var(--text-color);
+        }
+        .btn-theme-toggle i {
+            display: block; /* Prevent extra space */
+        }
+
+
+        /* Mobile Improvements */
+        .table-section { /* Wrapper for table on mobile */
+            overflow-x: auto;
+            width: 100%;
+            margin-bottom: 1rem; /* Add space below table */
+        }
+        @media (max-width: 768px) {
+            .screener-header {
+                 padding: 1rem;
+            }
+            .stock-table {
+                font-size: 0.8rem;
+            }
+            .stock-table th,
+            .stock-table td {
+                padding: 0.6rem 0.4rem; /* Reduced padding */
+                 white-space: nowrap; /* Prevent wrapping in cells */
+            }
+            .filter-section {
+                /* Padding handled by cells */
+            }
+            .filter-cell {
+                 border-right: none; /* Remove internal borders */
+                 border-bottom: 1px solid var(--border-color);
+            }
+             .filter-cell:last-child {
+                 border-bottom: none;
+             }
+            .filter-grid {
+                  grid-template-columns: 1fr; /* Stack filters */
+             }
+            .stock-preview { /* Adjust preview on mobile */
+                width: 90vw;
+                max-width: 300px;
+                left: 50%;
+                transform: translateX(-50%) translateY(10px) scale(0.95);
+            }
+            .stock-link:hover .stock-preview {
+                 transform: translateX(-50%) translateY(0) scale(1);
+            }
+
+        }
+
+        @media (max-width: 480px) {
+            /* Hide less critical columns on very small screens */
+            .stock-table tr th:nth-child(4), /* Sector */
+            .stock-table tr th:nth-child(5), /* Industry */
+            .stock-table tr th:nth-child(6), /* Country */
+            .stock-table tr th:nth-child(8), /* P/E */
+            .stock-table tr td:nth-child(4),
+            .stock-table tr td:nth-child(5),
+            .stock-table tr td:nth-child(6),
+            .stock-table tr td:nth-child(8) {
+                display: none;
+            }
+            .filter-tabs {
+                 padding: 0 0.5rem;
+            }
+            .filter-tab {
+                font-size: 0.8rem;
+                padding: 0.75rem 0.5rem;
+            }
+            .stock-results-header {
+                 padding: 0.75rem;
+                 font-size: 0.8rem;
+            }
+            .statistics-bar {
+                 padding: 0.75rem;
+                 font-size: 0.8rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid screener-container">
+    <!-- Stock Results Header -->
+    <div class="stock-results-header">
+        <div><strong><i class="fas fa-table me-1"></i> Results:</strong> <span class="badge">{{ stocks|length }}</span> / {{ total_stocks|default:"0" }} Total</div>
+        <div class="d-none d-sm-block"> <!-- Hide links on extra small screens -->
+            <a href="#" class="save-portfolio"><i class="fas fa-save me-1"></i> Save</a> |
+            <a href="#" class="create-alert"><i class="fas fa-bell me-1"></i> Alert</a>
+                </div>
+        <div class="d-none d-md-block"> <!-- Hide refresh on small screens -->
+            <i class="fas fa-sync-alt me-1"></i> Refresh: <strong>3min</strong> | <a href="#" class="refresh-off">off</a>
+            </div>
+                </div>
+
+    <!-- Header controls section -->
+    <div class="screener-header">
+        <div class="header-controls">
+            <!-- Theme Toggle Button -->
+            <button id="theme-toggle" class="btn-theme-toggle" title="Toggle Theme">
+                <i class="fas fa-moon"></i> <!-- Default: Moon icon (Light mode active) -->
+            </button>
+
+            <div class="control-group">
+                <select id="presets" name="preset" class="control-select">
+                    <option value="">My Presets</option>
+                    <option value="value">Value Stocks</option>
+                    <option value="growth">Growth Stocks</option>
+                    <option value="dividend">Dividend Payers</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <span>Order by</span>
+                <select id="order-by" name="sort_by" class="control-select">
+                    <option value="Symbol" {% if sort_by == 'Symbol' %}selected{% endif %}>Ticker</option>
+                    <option value="CompanyName" {% if sort_by == 'CompanyName' %}selected{% endif %}>Company</option>
+                    <option value="Sector" {% if sort_by == 'Sector' %}selected{% endif %}>Sector</option>
+                    <option value="CurrentPrice" {% if sort_by == 'CurrentPrice' %}selected{% endif %}>Price</option>
+                    <option value="ChangePercentage" {% if sort_by == 'ChangePercentage' %}selected{% endif %}>Change %</option>
+                    <option value="Volume" {% if sort_by == 'Volume' %}selected{% endif %}>Volume</option>
+                    <option value="MarketCap" {% if sort_by == 'MarketCap' %}selected{% endif %}>Market Cap</option>
+                    <option value="PE" {% if sort_by == 'PE' %}selected{% endif %}>P/E</option>
+                </select>
+                
+                <select id="order-direction" name="sort_order" class="control-select">
+                    <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Asc</option>
+                    <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Desc</option>
+                </select>
+                </div>
+            
+            <div class="control-group">
+                <span>Signal</span>
+                <select id="signal" name="signal" class="control-select">
+                    <option value="none">None</option>
+                    <option value="top_gainers">Top Gainers</option>
+                    <option value="top_losers">Top Losers</option>
+                    <option value="new_high">New High</option>
+                    <option value="new_low">New Low</option>
+                    <option value="unusual_volume">Unusual Volume</option>
+                </select>
+            </div>
+            
+            <div class="control-group search-group">
+                <span>Tickers</span>
+                <div class="search-input-group">
+                    <input type="text" id="tickers" name="symbol" placeholder="AAPL, MSFT..." value="{{ request.GET.symbol|default:'' }}" class="control-input">
+                    <button class="btn-filter" id="search-btn" title="Search Tickers"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+            <button class="btn-filter" id="show-filters" title="Show/Hide Filters"><i class="fas fa-filter me-1"></i> Filters <i class="fas fa-chevron-down filter-icon"></i></button>
+                        </div>
+        
+        <div class="filter-status">Active Filters: <span id="filter-count" class="badge">{{ active_filters_count|default:'0' }}</span></div>
+                    </div>
+
+    <!-- Filter tabs section -->
+    <div class="filter-tabs-container" id="filter-tabs-container" style="display: none;">
+    <div class="filter-tabs">
+        <div class="filter-tab active" data-tab="fundamentals">Fundamentals</div>
+        <div class="filter-tab" data-tab="technical">Technical</div>
+        <div class="filter-tab" data-tab="performance">Performance</div>
+        <div class="filter-tab" data-tab="dividend">Dividend</div>
+        <div class="filter-tab" data-tab="ownership">Ownership</div>
+                    </div>
+
+    <!-- Filter sections -->
+    <div class="filter-section" id="filter-section">
+        <!-- Fundamentals tab content -->
+            <div id="fundamentals-filters" class="filter-content active">
+            <div class="filter-count-header">
+                    <span>Fundamentals Filters: <span id="fundamental-filter-count">0</span></span>
+                    <button class="btn-reset" data-target-tab="fundamentals">Reset Fundamentals</button>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-cell">
+                    <div class="filter-label">Exchange</div>
+                    <div class="filter-value">
+                        <select name="exchange" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="PSX">PSX</option>
+                            <option value="ISE">ISE</option>
+                                <option value="NASDAQ">NASDAQ</option>
+                                <option value="NYSE">NYSE</option>
+                                <option value="AMEX">AMEX</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Index</div>
+                    <div class="filter-value">
+                        <select name="index" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="KSE100">KSE-100</option>
+                            <option value="KSE30">KSE-30</option>
+                            <option value="KMI30">KMI-30</option>
+                                <option value="DJIA">DJIA</option>
+                                <option value="SP500">S&P 500</option>
+                                <option value="NASDAQ100">NASDAQ 100</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Sector</div>
+                    <div class="filter-value">
+                        <select name="sector" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Financial Services">Financial Services</option>
+                            <option value="Energy">Energy</option>
+                            <option value="Industrials">Industrials</option>
+                                <option value="Consumer Cyclical">Consumer Cyclical</option>
+                                <option value="Consumer Defensive">Consumer Defensive</option>
+                                <option value="Basic Materials">Basic Materials</option>
+                                <option value="Communication Services">Communication Services</option>
+                                <option value="Real Estate">Real Estate</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Financials">Financials (PSX)</option>
+                                <option value="Cement">Cement (PSX)</option>
+                                <option value="Textile Composite">Textile Composite (PSX)</option>
+                                <!-- Add more sectors -->
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Industry</div>
+                    <div class="filter-value">
+                        <select name="industry" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="Software—Infrastructure">Software—Infrastructure</option>
+                                <option value="Drug Manufacturers—General">Drug Manufacturers—General</option>
+                                <option value="Banks—Regional">Banks—Regional</option>
+                                <option value="Oil & Gas E&P">Oil & Gas E&P</option>
+                                <option value="Commercial Banks (PSX)">Commercial Banks (PSX)</option>
+                                <option value="Cement (PSX)">Cement (PSX)</option>
+                                <!-- Add more industries -->
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Country</div>
+                    <div class="filter-value">
+                        <select name="country" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="USA">USA</option>
+                            <option value="Pakistan">Pakistan</option>
+                                <option value="Canada">Canada</option>
+                                <option value="China">China</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Market Cap.</div>
+                    <div class="filter-value">
+                        <select name="market_cap" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="Mega">Mega (+$200B)</option>
+                                <option value="Large">Large (+$10B)</option>
+                                <option value="Mid">Mid (+$2B)</option>
+                                <option value="Small">Small (+$300M)</option>
+                                <option value="Micro">Micro (+$50M)</option>
+                                <option value="Nano">Nano (-$50M)</option>
+                                <option value="-Mega">Not Mega (-$200B)</option>
+                                <option value="-Large">Not Large (-$10B)</option>
+                                <option value="-Mid">Not Mid (-$2B)</option>
+                                <option value="-Small">Not Small (-$300M)</option>
+                                <option value="-Micro">Not Micro (-$50M)</option>
+                                <option value="Over 1B">Over 1B</option>
+                                <option value="Over 5B">Over 5B</option>
+                                <option value="Over 10B">Over 10B</option>
+                                <option value="Over 50B">Over 50B</option>
+                                <option value="Over 100B">Over 100B</option>
+                                <option value="Over 200B">Over 200B</option>
+                                <option value="Under 1B">Under 1B</option>
+                                <option value="Under 5B">Under 5B</option>
+                                <option value="Under 10B">Under 10B</option>
+                                <option value="Under 50B">Under 50B</option>
+                                <option value="Under 100B">Under 100B</option>
+                                <option value="Under 200B">Under 200B</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Dividend Yield</div>
+                    <div class="filter-value">
+                        <select name="div_yield" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="None">None (0%)</option>
+                                <option value="Positive">Positive (>0%)</option>
+                                <option value="High">High (>5%)</option>
+                                <option value="Very High">Very High (>10%)</option>
+                                <option value="Over 1%">Over 1%</option>
+                                <option value="Over 2%">Over 2%</option>
+                                <option value="Over 3%">Over 3%</option>
+                                <option value="Over 4%">Over 4%</option>
+                                <option value="Over 5%">Over 5%</option>
+                                <option value="Over 6%">Over 6%</option>
+                                <option value="Over 7%">Over 7%</option>
+                                <option value="Over 8%">Over 8%</option>
+                                <option value="Over 9%">Over 9%</option>
+                                <option value="Over 10%">Over 10%</option>
+                                <option value="Under 1%">Under 1%</option>
+                                <option value="Under 2%">Under 2%</option>
+                                <option value="Under 3%">Under 3%</option>
+                                <option value="Under 4%">Under 4%</option>
+                                <option value="Under 5%">Under 5%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Avg Volume (3 Month)</div>
+                    <div class="filter-value">
+                        <select name="avg_volume" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="Under 50K">Under 50K</option>
+                            <option value="Under 100K">Under 100K</option>
+                                <option value="Under 500K">Under 500K</option>
+                                <option value="Under 750K">Under 750K</option>
+                                <option value="Under 1M">Under 1M</option>
+                                <option value="Over 50K">Over 50K</option>
+                            <option value="Over 100K">Over 100K</option>
+                                <option value="Over 200K">Over 200K</option>
+                                <option value="Over 300K">Over 300K</option>
+                                <option value="Over 400K">Over 400K</option>
+                            <option value="Over 500K">Over 500K</option>
+                                <option value="Over 750K">Over 750K</option>
+                            <option value="Over 1M">Over 1M</option>
+                                <option value="Over 2M">Over 2M</option>
+                                <option value="Over 5M">Over 5M</option>
+                                <option value="Over 10M">Over 10M</option>
+                                <option value="100K to 500K">100K to 500K</option>
+                                <option value="100K to 1M">100K to 1M</option>
+                                <option value="500K to 1M">500K to 1M</option>
+                                <option value="500K to 10M">500K to 10M</option>
+                        </select>
+                    </div>
+                </div>
+                     <!-- Add remaining fundamental filters -->
+                     <div class="filter-cell"> <div class="filter-label">Relative Volume</div> <div class="filter-value"> <select name="rel_volume" class="filter-select"> <option value="Any">Any</option> <option value="Over 0.5">Over 0.5</option> <option value="Over 1">Over 1</option> <option value="Over 1.5">Over 1.5</option> <option value="Over 2">Over 2</option> <option value="Over 3">Over 3</option> <option value="Over 4">Over 4</option> <option value="Over 5">Over 5</option> <option value="Over 10">Over 10</option> <option value="Under 0.75">Under 0.75</option> <option value="Under 0.5">Under 0.5</option> <option value="Under 0.25">Under 0.25</option> <option value="Under 1">Under 1</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">Current Volume</div> <div class="filter-value"> <select name="current_volume" class="filter-select"> <option value="Any">Any</option> <option value="Under 50K">Under 50K</option> <option value="Under 100K">Under 100K</option> <option value="Under 500K">Under 500K</option> <option value="Under 750K">Under 750K</option> <option value="Under 1M">Under 1M</option> <option value="Over 0">Over 0</option> <option value="Over 50K">Over 50K</option> <option value="Over 100K">Over 100K</option> <option value="Over 200K">Over 200K</option> <option value="Over 300K">Over 300K</option> <option value="Over 400K">Over 400K</option> <option value="Over 500K">Over 500K</option> <option value="Over 750K">Over 750K</option> <option value="Over 1M">Over 1M</option> <option value="Over 2M">Over 2M</option> <option value="Over 5M">Over 5M</option> <option value="Over 10M">Over 10M</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">Price</div> <div class="filter-value"> <select name="price" class="filter-select"> <option value="Any">Any</option> <option value="Under $1">Under $1</option> <option value="Under $2">Under $2</option> <option value="Under $3">Under $3</option> <option value="Under $4">Under $4</option> <option value="Under $5">Under $5</option> <option value="Under $7">Under $7</option> <option value="Under $10">Under $10</option> <option value="Under $15">Under $15</option> <option value="Under $20">Under $20</option> <option value="Under $30">Under $30</option> <option value="Under $40">Under $40</option> <option value="Under $50">Under $50</option> <option value="Over $1">Over $1</option> <option value="Over $2">Over $2</option> <option value="Over $3">Over $3</option> <option value="Over $4">Over $4</option> <option value="Over $5">Over $5</option> <option value="Over $7">Over $7</option> <option value="Over $10">Over $10</option> <option value="Over $15">Over $15</option> <option value="Over $20">Over $20</option> <option value="Over $30">Over $30</option> <option value="Over $40">Over $40</option> <option value="Over $50">Over $50</option> <option value="Over $60">Over $60</option> <option value="Over $70">Over $70</option> <option value="Over $80">Over $80</option> <option value="Over $90">Over $90</option> <option value="Over $100">Over $100</option> <option value="$1 to $5">$1 to $5</option> <option value="$1 to $10">$1 to $10</option> <option value="$1 to $20">$1 to $20</option> <option value="$5 to $10">$5 to $10</option> <option value="$5 to $20">$5 to $20</option> <option value="$5 to $50">$5 to $50</option> <option value="$10 to $20">$10 to $20</option> <option value="$10 to $50">$10 to $50</option> <option value="$20 to $50">$20 to $50</option> <option value="$50 to $100">$50 to $100</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">Target Price</div> <div class="filter-value"> <select name="target_price" class="filter-select"> <option value="Any">Any</option> <option value="Above Price">Above Price</option> <option value="Below Price">Below Price</option> <option value="5% Above Price">5% Above Price</option> <option value="10% Above Price">10% Above Price</option> <option value="15% Above Price">15% Above Price</option> <option value="20% Above Price">20% Above Price</option> <option value="30% Above Price">30% Above Price</option> <option value="40% Above Price">40% Above Price</option> <option value="50% Above Price">50% Above Price</option> <option value="5% Below Price">5% Below Price</option> <option value="10% Below Price">10% Below Price</option> <option value="15% Below Price">15% Below Price</option> <option value="20% Below Price">20% Below Price</option> <option value="30% Below Price">30% Below Price</option> <option value="40% Below Price">40% Below Price</option> <option value="50% Below Price">50% Below Price</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">IPO Date</div> <div class="filter-value"> <select name="ipo_date" class="filter-select"> <option value="Any">Any</option> <option value="Today">Today</option> <option value="Yesterday">Yesterday</option> <option value="In the last week">In the last week</option> <option value="In the last month">In the last month</option> <option value="In the last quarter">In the last quarter</option> <option value="In the last year">In the last year</option> <option value="In the last 2 years">In the last 2 years</option> <option value="In the last 3 years">In the last 3 years</option> <option value="In the last 5 years">In the last 5 years</option> <option value="More than a year ago">More than a year ago</option> <option value="More than 5 years ago">More than 5 years ago</option> <option value="More than 10 years ago">More than 10 years ago</option> <option value="More than 20 years ago">More than 20 years ago</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">Shares Outstanding</div> <div class="filter-value"> <select name="shares_outstanding" class="filter-select"> <option value="Any">Any</option> <option value="Under 1M">Under 1M</option> <option value="Under 5M">Under 5M</option> <option value="Under 10M">Under 10M</option> <option value="Under 20M">Under 20M</option> <option value="Under 50M">Under 50M</option> <option value="Under 100M">Under 100M</option> <option value="Over 1M">Over 1M</option> <option value="Over 5M">Over 5M</option> <option value="Over 10M">Over 10M</option> <option value="Over 20M">Over 20M</option> <option value="Over 50M">Over 50M</option> <option value="Over 100M">Over 100M</option> <option value="Over 500M">Over 500M</option> <option value="Over 1B">Over 1B</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">Float</div> <div class="filter-value"> <select name="float" class="filter-select"> <option value="Any">Any</option> <option value="Under 1M">Under 1M</option> <option value="Under 5M">Under 5M</option> <option value="Under 10M">Under 10M</option> <option value="Under 20M">Under 20M</option> <option value="Under 50M">Under 50M</option> <option value="Under 100M">Under 100M</option> <option value="Over 1M">Over 1M</option> <option value="Over 5M">Over 5M</option> <option value="Over 10M">Over 10M</option> <option value="Over 20M">Over 20M</option> <option value="Over 50M">Over 50M</option> <option value="Over 100M">Over 100M</option> <option value="Over 500M">Over 500M</option> <option value="Over 1B">Over 1B</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">Analyst Recom.</div> <div class="filter-value"> <select name="analyst_recom" class="filter-select"> <option value="Any">Any</option> <option value="Strong Buy (1-1.5)">Strong Buy (1-1.5)</option> <option value="Buy (1.5-2.5)">Buy (1.5-2.5)</option> <option value="Hold (2.5-3.5)">Hold (2.5-3.5)</option> <option value="Sell (3.5-4.5)">Sell (3.5-4.5)</option> <option value="Strong Sell (4.5-5)">Strong Sell (4.5-5)</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">Option/Short</div> <div class="filter-value"> <select name="option_short" class="filter-select"> <option value="Any">Any</option> <option value="Optionable">Optionable</option> <option value="Shortable">Shortable</option> <option value="Optionable and Shortable">Optionable and Shortable</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">Earnings Date</div> <div class="filter-value"> <select name="earnings_date" class="filter-select"> <option value="Any">Any</option> <option value="Today">Today</option> <option value="Today Before Market Open">Today Before Market Open</option> <option value="Today After Market Close">Today After Market Close</option> <option value="Tomorrow">Tomorrow</option> <option value="Tomorrow Before Market Open">Tomorrow Before Market Open</option> <option value="Tomorrow After Market Close">Tomorrow After Market Close</option> <option value="Yesterday">Yesterday</option> <option value="Yesterday Before Market Open">Yesterday Before Market Open</option> <option value="Yesterday After Market Close">Yesterday After Market Close</option> <option value="Next 5 Days">Next 5 Days</option> <option value="Previous 5 Days">Previous 5 Days</option> <option value="This Week">This Week</option> <option value="Next Week">Next Week</option> <option value="This Month">This Month</option> <option value="Next Month">Next Month</option> </select> </div> </div>
+                     <div class="filter-cell"> <div class="filter-label">Trades</div> <div class="filter-value"> <select name="trades" class="filter-select"> <option value="Any">Any</option> <option value="Elite only">Elite only</option> </select> </div> </div>
+
+                    </div>
+                </div>
+
+            <!-- Technical tab content -->
+            <div id="technical-filters" class="filter-content" style="display: none;">
+                <div class="filter-count-header">
+                    <span>Technical Filters: <span id="technical-filter-count">0</span></span>
+                    <button class="btn-reset" data-target-tab="technical">Reset Technical</button>
+                    </div>
+                <div class="filter-grid">
+                <div class="filter-cell">
+                        <div class="filter-label">P/E (Price/Earnings TTM)</div>
+                    <div class="filter-value">
+                            <select name="pe_ratio" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="Low (<15)">Low (&lt;15)</option>
+                                <option value="Profitable (<0)">Profitable (&gt;0)</option>
+                                <option value="High (>50)">High (&gt;50)</option>
+                            <option value="Under 5">Under 5</option>
+                            <option value="Under 10">Under 10</option>
+                                <option value="Under 15">Under 15</option>
+                            <option value="Under 20">Under 20</option>
+                                <option value="Under 25">Under 25</option>
+                                <option value="Under 30">Under 30</option>
+                                <option value="Under 35">Under 35</option>
+                                <option value="Under 40">Under 40</option>
+                                <option value="Under 45">Under 45</option>
+                                <option value="Under 50">Under 50</option>
+                                <option value="Over 5">Over 5</option>
+                                <option value="Over 10">Over 10</option>
+                                <option value="Over 15">Over 15</option>
+                                <option value="Over 20">Over 20</option>
+                                <option value="Over 25">Over 25</option>
+                                <option value="Over 30">Over 30</option>
+                                <option value="Over 35">Over 35</option>
+                                <option value="Over 40">Over 40</option>
+                                <option value="Over 45">Over 45</option>
+                            <option value="Over 50">Over 50</option>
+                                <option value="Over 60">Over 60</option>
+                                <option value="Over 70">Over 70</option>
+                                <option value="Over 80">Over 80</option>
+                                <option value="Over 90">Over 90</option>
+                            <option value="Over 100">Over 100</option>
+                                <option value="Negative (<0)">Negative (&lt;0)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Forward P/E</div>
+                    <div class="filter-value">
+                            <select name="forward_pe" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="Low (<15)">Low (&lt;15)</option>
+                                <option value="Profitable (<0)">Profitable (&gt;0)</option>
+                                <option value="High (>50)">High (&gt;50)</option>
+                                <option value="Under 5">Under 5</option>
+                                <option value="Under 10">Under 10</option>
+                                <!-- Add more Fwd P/E options -->
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">PEG (Price/Earnings/Growth)</div>
+                    <div class="filter-value">
+                            <select name="peg" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="Low (<1)">Low (&lt;1)</option>
+                                <option value="High (>2)">High (&gt;2)</option>
+                                <option value="Under 1">Under 1</option>
+                                <option value="Under 2">Under 2</option>
+                                <option value="Under 3">Under 3</option>
+                                <option value="Over 1">Over 1</option>
+                                <option value="Over 2">Over 2</option>
+                                <option value="Over 3">Over 3</option>
+                                <option value="Negative (<0)">Negative (&lt;0)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">P/S (Price/Sales TTM)</div>
+                    <div class="filter-value">
+                            <select name="ps" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="Low (<1)">Low (&lt;1)</option>
+                                <option value="High (>10)">High (&gt;10)</option>
+                                <option value="Under 1">Under 1</option>
+                                <option value="Under 2">Under 2</option>
+                                <option value="Under 3">Under 3</option>
+                                <option value="Under 4">Under 4</option>
+                                <option value="Under 5">Under 5</option>
+                                <option value="Under 6">Under 6</option>
+                                <option value="Under 7">Under 7</option>
+                                <option value="Under 8">Under 8</option>
+                                <option value="Under 9">Under 9</option>
+                                <option value="Under 10">Under 10</option>
+                                <option value="Over 1">Over 1</option>
+                                <option value="Over 2">Over 2</option>
+                                <option value="Over 3">Over 3</option>
+                                <option value="Over 4">Over 4</option>
+                                <option value="Over 5">Over 5</option>
+                                <option value="Over 6">Over 6</option>
+                                <option value="Over 7">Over 7</option>
+                                <option value="Over 8">Over 8</option>
+                                <option value="Over 9">Over 9</option>
+                                <option value="Over 10">Over 10</option>
+                                <option value="Negative (<0)">Negative (&lt;0)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">P/B (Price/Book MRQ)</div>
+                    <div class="filter-value">
+                            <select name="pb" class="filter-select">
+                            <option value="Any">Any</option>
+                                <option value="Low (<1)">Low (&lt;1)</option>
+                                <option value="High (>5)">High (&gt;5)</option>
+                                <option value="Under 1">Under 1</option>
+                                <option value="Under 2">Under 2</option>
+                                <option value="Under 3">Under 3</option>
+                                <option value="Under 4">Under 4</option>
+                                <option value="Under 5">Under 5</option>
+                                <option value="Under 6">Under 6</option>
+                                <option value="Under 7">Under 7</option>
+                                <option value="Under 8">Under 8</option>
+                                <option value="Under 9">Under 9</option>
+                                <option value="Under 10">Under 10</option>
+                                <option value="Over 1">Over 1</option>
+                                <option value="Over 2">Over 2</option>
+                                <option value="Over 3">Over 3</option>
+                                <option value="Over 4">Over 4</option>
+                                <option value="Over 5">Over 5</option>
+                                <option value="Over 6">Over 6</option>
+                                <option value="Over 7">Over 7</option>
+                                <option value="Over 8">Over 8</option>
+                                <option value="Over 9">Over 9</option>
+                                <option value="Over 10">Over 10</option>
+                                <option value="Negative (<0)">Negative (&lt;0)</option>
+                        </select>
+                    </div>
+                </div>
+                    <!-- Add more technical filters -->
+                        </div>
+                    </div>
+
+            <!-- Performance tab content -->
+            <div id="performance-filters" class="filter-content" style="display: none;">
+            <div class="filter-count-header">
+                    <span>Performance Filters: <span id="performance-filter-count">0</span></span>
+                    <button class="btn-reset" data-target-tab="performance">Reset Performance</button>
+                            </div>
+            <div class="filter-grid">
+                <div class="filter-cell">
+                        <div class="filter-label">Performance (Week)</div>
+                    <div class="filter-value">
+                           <select name="perf_week" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Up">Up</option>
+                              <option value="Down">Down</option>
+                              <option value="Up 1%">Up 1%</option>
+                              <option value="Up 2%">Up 2%</option>
+                              <option value="Up 3%">Up 3%</option>
+                              <option value="Up 4%">Up 4%</option>
+                              <option value="Up 5%">Up 5%</option>
+                              <option value="Up 6%">Up 6%</option>
+                              <option value="Up 7%">Up 7%</option>
+                              <option value="Up 8%">Up 8%</option>
+                              <option value="Up 9%">Up 9%</option>
+                              <option value="Up 10%">Up 10%</option>
+                              <option value="Up 15%">Up 15%</option>
+                              <option value="Up 20%">Up 20%</option>
+                              <option value="Down 1%">Down 1%</option>
+                              <option value="Down 2%">Down 2%</option>
+                              <option value="Down 3%">Down 3%</option>
+                              <option value="Down 4%">Down 4%</option>
+                              <option value="Down 5%">Down 5%</option>
+                              <option value="Down 6%">Down 6%</option>
+                              <option value="Down 7%">Down 7%</option>
+                              <option value="Down 8%">Down 8%</option>
+                              <option value="Down 9%">Down 9%</option>
+                              <option value="Down 10%">Down 10%</option>
+                              <option value="Down 15%">Down 15%</option>
+                              <option value="Down 20%">Down 20%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Performance (Month)</div>
+                    <div class="filter-value">
+                           <select name="perf_month" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Up">Up</option>
+                              <option value="Down">Down</option>
+                              <option value="Up 5%">Up 5%</option>
+                              <option value="Up 10%">Up 10%</option>
+                              <option value="Up 15%">Up 15%</option>
+                              <option value="Up 20%">Up 20%</option>
+                              <option value="Up 30%">Up 30%</option>
+                              <option value="Up 40%">Up 40%</option>
+                              <option value="Up 50%">Up 50%</option>
+                              <option value="Up 60%">Up 60%</option>
+                              <option value="Up 70%">Up 70%</option>
+                              <option value="Up 80%">Up 80%</option>
+                              <option value="Up 90%">Up 90%</option>
+                              <option value="Up 100%">Up 100%</option>
+                              <option value="Down 5%">Down 5%</option>
+                              <option value="Down 10%">Down 10%</option>
+                              <option value="Down 15%">Down 15%</option>
+                              <option value="Down 20%">Down 20%</option>
+                              <option value="Down 30%">Down 30%</option>
+                              <option value="Down 40%">Down 40%</option>
+                              <option value="Down 50%">Down 50%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Performance (Quarter)</div>
+                    <div class="filter-value">
+                           <select name="perf_quarter" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Up">Up</option>
+                              <option value="Down">Down</option>
+                              <option value="Up 10%">Up 10%</option>
+                              <option value="Up 20%">Up 20%</option>
+                              <option value="Up 30%">Up 30%</option>
+                              <option value="Up 40%">Up 40%</option>
+                              <option value="Up 50%">Up 50%</option>
+                              <option value="Up 60%">Up 60%</option>
+                              <option value="Up 70%">Up 70%</option>
+                              <option value="Up 80%">Up 80%</option>
+                              <option value="Up 90%">Up 90%</option>
+                              <option value="Up 100%">Up 100%</option>
+                              <option value="Down 10%">Down 10%</option>
+                              <option value="Down 20%">Down 20%</option>
+                              <option value="Down 30%">Down 30%</option>
+                              <option value="Down 40%">Down 40%</option>
+                              <option value="Down 50%">Down 50%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Performance (Half Year)</div>
+                    <div class="filter-value">
+                           <select name="perf_half" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Up">Up</option>
+                              <option value="Down">Down</option>
+                              <option value="Up 10%">Up 10%</option>
+                              <option value="Up 20%">Up 20%</option>
+                              <option value="Up 30%">Up 30%</option>
+                              <option value="Up 40%">Up 40%</option>
+                              <option value="Up 50%">Up 50%</option>
+                              <option value="Up 60%">Up 60%</option>
+                              <option value="Up 70%">Up 70%</option>
+                              <option value="Up 80%">Up 80%</option>
+                              <option value="Up 90%">Up 90%</option>
+                              <option value="Up 100%">Up 100%</option>
+                              <option value="Down 10%">Down 10%</option>
+                              <option value="Down 20%">Down 20%</option>
+                              <option value="Down 30%">Down 30%</option>
+                              <option value="Down 40%">Down 40%</option>
+                              <option value="Down 50%">Down 50%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Performance (Year)</div>
+                    <div class="filter-value">
+                           <select name="perf_year" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Up">Up</option>
+                              <option value="Down">Down</option>
+                              <option value="Up 10%">Up 10%</option>
+                              <option value="Up 20%">Up 20%</option>
+                              <option value="Up 30%">Up 30%</option>
+                              <option value="Up 40%">Up 40%</option>
+                              <option value="Up 50%">Up 50%</option>
+                              <option value="Up 60%">Up 60%</option>
+                              <option value="Up 70%">Up 70%</option>
+                              <option value="Up 80%">Up 80%</option>
+                              <option value="Up 90%">Up 90%</option>
+                              <option value="Up 100%">Up 100%</option>
+                              <option value="Up 200%">Up 200%</option>
+                              <option value="Up 300%">Up 300%</option>
+                              <option value="Up 500%">Up 500%</option>
+                              <option value="Down 10%">Down 10%</option>
+                              <option value="Down 20%">Down 20%</option>
+                              <option value="Down 30%">Down 30%</option>
+                              <option value="Down 40%">Down 40%</option>
+                              <option value="Down 50%">Down 50%</option>
+                              <option value="Down 60%">Down 60%</option>
+                              <option value="Down 70%">Down 70%</option>
+                              <option value="Down 80%">Down 80%</option>
+                              <option value="Down 90%">Down 90%</option>
+                        </select>
+                    </div>
+                            </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Performance (YTD)</div>
+                    <div class="filter-value">
+                           <select name="perf_ytd" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Up">Up</option>
+                              <option value="Down">Down</option>
+                              <option value="Up 10%">Up 10%</option>
+                              <option value="Up 20%">Up 20%</option>
+                              <option value="Up 30%">Up 30%</option>
+                              <option value="Up 40%">Up 40%</option>
+                              <option value="Up 50%">Up 50%</option>
+                              <option value="Up 60%">Up 60%</option>
+                              <option value="Up 70%">Up 70%</option>
+                              <option value="Up 80%">Up 80%</option>
+                              <option value="Up 90%">Up 90%</option>
+                              <option value="Up 100%">Up 100%</option>
+                              <option value="Down 10%">Down 10%</option>
+                              <option value="Down 20%">Down 20%</option>
+                              <option value="Down 30%">Down 30%</option>
+                              <option value="Down 40%">Down 40%</option>
+                              <option value="Down 50%">Down 50%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Volatility (Week)</div>
+                    <div class="filter-value">
+                           <select name="volatility_week" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Over 2%">Over 2%</option>
+                              <option value="Over 3%">Over 3%</option>
+                              <option value="Over 4%">Over 4%</option>
+                              <option value="Over 5%">Over 5%</option>
+                              <option value="Over 6%">Over 6%</option>
+                              <option value="Over 7%">Over 7%</option>
+                              <option value="Over 8%">Over 8%</option>
+                              <option value="Over 9%">Over 9%</option>
+                              <option value="Over 10%">Over 10%</option>
+                              <option value="Over 12%">Over 12%</option>
+                              <option value="Over 15%">Over 15%</option>
+                              <option value="Under 1%">Under 1%</option>
+                              <option value="Under 2%">Under 2%</option>
+                              <option value="Under 3%">Under 3%</option>
+                              <option value="Under 4%">Under 4%</option>
+                              <option value="Under 5%">Under 5%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Volatility (Month)</div>
+                    <div class="filter-value">
+                           <select name="volatility_month" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Over 3%">Over 3%</option>
+                              <option value="Over 4%">Over 4%</option>
+                              <option value="Over 5%">Over 5%</option>
+                              <option value="Over 6%">Over 6%</option>
+                              <option value="Over 7%">Over 7%</option>
+                              <option value="Over 8%">Over 8%</option>
+                              <option value="Over 9%">Over 9%</option>
+                              <option value="Over 10%">Over 10%</option>
+                              <option value="Over 12%">Over 12%</option>
+                              <option value="Over 15%">Over 15%</option>
+                              <option value="Over 20%">Over 20%</option>
+                              <option value="Under 1%">Under 1%</option>
+                              <option value="Under 2%">Under 2%</option>
+                              <option value="Under 3%">Under 3%</option>
+                              <option value="Under 4%">Under 4%</option>
+                              <option value="Under 5%">Under 5%</option>
+                              <option value="Under 6%">Under 6%</option>
+                              <option value="Under 7%">Under 7%</option>
+                              <option value="Under 8%">Under 8%</option>
+                              <option value="Under 9%">Under 9%</option>
+                              <option value="Under 10%">Under 10%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">RSI (14)</div>
+                    <div class="filter-value">
+                        <select name="rsi" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Overbought (>70)">Overbought (&gt;70)</option>
+                              <option value="Overbought (>80)">Overbought (&gt;80)</option>
+                              <option value="Overbought (>90)">Overbought (&gt;90)</option>
+                              <option value="Oversold (<30)">Oversold (&lt;30)</option>
+                              <option value="Oversold (<20)">Oversold (&lt;20)</option>
+                              <option value="Oversold (<10)">Oversold (&lt;10)</option>
+                              <option value="Not Overbought (<70)">Not Overbought (&lt;70)</option>
+                              <option value="Not Overbought (<60)">Not Overbought (&lt;60)</option>
+                              <option value="Not Overbought (<50)">Not Overbought (&lt;50)</option>
+                              <option value="Not Oversold (>30)">Not Oversold (&gt;30)</option>
+                              <option value="Not Oversold (>40)">Not Oversold (&gt;40)</option>
+                              <option value="Not Oversold (>50)">Not Oversold (&gt;50)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Gap</div>
+                    <div class="filter-value">
+                        <select name="gap" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Gap Up">Gap Up</option>
+                              <option value="Gap Down">Gap Down</option>
+                              <option value="Gap Up 0%">Gap Up 0%</option>
+                              <option value="Gap Up 1%">Gap Up 1%</option>
+                              <option value="Gap Up 2%">Gap Up 2%</option>
+                              <option value="Gap Up 3%">Gap Up 3%</option>
+                              <option value="Gap Up 4%">Gap Up 4%</option>
+                              <option value="Gap Up 5%">Gap Up 5%</option>
+                              <option value="Gap Up 10%">Gap Up 10%</option>
+                              <option value="Gap Up 15%">Gap Up 15%</option>
+                              <option value="Gap Up 20%">Gap Up 20%</option>
+                              <option value="Gap Down 0%">Gap Down 0%</option>
+                              <option value="Gap Down 1%">Gap Down 1%</option>
+                              <option value="Gap Down 2%">Gap Down 2%</option>
+                              <option value="Gap Down 3%">Gap Down 3%</option>
+                              <option value="Gap Down 4%">Gap Down 4%</option>
+                              <option value="Gap Down 5%">Gap Down 5%</option>
+                              <option value="Gap Down 10%">Gap Down 10%</option>
+                              <option value="Gap Down 15%">Gap Down 15%</option>
+                              <option value="Gap Down 20%">Gap Down 20%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">20-Day Simple Moving Average</div>
+                    <div class="filter-value">
+                        <select name="sma_20" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Price above SMA20">Price above SMA20</option>
+                              <option value="Price 10% above SMA20">Price 10% above SMA20</option>
+                              <option value="Price 20% above SMA20">Price 20% above SMA20</option>
+                              <option value="Price 30% above SMA20">Price 30% above SMA20</option>
+                              <option value="Price 50% above SMA20">Price 50% above SMA20</option>
+                              <option value="Price below SMA20">Price below SMA20</option>
+                              <option value="Price 10% below SMA20">Price 10% below SMA20</option>
+                              <option value="Price 20% below SMA20">Price 20% below SMA20</option>
+                              <option value="Price 30% below SMA20">Price 30% below SMA20</option>
+                              <option value="Price 50% below SMA20">Price 50% below SMA20</option>
+                              <option value="Price crossed SMA20">Price crossed SMA20</option>
+                              <option value="Price crossed SMA20 above">Price crossed SMA20 above</option>
+                              <option value="Price crossed SMA20 below">Price crossed SMA20 below</option>
+                              <option value="SMA20 above SMA50">SMA20 above SMA50</option>
+                              <option value="SMA20 below SMA50">SMA20 below SMA50</option>
+                              <option value="SMA20 crossed SMA50">SMA20 crossed SMA50</option>
+                              <option value="SMA20 crossed SMA50 above">SMA20 crossed SMA50 above</option>
+                              <option value="SMA20 crossed SMA50 below">SMA20 crossed SMA50 below</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">50-Day Simple Moving Average</div>
+                    <div class="filter-value">
+                        <select name="sma_50" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Price above SMA50">Price above SMA50</option>
+                              <option value="Price 10% above SMA50">Price 10% above SMA50</option>
+                              <option value="Price 20% above SMA50">Price 20% above SMA50</option>
+                              <option value="Price 30% above SMA50">Price 30% above SMA50</option>
+                              <option value="Price 50% above SMA50">Price 50% above SMA50</option>
+                              <option value="Price below SMA50">Price below SMA50</option>
+                              <option value="Price 10% below SMA50">Price 10% below SMA50</option>
+                              <option value="Price 20% below SMA50">Price 20% below SMA50</option>
+                              <option value="Price 30% below SMA50">Price 30% below SMA50</option>
+                              <option value="Price 50% below SMA50">Price 50% below SMA50</option>
+                              <option value="Price crossed SMA50">Price crossed SMA50</option>
+                              <option value="Price crossed SMA50 above">Price crossed SMA50 above</option>
+                              <option value="Price crossed SMA50 below">Price crossed SMA50 below</option>
+                              <option value="SMA50 above SMA200">SMA50 above SMA200</option>
+                              <option value="SMA50 below SMA200">SMA50 below SMA200</option>
+                              <option value="SMA50 crossed SMA200">SMA50 crossed SMA200</option>
+                              <option value="SMA50 crossed SMA200 above">SMA50 crossed SMA200 above</option>
+                              <option value="SMA50 crossed SMA200 below">SMA50 crossed SMA200 below</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">200-Day Simple Moving Average</div>
+                    <div class="filter-value">
+                        <select name="sma_200" class="filter-select">
+                            <option value="Any">Any</option>
+                              <option value="Price above SMA200">Price above SMA200</option>
+                              <option value="Price 10% above SMA200">Price 10% above SMA200</option>
+                              <option value="Price 20% above SMA200">Price 20% above SMA200</option>
+                              <option value="Price 30% above SMA200">Price 30% above SMA200</option>
+                              <option value="Price 50% above SMA200">Price 50% above SMA200</option>
+                              <option value="Price below SMA200">Price below SMA200</option>
+                              <option value="Price 10% below SMA200">Price 10% below SMA200</option>
+                              <option value="Price 20% below SMA200">Price 20% below SMA200</option>
+                              <option value="Price 30% below SMA200">Price 30% below SMA200</option>
+                              <option value="Price 50% below SMA200">Price 50% below SMA200</option>
+                              <option value="Price crossed SMA200">Price crossed SMA200</option>
+                              <option value="Price crossed SMA200 above">Price crossed SMA200 above</option>
+                              <option value="Price crossed SMA200 below">Price crossed SMA200 below</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Change %</div>
+                    <div class="filter-value">
+                        <select name="change" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Up">Up</option>
+                            <option value="Up 1%">Up 1%</option>
+                            <option value="Up 2%">Up 2%</option>
+                              <option value="Up 3%">Up 3%</option>
+                              <option value="Up 4%">Up 4%</option>
+                            <option value="Up 5%">Up 5%</option>
+                              <option value="Up 6%">Up 6%</option>
+                              <option value="Up 7%">Up 7%</option>
+                              <option value="Up 8%">Up 8%</option>
+                              <option value="Up 9%">Up 9%</option>
+                            <option value="Up 10%">Up 10%</option>
+                            <option value="Up 15%">Up 15%</option>
+                            <option value="Up 20%">Up 20%</option>
+                            <option value="Down">Down</option>
+                            <option value="Down 1%">Down 1%</option>
+                            <option value="Down 2%">Down 2%</option>
+                              <option value="Down 3%">Down 3%</option>
+                              <option value="Down 4%">Down 4%</option>
+                            <option value="Down 5%">Down 5%</option>
+                              <option value="Down 6%">Down 6%</option>
+                              <option value="Down 7%">Down 7%</option>
+                              <option value="Down 8%">Down 8%</option>
+                              <option value="Down 9%">Down 9%</option>
+                            <option value="Down 10%">Down 10%</option>
+                            <option value="Down 15%">Down 15%</option>
+                              <option value="Down 20%">Down 20%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                        <div class="filter-label">Change from Open %</div>
+                    <div class="filter-value">
+                        <select name="change_open" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Up">Up</option>
+                              <option value="Down">Down</option>
+                              <option value="Up 0.5%">Up 0.5%</option>
+                            <option value="Up 1%">Up 1%</option>
+                            <option value="Up 2%">Up 2%</option>
+                              <option value="Up 3%">Up 3%</option>
+                              <option value="Up 4%">Up 4%</option>
+                            <option value="Up 5%">Up 5%</option>
+                              <option value="Down 0.5%">Down 0.5%</option>
+                            <option value="Down 1%">Down 1%</option>
+                            <option value="Down 2%">Down 2%</option>
+                              <option value="Down 3%">Down 3%</option>
+                              <option value="Down 4%">Down 4%</option>
+                            <option value="Down 5%">Down 5%</option>
+                        </select>
+                    </div>
+                            </div>
+                     <!-- Add more performance filters -->
+                        </div>
+                    </div>
+
+        <!-- Dividend tab content -->
+            <div id="dividend-filters" class="filter-content" style="display: none;">
+                 <div class="filter-count-header">
+                    <span>Dividend Filters: <span id="dividend-filter-count">0</span></span>
+                    <button class="btn-reset" data-target-tab="dividend">Reset Dividend</button>
+                </div>
+                <div class="filter-grid">
+                    <!-- Dividend filters will go here -->
+                     <div class="filter-cell">
+                        <div class="filter-label">Dividend Yield</div>
+                        <div class="filter-value">
+                            <select name="div_yield_tab" class="filter-select">
+                                <option value="Any">Any</option>
+                                <option value="None">None (0%)</option>
+                                <option value="Positive">Positive (>0%)</option>
+                                <option value="High">High (>5%)</option>
+                                <option value="Very High">Very High (>10%)</option>
+                                <option value="Over 1%">Over 1%</option>
+                                <option value="Over 2%">Over 2%</option>
+                                <option value="Over 3%">Over 3%</option>
+                                <option value="Over 4%">Over 4%</option>
+                                <option value="Over 5%">Over 5%</option>
+                            </select>
+                        </div>
+                    </div>
+                     <div class="filter-cell">
+                        <div class="filter-label">Payout Ratio</div>
+                        <div class="filter-value">
+                           <select name="payout_ratio" class="filter-select">
+                              <option value="Any">Any</option>
+                              <option value="Positive (>0%)">Positive (>0%)</option>
+                              <option value="Low (<30%)">Low (<30%)</option>
+                              <option value="High (>70%)">High (>70%)</option>
+                              <option value="Over 100% (using debt)">Over 100% (using debt)</option>
+                              <option value="Under 10%">Under 10%</option>
+                              <option value="Under 20%">Under 20%</option>
+                              <option value="Under 30%">Under 30%</option>
+                              <option value="Under 40%">Under 40%</option>
+                              <option value="Under 50%">Under 50%</option>
+                              <option value="Under 60%">Under 60%</option>
+                              <option value="Under 70%">Under 70%</option>
+                              <option value="Under 80%">Under 80%</option>
+                              <option value="Under 90%">Under 90%</option>
+                              <option value="Under 100%">Under 100%</option>
+                              <option value="Over 0%">Over 0%</option>
+                              <option value="Over 10%">Over 10%</option>
+                              <option value="Over 20%">Over 20%</option>
+                              <option value="Over 30%">Over 30%</option>
+                              <option value="Over 40%">Over 40%</option>
+                              <option value="Over 50%">Over 50%</option>
+                              <option value="Over 60%">Over 60%</option>
+                              <option value="Over 70%">Over 70%</option>
+                              <option value="Over 80%">Over 80%</option>
+                              <option value="Over 90%">Over 90%</option>
+                              <option value="Over 100%">Over 100%</option>
+                              <option value="Negative">Negative</option>
+                           </select>
+                        </div>
+                     </div>
+                     <!-- Add Ex-Div Date, Dividend Growth Rate etc. -->
+                </div>
+                            </div>
+        
+        <!-- Ownership tab content -->
+            <div id="ownership-filters" class="filter-content" style="display: none;">
+                <div class="filter-count-header">
+                    <span>Ownership Filters: <span id="ownership-filter-count">0</span></span>
+                    <button class="btn-reset" data-target-tab="ownership">Reset Ownership</button>
+                            </div>
+                <div class="filter-grid">
+                    <!-- Ownership filters will go here -->
+                    <div class="filter-cell">
+                        <div class="filter-label">Institutional Own %</div>
+                        <div class="filter-value">
+                            <select name="inst_own" class="filter-select">
+                                <option value="Any">Any</option>
+                                <option value="Low (<5%)">Low (<5%)</option>
+                                <option value="High (>80%)">High (>80%)</option>
+                                <option value="Over 5%">Over 5%</option>
+                                <option value="Over 10%">Over 10%</option>
+                                <option value="Over 20%">Over 20%</option>
+                                <option value="Over 30%">Over 30%</option>
+                                <option value="Over 40%">Over 40%</option>
+                                <option value="Over 50%">Over 50%</option>
+                                <option value="Over 60%">Over 60%</option>
+                                <option value="Over 70%">Over 70%</option>
+                                <option value="Over 80%">Over 80%</option>
+                                <option value="Over 90%">Over 90%</option>
+                                <option value="Under 5%">Under 5%</option>
+                                <option value="Under 10%">Under 10%</option>
+                                <option value="Under 20%">Under 20%</option>
+                                <option value="Under 30%">Under 30%</option>
+                                <option value="Under 40%">Under 40%</option>
+                                <option value="Under 50%">Under 50%</option>
+                                <option value="Under 60%">Under 60%</option>
+                                <option value="Under 70%">Under 70%</option>
+                                <option value="Under 80%">Under 80%</option>
+                                <option value="Under 90%">Under 90%</option>
+                           </select>
+                        </div>
+                    </div>
+                    <div class="filter-cell">
+                        <div class="filter-label">Insider Own %</div>
+                        <div class="filter-value">
+                           <select name="insider_own" class="filter-select">
+                              <option value="Any">Any</option>
+                              <option value="Low (<5%)">Low (<5%)</option>
+                              <option value="High (>30%)">High (>30%)</option>
+                              <option value="Over 5%">Over 5%</option>
+                              <option value="Over 10%">Over 10%</option>
+                              <option value="Over 20%">Over 20%</option>
+                              <option value="Over 30%">Over 30%</option>
+                              <option value="Over 40%">Over 40%</option>
+                              <option value="Over 50%">Over 50%</option>
+                              <option value="Over 60%">Over 60%</option>
+                              <option value="Under 5%">Under 5%</option>
+                              <option value="Under 10%">Under 10%</option>
+                              <option value="Under 20%">Under 20%</option>
+                              <option value="Under 30%">Under 30%</option>
+                              <option value="Under 40%">Under 40%</option>
+                              <option value="Under 50%">Under 50%</option>
+                              <option value="Under 60%">Under 60%</option>
+                           </select>
+                        </div>
+                    </div>
+                     <!-- Add Short Float %, Inst/Insider Transactions etc. -->
+                </div>
+            </div>
+        </div>
+    </div><!-- End Filter Tabs Container -->
+
+    <!-- Statistics Bar -->
+    <div class="statistics-bar">
+        <div class="filter-summary">
+            <span class="stats-label">Matches:</span>
+            <span class="stats-value"><strong>{{ stocks|length }}</strong></span>
+                    </div>
+        <div class="market-stats">
+            <div class="stat-item">
+                <span class="stats-label">KSE-100:</span>
+                <span class="stats-value {% if kse100_change > 0 %}positive{% elif kse100_change < 0 %}negative{% endif %}">
+                    {{ kse100_index|default:"42,156.28" }} ({{ kse100_change|default:"+0.43" }}%)
+                </span>
+            </div>
+            <div class="stat-item d-none d-md-flex"> <!-- Hide on small screens -->
+                <span class="stats-label">Volume:</span>
+                <span class="stats-value">{{ market_volume|default:"285.2M"|intcomma }}</span>
+            </div>
+            <div class="stat-item d-none d-lg-flex"> <!-- Hide on medium screens -->
+                <span class="stats-label">Last Update:</span>
+                {% comment %} <span class="stats-value">{{ last_update|default:today|date:"H:i T" }}</span> {% endcomment %}
+                <span class="stats-value">15:30 PKT</span>
+            </div>
+                </div>
+            </div>
+
+    <!-- Market Chart Section -->
+    <div class="market-chart-section">
+        <div class="chart-toggle">
+            <button class="chart-btn active" data-chart="kse100">KSE-100</button>
+            <button class="chart-btn" data-chart="sp500">S&P 500</button>
+            <button class="chart-btn" data-chart="nasdaq">NASDAQ</button>
+            <button class="chart-btn" data-chart="crypto">Crypto</button>
+            <button class="chart-btn" data-chart="forex">Forex</button>
+        </div>
+        <div class="chart-container">
+            <div id="market-chart"></div> <!-- Chart will be rendered here -->
+        </div>
+    </div>
+
+
+    <!-- Stocks table -->
+    <div class="stock-results">
+         <div class="table-section"> <!-- Add wrapper for horizontal scroll -->
+        <table class="stock-table">
+                            <thead>
+                                <tr>
+                        <th class="sorting-enabled">No.</th>
+                        <th class="sorting-enabled">Ticker</th>
+                        <th class="sorting-enabled">Company</th>
+                        <th class="sorting-enabled">Sector</th>
+                        <th class="sorting-enabled">Industry</th>
+                        <th class="sorting-enabled">Country</th>
+                        <th class="sorting-enabled text-right">Market Cap</th>
+                        <th class="sorting-enabled text-right">P/E</th>
+                        <th class="sorting-enabled text-right">Price</th>
+                        <th class="sorting-enabled text-right">Change %</th>
+                        <th class="sorting-enabled text-right">Volume</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stock in stocks %}
+                                <tr>
+                        <td>{{ forloop.counter0|add:stocks.start_index }}</td>
+                        <td>
+                            <a href="javascript:void(0);" class="stock-link" data-symbol="{{ stock.Symbol }}">
+                                {{ stock.Symbol }}
+                                <!-- Company Profile Preview -->
+                                <div class="stock-preview">
+                                    <div class="preview-header">
+                                        <div class="preview-logo">{{ stock.Symbol|slice:":1" }}</div>
+                                        <div class="preview-name">{{ stock.CompanyName|default:stock.Symbol|truncatechars:40 }}</div>
+                                    </div>
+                                    <div class="preview-details">
+                                        <div class="preview-stat">
+                                            <div class="preview-label">Price</div>
+                                            <div class="preview-value">{{ stock.CurrentPrice|floatformat:2|default:"N/A" }}</div>
+                                        </div>
+                                        <div class="preview-stat">
+                                            <div class="preview-label">Change</div>
+                                            <div class="preview-value {% if stock.ChangePercentage > 0 %}positive{% elif stock.ChangePercentage < 0 %}negative{% endif %}">
+                                                {{ stock.ChangePercentage|floatformat:2|default:"0.00" }}%
+                                            </div>
+                                        </div>
+                                        <div class="preview-stat">
+                                            <div class="preview-label">Market Cap</div>
+                                            <div class="preview-value">{{ stock.MarketCap|intcomma|default:"N/A" }}</div>
+                                        </div>
+                                        <div class="preview-stat">
+                                            <div class="preview-label">Volume</div>
+                                            <div class="preview-value">{{ stock.Volume|intcomma|default:"N/A" }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="preview-desc">
+                                        {{ stock.Description|default:"No description available."|truncatewords:25 }}
+                                    </div>
+                                </div>
+                            </a>
+                        </td>
+                        <td>{{ stock.CompanyName|truncatechars:35 }}</td>
+                        <td>{{ stock.Sector|default:"N/A" }}</td>
+                        <td>{{ stock.Industry|default:"N/A"|truncatechars:30 }}</td>
+                        <td>{{ stock.Country|default:"N/A" }}</td>
+                        <td class="text-right">{% if stock.MarketCap %}{{ stock.MarketCap|intcomma }}{% else %}N/A{% endif %}</td>
+                        <td class="text-right">{% if stock.PE %}{{ stock.PE|floatformat:2 }}{% else %}-{% endif %}</td>
+                        <td class="text-right">{{ stock.CurrentPrice|floatformat:2 }}</td>
+                        <td class="text-right {% if stock.ChangePercentage > 0 %}positive{% elif stock.ChangePercentage < 0 %}negative{% endif %}">
+                        {{ stock.ChangePercentage|floatformat:2 }}%
+                                    </td>
+                        <td class="text-right">{{ stock.Volume|intcomma }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                        <td colspan="11" class="text-center" style="padding: 2rem;">No stocks match your criteria. Try adjusting the filters.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+        </div><!-- End Table Section -->
+
+                    <!-- Pagination -->
+        {% if stocks.paginator.num_pages > 1 %}
+                        <ul class="pagination">
+                            {% if stocks.has_previous %}
+                            <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)" onclick="navigateToPage({{ stocks.previous_page_number }})" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                            </li>
+                            {% endif %}
+
+            {% for i in stocks.paginator.page_range %}
+                {% if stocks.number == i %}
+                        <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ i }}</span>
+                            </li>
+                    {% elif i > stocks.number|add:'-3' and i < stocks.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0)" onclick="navigateToPage({{ i }})">{{ i }}</a>
+                    </li>
+                    {% elif i == stocks.number|add:'-3' or i == stocks.number|add:'3' %}
+                         <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+                            {% endfor %}
+
+                            {% if stocks.has_next %}
+                            <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)" onclick="navigateToPage({{ stocks.next_page_number }})" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+        {% endif %}
+                </div>
+            </div>
+
+<!-- Loading Spinner Overlay -->
+<div class="spinner-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const body = document.body;
+        const themeToggleButton = document.getElementById('theme-toggle');
+        const themeIcon = themeToggleButton.querySelector('i');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const filterTabsContainer = document.getElementById('filter-tabs-container');
+        const showFiltersButton = document.getElementById('show-filters');
+        const filterIconToggle = showFiltersButton.querySelector('.filter-icon');
+
+        // --- Theme Management ---
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark-theme');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark-theme');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+            // Update select arrows if needed (more robust methods exist)
+             updateSelectArrows();
+        };
+
+        const updateSelectArrows = () => {
+             // This is a basic example; might need refinement
+             // It re-reads the CSS variable and updates the background-image style property
+             // This can be inefficient if called frequently or with many selects
+             const selects = document.querySelectorAll('select.control-select, select.filter-select');
+             selects.forEach(select => {
+                const arrowColor = getComputedStyle(document.documentElement).getPropertyValue('--select-arrow-color').trim().replace('#', '%23');
+                select.style.backgroundImage = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='${arrowColor}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`;
+             });
+        }
+
+        themeToggleButton.addEventListener('click', () => {
+            const currentTheme = body.classList.contains('dark-theme') ? 'dark' : 'light';
+            applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+
+        // Check initial theme
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else if (prefersDark) {
+            applyTheme('dark');
+        } else {
+            applyTheme('light'); // Default to light
+        }
+
+        // Listen for OS theme changes (optional)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+             if (!localStorage.getItem('theme')) { // Only change if no user preference is set
+                 applyTheme(event.matches ? 'dark' : 'light');
+             }
+        });
+        // --- End Theme Management ---
+
+
+        // --- Filter Panel Toggle ---
+         showFiltersButton.addEventListener('click', () => {
+             const isVisible = filterTabsContainer.style.display === 'block';
+             filterTabsContainer.style.display = isVisible ? 'none' : 'block';
+             filterIconToggle.classList.toggle('fa-chevron-down', isVisible);
+             filterIconToggle.classList.toggle('fa-chevron-up', !isVisible);
+         });
+         // Keep track if filters were open
+         const filtersOpen = new URLSearchParams(window.location.search).has('filters_open');
+         if(filtersOpen){
+              filterTabsContainer.style.display = 'block';
+              filterIconToggle.classList.remove('fa-chevron-down');
+              filterIconToggle.classList.add('fa-chevron-up');
+         }
+
+
+        // --- Filter Tab Switching ---
+        const filterTabs = document.querySelectorAll('.filter-tabs .filter-tab');
+        const filterContents = document.querySelectorAll('.filter-section .filter-content');
+        
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabType = this.getAttribute('data-tab');
+                
+                // Deactivate all tabs and content
+                filterTabs.forEach(t => t.classList.remove('active'));
+                filterContents.forEach(c => {
+                    c.classList.remove('active');
+                    c.style.display = 'none';
+                 });
+
+                // Activate clicked tab and corresponding content
+                this.classList.add('active');
+                const activeContent = document.getElementById(tabType + '-filters');
+                if (activeContent) {
+                    activeContent.classList.add('active');
+                    activeContent.style.display = 'block';
+                }
+            });
+        });
+        
+        // --- Form Creation and Submission Logic ---
+        const createFilterForm = function() {
+            let filterForm = document.getElementById('filter-form');
+            if (!filterForm) {
+                filterForm = document.createElement('form');
+                filterForm.id = 'filter-form';
+                filterForm.method = 'get';
+                filterForm.action = window.location.pathname; // Use current path
+                filterForm.style.display = 'none'; // Hide the form
+                document.body.appendChild(filterForm);
+            }
+             // Clear previous hidden inputs inside the form before adding new ones
+             filterForm.innerHTML = '';
+            return filterForm;
+        };
+        
+        const collectFormData = (form) => {
+             // Add sorting parameters from dropdowns
+             const sortBy = document.getElementById('order-by')?.value;
+             const sortOrder = document.getElementById('order-direction')?.value;
+             if (sortBy) addHiddenInput(form, 'sort_by', sortBy);
+             if (sortOrder) addHiddenInput(form, 'sort_order', sortOrder);
+
+             // Add search ticker
+             const tickerValue = document.getElementById('tickers')?.value;
+             if (tickerValue) addHiddenInput(form, 'symbol', tickerValue);
+
+             // Add signal
+             const signalValue = document.getElementById('signal')?.value;
+             if (signalValue && signalValue !== 'none') addHiddenInput(form, 'signal', signalValue);
+
+             // Add all *active* filter selects (value not 'Any')
+             const filterSelects = document.querySelectorAll('.filter-value select');
+             filterSelects.forEach(select => {
+                 if (select.value && select.value.toLowerCase() !== 'any') {
+                     addHiddenInput(form, select.name, select.value);
+                 }
+             });
+
+             // Preserve pagination (reset to 1 on filter change, keep on sort/search)
+             const urlParams = new URLSearchParams(window.location.search);
+             const currentPage = urlParams.get('page');
+             // Determine if this is a filter change vs sort/search/paginate
+             // This check is basic, might need refinement based on trigger event
+             const isFiltering = event?.target?.classList.contains('filter-select');
+             if (currentPage && !isFiltering) {
+                 addHiddenInput(form, 'page', currentPage);
+             }
+
+             // Preserve other essential params if needed (e.g., date range)
+             // const startDate = urlParams.get('start_date');
+             // if (startDate) addHiddenInput(form, 'start_date', startDate);
+
+             // Add flag if filters are open
+             if (filterTabsContainer.style.display === 'block') {
+                 addHiddenInput(form, 'filters_open', 'true');
+             }
+
+        };
+
+        const addHiddenInput = (form, name, value) => {
+                    let input = document.createElement('input');
+                    input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+                    form.appendChild(input);
+        };
+
+        const submitFilterForm = () => {
+             if (loadingOverlay) loadingOverlay.classList.add('active'); // Show spinner
+             const form = createFilterForm();
+             collectFormData(form);
+             form.submit();
+        };
+
+
+        // --- Event Listeners for Controls ---
+
+        // Sorting dropdowns
+        document.getElementById('order-by')?.addEventListener('change', submitFilterForm);
+        document.getElementById('order-direction')?.addEventListener('change', submitFilterForm);
+
+        // Signal dropdown
+        document.getElementById('signal')?.addEventListener('change', submitFilterForm);
+
+        // Ticker search button and Enter key
+        document.getElementById('search-btn')?.addEventListener('click', submitFilterForm);
+        document.getElementById('tickers')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent default form submission if inside one
+                submitFilterForm();
+            }
+        });
+
+        // Filter selects
+        document.querySelectorAll('.filter-value select').forEach(select => {
+            select.addEventListener('change', submitFilterForm);
+        });
+
+        // Reset buttons
+        document.querySelectorAll('.btn-reset').forEach(button => {
+            button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                 if (loadingOverlay) loadingOverlay.classList.add('active'); // Show spinner
+
+                const targetTab = this.getAttribute('data-target-tab');
+                const filterContent = document.getElementById(`${targetTab}-filters`);
+
+                if (filterContent) {
+                    filterContent.querySelectorAll('select').forEach(select => {
+                        select.value = 'Any'; // Reset selects in the specific tab
+                    });
+                }
+
+                // Re-submit form with other filters/sort intact, but this tab's filters cleared
+                    const form = createFilterForm();
+                collectFormData(form); // Collects again, now with 'Any' for reset tab
+                    form.submit();
+                });
+            });
+
+        // Update filter counts on load (simple version)
+        const updateFilterCounts = () => {
+             let totalActive = 0;
+             document.querySelectorAll('.filter-content').forEach(content => {
+                 const tabId = content.id.replace('-filters', '');
+                 const countSpan = document.getElementById(`${tabId}-filter-count`);
+                 const resetButton = content.querySelector('.btn-reset');
+                 let tabCount = 0;
+                 content.querySelectorAll('select').forEach(select => {
+                     if (select.value && select.value.toLowerCase() !== 'any') {
+                         tabCount++;
+                     }
+                 });
+                 if (countSpan) countSpan.textContent = tabCount;
+                 if (resetButton) resetButton.textContent = `Reset ${tabId.charAt(0).toUpperCase() + tabId.slice(1)} (${tabCount})`;
+                 totalActive += tabCount;
+             });
+             document.getElementById('filter-count').textContent = totalActive;
+        };
+        updateFilterCounts(); // Run on load
+
+
+        // --- Pagination Functionality ---
+        window.navigateToPage = function(page) { // Make it global for inline onclick
+             if (loadingOverlay) loadingOverlay.classList.add('active'); // Show spinner
+            const form = createFilterForm();
+             collectFormData(form); // Collect current filters/sort
+            
+             // Ensure page input exists and set value
+            let pageInput = form.querySelector('input[name="page"]');
+            if (!pageInput) {
+                pageInput = document.createElement('input');
+            pageInput.type = 'hidden';
+            pageInput.name = 'page';
+            form.appendChild(pageInput);
+            }
+            pageInput.value = page;
+            
+            form.submit();
+        };
+
+         // Hide spinner on page load if navigation completes
+         window.addEventListener('pageshow', function(event) {
+            // Check if the page was loaded from the bfcache (back/forward cache)
+            if (event.persisted && loadingOverlay) {
+                loadingOverlay.classList.remove('active');
+            }
+            // For regular loads, browser usually handles showing content automatically.
+            // If issues persist, might need to remove spinner explicitly after a short delay.
+            // setTimeout(() => { if(loadingOverlay) loadingOverlay.classList.remove('active'); }, 50);
+         });
+         // Also hide spinner if form submission fails or takes too long (less ideal)
+         // setTimeout(() => { if(loadingOverlay) loadingOverlay.classList.remove('active'); }, 10000); // Failsafe after 10s
+
+        });
+    </script>
+{% endblock %}

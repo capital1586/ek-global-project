@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card text-white" id="primary-card">
+            <div class="card-header flex-wrap">
+                <h5 class="card-title text-white">Upload Rates</h5>
+            </div>
+            <div class="tab-content" id="myTabContent4">
+                <div class="tab-pane fade show active" id="Primarycard" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="card-body mb-0">
+                        <p class="card-text">Upload a CSV file of rates to be populated into the system database, it
+                            must contain the column names as shown below :</p>
+                        <div class="col-md-6">
+                            <table class="table table-bordered table-responsive-sm">
+                                <thead>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td>ticker</td>
+                                        <td>mkt</td>
+                                        <td>previous_close</td>
+                                        <td>open</td>
+                                        <td>high</td>
+                                        <td>low</td>
+                                        <td>close</td>
+                                        <td>change</td>
+                                        <td>volume</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <form enctype="multipart/form-data" method="post">
+                            {% csrf_token %}
+                            <div class="col-md-6">
+                                <input name="rates_file" type="file" class="form-control" accept=".csv">
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2 btn-sm">Upload</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card text-white" id="">
+            <div class="card-header flex-wrap">
+                <h5 class="card-title text-white">Upload KSE</h5>
+            </div>
+            <div class="tab-content" id="myTabContent4">
+                <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="card-body mb-0">
+                        <p class="card-text">Upload a CSV file of the KSE data to be populated into the system database,
+                            it must contain the column names as shown below:</p>
+
+                        <div class="col-md-6">
+                            <table class="table table-bordered table-responsive-sm">
+                                <thead>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td>date</td>
+                                        <td>open</td>
+                                        <td>high</td>
+                                        <td>low</td>
+                                        <td>close</td>
+                                        <td>volume</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <form enctype="multipart/form-data" method="post">
+                            {% csrf_token %}
+                            <div class="col-md-6">
+                                <input name="kse_rates_file" type="file" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2 btn-sm">Upload</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

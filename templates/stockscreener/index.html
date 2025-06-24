@@ -1,0 +1,1252 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load stockscreener_tags %}
+
+
+{% block content %}
+<div class="content-body">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="row page-titles mb-4">
+            <div class="col-sm-6">
+                <div class="welcome-text">
+                    <h4 class="text-white mb-2"><i class="fas fa-chart-line text-primary me-2"></i>Stock Screener</h4>
+                    <span class="text-light opacity-75">Find, filter, and analyze stocks across global markets</span>
+                </div>
+            </div>
+            <div class="col-sm-6 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                <div class="d-flex align-items-center">
+                    <div class="quick-actions me-3">
+                        
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fas fa-chart-line me-1"></i>Presets
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end bg-card border border-light border-opacity-10 shadow-lg">
+                                <li><h6 class="dropdown-header text-primary fw-bold">Quick Filters</h6></li>
+                                <li><a class="dropdown-item text-light hover-primary" href="?market_cap=mega"><i class="fas fa-building me-2"></i>Mega Cap</a></li>
+                                <li><a class="dropdown-item text-light hover-primary" href="?52_week=high"><i class="fas fa-arrow-up me-2"></i>52-Week High</a></li>
+                                <li><a class="dropdown-item text-light hover-primary" href="?52_week=low"><i class="fas fa-arrow-down me-2"></i>52-Week Low</a></li>
+                                <li><a class="dropdown-item text-light hover-primary" href="?dividend=high"><i class="fas fa-coins me-2"></i>Dividend > 4%</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="date-time-picker bg-card-header px-3 py-2 rounded shadow-sm">
+                        <i class="far fa-clock text-primary me-2"></i>
+                        <span class="fs-14 text-light">{{ current_date|date:"D M d Y h:i A" }} ET</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Overview Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6">
+                <div class="market-card bg-card border-0 shadow-sm h-100">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fs-14 text-light opacity-75 mb-1">S&P 500</h6>
+                                <h4 class="mb-0 text-white">4,783.45</h4>
+                            </div>
+                            <div class="stock-price-up">
+                                <div class="fs-14">+1.23%</div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-caret-up me-1"></i>
+                                    <span>+58.48</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2" style="height: 30px;">
+                            <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path d="M0,15 L10,13 L20,16 L30,14 L40,17 L50,15 L60,18 L70,16 L80,19 L90,17 L100,15" stroke="var(--primary)" stroke-width="1.5" fill="none"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6">
+                <div class="market-card bg-card border-0 shadow-sm h-100">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fs-14 text-light opacity-75 mb-1">NASDAQ</h6>
+                                <h4 class="mb-0 text-white">16,742.39</h4>
+                            </div>
+                            <div class="stock-price-up">
+                                <div class="fs-14">+1.64%</div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-caret-up me-1"></i>
+                                    <span>+270.19</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2" style="height: 30px;">
+                            <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path d="M0,20 L10,18 L20,15 L30,17 L40,14 L50,12 L60,10 L70,8 L80,7 L90,5 L100,3" stroke="var(--primary)" stroke-width="1.5" fill="none"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6">
+                <div class="market-card bg-card border-0 shadow-sm h-100">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fs-14 text-light opacity-75 mb-1">DOW</h6>
+                                <h4 class="mb-0 text-white">38,797.38</h4>
+                            </div>
+                            <div class="stock-price-down">
+                                <div class="fs-14">-0.21%</div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-caret-down me-1"></i>
+                                    <span>-83.75</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2" style="height: 30px;">
+                            <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path d="M0,10 L10,12 L20,10 L30,13 L40,15 L50,14 L60,16 L70,18 L80,17 L90,19 L100,20" stroke="var(--primary)" stroke-width="1.5" fill="none"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6">
+                <div class="market-card bg-card border-0 shadow-sm h-100">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fs-14 text-light opacity-75 mb-1">RUSSELL 2000</h6>
+                                <h4 class="mb-0 text-white">2,066.21</h4>
+                            </div>
+                            <div class="stock-price-up">
+                                <div class="fs-14">+0.87%</div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-caret-up me-1"></i>
+                                    <span>+17.78</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2" style="height: 30px;">
+                            <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path d="M0,15 L10,17 L20,14 L30,16 L40,13 L50,15 L60,12 L70,14 L80,11 L90,13 L100,10" stroke="var(--primary)" stroke-width="1.5" fill="none"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Card -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-card border-0 shadow-sm filter-card">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3 bg-card-header">
+                        <h5 class="card-title text-white mb-0">
+                            <i class="fas fa-filter me-2 text-primary"></i>Advanced Filters
+                        </h5>
+                        <button class="btn btn-sm btn-link text-light p-0" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true" aria-controls="filterCollapse">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse show" id="filterCollapse">
+                        <div class="card-body pb-2">
+                            <form action="{% url 'stockscreener:screener' %}" method="get" id="filter-form">
+                                <div class="row g-3">
+                                    <!-- Exchange Filter -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                        <div class="form-group filter-group">
+                                            <label class="form-label text-light opacity-75 small">
+                                                <i class="fas fa-globe-americas text-primary me-1"></i>Exchange
+                                            </label>
+                                            <select class="form-select form-select-sm bg-input text-white border-dark custom-select" name="exchange">
+                                                <option value="">All Exchanges</option>
+                                                <option value="NMS" {% if filters.exchange == 'NMS' %}selected{% endif %}>NASDAQ</option>
+                                                <option value="NYQ" {% if filters.exchange == 'NYQ' %}selected{% endif %}>NYSE</option>
+                                                <option value="PCX" {% if filters.exchange == 'PCX' %}selected{% endif %}>NYSE Arca</option>
+                                                <option value="NGM" {% if filters.exchange == 'NGM' %}selected{% endif %}>NASDAQ Global</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Market Cap Filter -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                        <div class="form-group filter-group">
+                                            <label class="form-label text-light opacity-75 small">
+                                                <i class="fas fa-building text-primary me-1"></i>Market Cap
+                                            </label>
+                                            <select class="form-select form-select-sm bg-input text-white border-dark custom-select" name="market_cap">
+                                                <option value="">Any Market Cap</option>
+                                                <option value="mega" {% if filters.market_cap == 'mega' %}selected{% endif %}>Mega ($200B+)</option>
+                                                <option value="large" {% if filters.market_cap == 'large' %}selected{% endif %}>Large ($10B-$200B)</option>
+                                                <option value="mid" {% if filters.market_cap == 'mid' %}selected{% endif %}>Mid ($2B-$10B)</option>
+                                                <option value="small" {% if filters.market_cap == 'small' %}selected{% endif %}>Small ($300M-$2B)</option>
+                                                <option value="micro" {% if filters.market_cap == 'micro' %}selected{% endif %}>Micro (< $300M)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Price Range Filter -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                        <div class="form-group">
+                                            <label class="form-label text-light opacity-75">Price Range ($)</label>
+                                            <div class="d-flex">
+                                                <input type="number" class="form-control form-control-sm bg-input text-white border-dark me-2" name="price_min" placeholder="Min" value="{{ filters.price_min }}">
+                                                <input type="number" class="form-control form-control-sm bg-input text-white border-dark" name="price_max" placeholder="Max" value="{{ filters.price_max }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Volume Range Filter -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                        <div class="form-group">
+                                            <label class="form-label text-light opacity-75">Volume</label>
+                                            <div class="d-flex">
+                                                <input type="number" class="form-control form-control-sm bg-input text-white border-dark me-2" name="volume_min" placeholder="Min" value="{{ filters.volume_min }}">
+                                                <input type="number" class="form-control form-control-sm bg-input text-white border-dark" name="volume_max" placeholder="Max" value="{{ filters.volume_max }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sector Filter -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                        <div class="form-group">
+                                            <label class="form-label text-light opacity-75">Sector</label>
+                                            <select class="form-select form-select-sm bg-input text-white border-dark" name="sector">
+                                                <option value="">All Sectors</option>
+                                                <option value="Technology" {% if filters.sector == 'Technology' %}selected{% endif %}>Technology</option>
+                                                <option value="Financial Services" {% if filters.sector == 'Financial Services' %}selected{% endif %}>Financial Services</option>
+                                                <option value="Healthcare" {% if filters.sector == 'Healthcare' %}selected{% endif %}>Healthcare</option>
+                                                <option value="Consumer Cyclical" {% if filters.sector == 'Consumer Cyclical' %}selected{% endif %}>Consumer Cyclical</option>
+                                                <option value="Industrials" {% if filters.sector == 'Industrials' %}selected{% endif %}>Industrials</option>
+                                                <option value="Communication Services" {% if filters.sector == 'Communication Services' %}selected{% endif %}>Communication Services</option>
+                                                <option value="Energy" {% if filters.sector == 'Energy' %}selected{% endif %}>Energy</option>
+                                                <option value="Consumer Defensive" {% if filters.sector == 'Consumer Defensive' %}selected{% endif %}>Consumer Defensive</option>
+                                                <option value="Basic Materials" {% if filters.sector == 'Basic Materials' %}selected{% endif %}>Basic Materials</option>
+                                                <option value="Real Estate" {% if filters.sector == 'Real Estate' %}selected{% endif %}>Real Estate</option>
+                                                <option value="Utilities" {% if filters.sector == 'Utilities' %}selected{% endif %}>Utilities</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- P/E Ratio Filter -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                        <div class="form-group">
+                                            <label class="form-label text-light opacity-75">P/E Ratio</label>
+                                            <select class="form-select form-select-sm bg-input text-white border-dark" name="pe_ratio">
+                                                <option value="">Any P/E Ratio</option>
+                                                <option value="low" {% if filters.pe_ratio == 'low' %}selected{% endif %}>Low (< 15)</option>
+                                                <option value="profitable" {% if filters.pe_ratio == 'profitable' %}selected{% endif %}>Profitable (> 0)</option>
+                                                <option value="high" {% if filters.pe_ratio == 'high' %}selected{% endif %}>High (> 50)</option>
+                                                <option value="negative" {% if filters.pe_ratio == 'negative' %}selected{% endif %}>Negative</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dividend Yield Filter -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                        <div class="form-group">
+                                            <label class="form-label text-light opacity-75">Dividend Yield</label>
+                                            <select class="form-select form-select-sm bg-input text-white border-dark" name="dividend">
+                                                <option value="">Any Dividend</option>
+                                                <option value="any" {% if filters.dividend == 'any' %}selected{% endif %}>Any Dividend (> 0%)</option>
+                                                <option value="high" {% if filters.dividend == 'high' %}selected{% endif %}>High (> 4%)</option>
+                                                <option value="very_high" {% if filters.dividend == 'very_high' %}selected{% endif %}>Very High (> 7%)</option>
+                                                <option value="none" {% if filters.dividend == 'none' %}selected{% endif %}>No Dividend</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- 52-Week Range Filter -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                        <div class="form-group">
+                                            <label class="form-label text-light opacity-75">52-Week Range</label>
+                                            <select class="form-select form-select-sm bg-input text-white border-dark" name="52_week">
+                                                <option value="">Any Range</option>
+                                                <option value="high" {% if filters.52_week == 'high' %}selected{% endif %}>Near High (> 80%)</option>
+                                                <option value="middle" {% if filters.52_week == 'middle' %}selected{% endif %}>Middle Range (20-80%)</option>
+                                                <option value="low" {% if filters.52_week == 'low' %}selected{% endif %}>Near Low (< 20%)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Items Per Page -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                        <div class="form-group">
+                                            <label class="form-label text-light opacity-75">Items Per Page</label>
+                                            <select class="form-select form-select-sm bg-input text-white border-dark" name="items_per_page">
+                                                <option value="10" {% if items_per_page == 10 %}selected{% endif %}>10</option>
+                                                <option value="20" {% if items_per_page == 20 %}selected{% endif %}>20</option>
+                                                <option value="50" {% if items_per_page == 50 %}selected{% endif %}>50</option>
+                                                <option value="100" {% if items_per_page == 100 %}selected{% endif %}>100</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Apply Filters Button -->
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 d-flex align-items-end">
+                                        <div class="form-group w-100">
+                                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                <i class="fas fa-search me-1"></i>Apply Filters
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-card border-0 shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center py-3">
+                        <div class="results-summary">
+                            <h6 class="text-white mb-0">
+                                <i class="fas fa-chart-bar me-2 text-primary"></i>
+                                <span>Found <strong>{{ total_results }}</strong> stocks matching your criteria</span>
+                            </h6>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="sort-controls d-flex align-items-center">
+                                <span class="text-light opacity-75 me-2">Sort by:</span>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {% if sort_by == 'market_cap' %}Market Cap
+                                        {% elif sort_by == 'price' %}Price
+                                        {% elif sort_by == 'change_pct' %}Change %
+                                        {% elif sort_by == 'volume' %}Volume
+                                        {% elif sort_by == 'pe_ratio' %}P/E Ratio
+                                        {% elif sort_by == 'dividend_yield' %}Dividend Yield
+                                        {% elif sort_by == 'company_name' %}Company Name
+                                        {% elif sort_by == 'symbol' %}Symbol
+                                        {% else %}Market Cap{% endif %}
+                                        <i class="fas fa-sort-{{ sort_order }} ms-1"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end bg-card border border-light border-opacity-10" aria-labelledby="sortDropdown">
+                                        <li><a class="dropdown-item text-light hover-primary {% if sort_by == 'market_cap' %}active{% endif %}" href="{% url 'stockscreener:screener' %}?sort_by=market_cap&sort_order={{ sort_order }}">Market Cap</a></li>
+                                        <li><a class="dropdown-item text-light hover-primary {% if sort_by == 'price' %}active{% endif %}" href="{% url 'stockscreener:screener' %}?sort_by=price&sort_order={{ sort_order }}">Price</a></li>
+                                        <li><a class="dropdown-item text-light hover-primary {% if sort_by == 'change_pct' %}active{% endif %}" href="{% url 'stockscreener:screener' %}?sort_by=change_pct&sort_order={{ sort_order }}">Change %</a></li>
+                                        <li><a class="dropdown-item text-light hover-primary {% if sort_by == 'volume' %}active{% endif %}" href="{% url 'stockscreener:screener' %}?sort_by=volume&sort_order={{ sort_order }}">Volume</a></li>
+                                        <li><a class="dropdown-item text-light hover-primary {% if sort_by == 'pe_ratio' %}active{% endif %}" href="{% url 'stockscreener:screener' %}?sort_by=pe_ratio&sort_order={{ sort_order }}">P/E Ratio</a></li>
+                                        <li><a class="dropdown-item text-light hover-primary {% if sort_by == 'dividend_yield' %}active{% endif %}" href="{% url 'stockscreener:screener' %}?sort_by=dividend_yield&sort_order={{ sort_order }}">Dividend Yield</a></li>
+                                        <li><a class="dropdown-item text-light hover-primary {% if sort_by == 'company_name' %}active{% endif %}" href="{% url 'stockscreener:screener' %}?sort_by=company_name&sort_order={{ sort_order }}">Company Name</a></li>
+                                        <li><a class="dropdown-item text-light hover-primary {% if sort_by == 'symbol' %}active{% endif %}" href="{% url 'stockscreener:screener' %}?sort_by=symbol&sort_order={{ sort_order }}">Symbol</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stocks Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-borderless align-middle mb-0 stock-table">
+                                <thead class="bg-card-header">
+                                    <tr>
+                                        <th class="text-nowrap ps-4 py-3">
+                                            <a href="{% url 'stockscreener:screener' %}?sort_by=symbol&sort_order={% if sort_by == 'symbol' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" class="text-decoration-none text-white d-flex align-items-center">
+                                                <i class="fas fa-hashtag text-primary me-2 opacity-75"></i>
+                                                <span>Symbol</span>
+                                                {% if sort_by == 'symbol' %}
+                                                <i class="fas fa-sort-{{ sort_order }} ms-2 text-primary"></i>
+                                                {% endif %}
+                                            </a>
+                                        </th>
+                                        <th class="text-nowrap py-3">
+                                            <a href="{% url 'stockscreener:screener' %}?sort_by=company_name&sort_order={% if sort_by == 'company_name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" class="text-decoration-none text-white d-flex align-items-center">
+                                                <i class="fas fa-building text-primary me-2 opacity-75"></i>
+                                                <span>Company</span>
+                                                {% if sort_by == 'company_name' %}
+                                                <i class="fas fa-sort-{{ sort_order }} ms-2 text-primary"></i>
+                                                {% endif %}
+                                            </a>
+                                        </th>
+                                        <th class="text-nowrap py-3">
+                                            <a href="{% url 'stockscreener:screener' %}?sort_by=price&sort_order={% if sort_by == 'price' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" class="text-decoration-none text-white d-flex align-items-center">
+                                                <i class="fas fa-dollar-sign text-primary me-2 opacity-75"></i>
+                                                <span>Price</span>
+                                                {% if sort_by == 'price' %}
+                                                <i class="fas fa-sort-{{ sort_order }} ms-2 text-primary"></i>
+                                                {% endif %}
+                                            </a>
+                                        </th>
+                                        <th class="text-nowrap py-3">
+                                            <a href="{% url 'stockscreener:screener' %}?sort_by=change_pct&sort_order={% if sort_by == 'change_pct' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" class="text-decoration-none text-white d-flex align-items-center">
+                                                <i class="fas fa-chart-line text-primary me-2 opacity-75"></i>
+                                                <span>Change %</span>
+                                                {% if sort_by == 'change_pct' %}
+                                                <i class="fas fa-sort-{{ sort_order }} ms-2 text-primary"></i>
+                                                {% endif %}
+                                            </a>
+                                        </th>
+                                        <th class="text-nowrap py-3">
+                                            <a href="{% url 'stockscreener:screener' %}?sort_by=market_cap&sort_order={% if sort_by == 'market_cap' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" class="text-decoration-none text-white d-flex align-items-center">
+                                                <i class="fas fa-coins text-primary me-2 opacity-75"></i>
+                                                <span>Market Cap</span>
+                                                {% if sort_by == 'market_cap' %}
+                                                <i class="fas fa-sort-{{ sort_order }} ms-2 text-primary"></i>
+                                                {% endif %}
+                                            </a>
+                                        </th>
+                                        <th class="text-nowrap py-3">
+                                            <a href="{% url 'stockscreener:screener' %}?sort_by=volume&sort_order={% if sort_by == 'volume' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" class="text-decoration-none text-white d-flex align-items-center">
+                                                <i class="fas fa-exchange-alt text-primary me-2 opacity-75"></i>
+                                                <span>Volume</span>
+                                                {% if sort_by == 'volume' %}
+                                                <i class="fas fa-sort-{{ sort_order }} ms-2 text-primary"></i>
+                                                {% endif %}
+                                            </a>
+                                        </th>
+                                        <th class="text-nowrap py-3">
+                                            <a href="{% url 'stockscreener:screener' %}?sort_by=pe_ratio&sort_order={% if sort_by == 'pe_ratio' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" class="text-decoration-none text-white d-flex align-items-center">
+                                                <i class="fas fa-chart-pie text-primary me-2 opacity-75"></i>
+                                                <span>P/E Ratio</span>
+                                                {% if sort_by == 'pe_ratio' %}
+                                                <i class="fas fa-sort-{{ sort_order }} ms-2 text-primary"></i>
+                                                {% endif %}
+                                            </a>
+                                        </th>
+                                        <th class="text-nowrap py-3">
+                                            <a href="{% url 'stockscreener:screener' %}?sort_by=dividend_yield&sort_order={% if sort_by == 'dividend_yield' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" class="text-decoration-none text-white d-flex align-items-center">
+                                                <i class="fas fa-hand-holding-usd text-primary me-2 opacity-75"></i>
+                                                <span>Div. Yield</span>
+                                                {% if sort_by == 'dividend_yield' %}
+                                                <i class="fas fa-sort-{{ sort_order }} ms-2 text-primary"></i>
+                                                {% endif %}
+                                            </a>
+                                        </th>
+                                        <th class="text-nowrap pe-4 py-3">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-industry text-primary me-2 opacity-75"></i>
+                                                <span>Sector</span>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stock in stocks %}
+                                    <tr class="stock-row">
+                                        <td class="ps-4 py-3">
+                                            <span class="stock-symbol fw-bold">{{ stock.symbol }}</span>
+                                        </td>
+                                        <td class="py-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="stock-icon me-2 rounded-circle bg-card-header d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; overflow: hidden; border: 2px solid rgba(var(--primary-rgb), 0.3);">
+                                                    <img src="https://logo.clearbit.com/{{ stock.symbol|lower }}.com" alt="{{ stock.company_name }}" class="company-logo" width="32" height="32" 
+                                                    onerror="this.onerror=null; this.src='https://logo.clearbit.com/{{ stock.company_name|slugify }}.com'; this.onerror=function(){this.src='https://ui-avatars.com/api/?name={{ stock.symbol }}&background=0D8ABC&color=fff&size=32&bold=true&font-size=0.5';this.onerror=null;}">
+                                                </div>
+                                                <div class="stock-name">
+                                                    <div class="fw-medium">{{ stock.company_name }}</div>
+                                                    <div class="text-light opacity-75 small">{{ stock.sector }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 fw-medium">${{ stock.price|floatformat:2 }}</td>
+                                        <td class="py-3">
+                                            <span class="{% if stock.change_pct >= 0 %}stock-price-up{% else %}stock-price-down{% endif %}">
+                                                {% if stock.change_pct >= 0 %}+{% endif %}{{ stock.change_pct|floatformat:2 }}%
+                                                <i class="fas fa-caret-{% if stock.change_pct >= 0 %}up{% else %}down{% endif %} ms-1"></i>
+                                            </span>
+                                        </td>
+                                        <td class="py-3">{{ stock.market_cap|intword }}</td>
+                                        <td class="py-3">{{ stock.volume|intcomma }}</td>
+                                        <td class="py-3">{{ stock.pe_ratio|floatformat:2 }}</td>
+                                        <td class="py-3">{{ stock.dividend_yield|floatformat:2 }}%</td>
+                                        <td class="pe-4 py-3">
+                                            <span class="sector-badge">{{ stock.sector }}</span>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="9" class="text-center py-5">
+                                            <div class="empty-state">
+                                                <i class="fas fa-search fa-2x mb-3 text-primary opacity-50"></i>
+                                                <h5 class="text-white">No stocks found matching your criteria</h5>
+                                                <p class="text-light opacity-75">Try adjusting your filters to see more results</p>
+                                                <a href="{% url 'stockscreener:screener' %}" class="btn btn-sm btn-outline-primary mt-2">Reset Filters</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        {% if paginator.num_pages > 1 %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-card border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="pagination-info text-light opacity-75">
+                                Showing {{ stocks.start_index }} to {{ stocks.end_index }} of {{ paginator.count }} results
+                            </div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination pagination-sm mb-0">
+                                    {% if stocks.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link bg-input text-white border-dark" href="{% url 'stockscreener:screener' %}?page={{ stocks.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link bg-input text-white border-dark" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </span>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    {% if stocks.number > 3 %}
+                                    <li class="page-item">
+                                        <a class="page-link bg-input text-white border-dark" href="{% url 'stockscreener:screener' %}?page=1" aria-label="First Page">1</a>
+                                    </li>
+                                    {% if stocks.number > 4 %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link bg-input text-white border-dark">...</span>
+                                    </li>
+                                    {% endif %}
+                                    {% endif %}
+                                    
+                                    {% for i in paginator.page_range %}
+                                        {% if stocks.number == i %}
+                                        <li class="page-item active">
+                                            <span class="page-link bg-primary border-primary">{{ i }}</span>
+                                        </li>
+                                        {% elif i > stocks.number|add:"-3" and i < stocks.number|add:"3" %}
+                                        <li class="page-item">
+                                            <a class="page-link bg-input text-white border-dark" href="{% url 'stockscreener:screener' %}?page={{ i }}">{{ i }}</a>
+                                        </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if stocks.number < paginator.num_pages|add:"-2" %}
+                                    {% if stocks.number < paginator.num_pages|add:"-3" %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link bg-input text-white border-dark">...</span>
+                                    </li>
+                                    {% endif %}
+                                    <li class="page-item">
+                                        <a class="page-link bg-input text-white border-dark" href="{% url 'stockscreener:screener' %}?page={{ paginator.num_pages }}" aria-label="Last Page">{{ paginator.num_pages }}</a>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    {% if stocks.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link bg-input text-white border-dark" href="{% url 'stockscreener:screener' %}?page={{ stocks.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link bg-input text-white border-dark" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </span>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Add custom CSS for new components -->
+        <style>
+            /* Enhanced header styling */
+            .welcome-text h4 {
+                font-weight: 600;
+                letter-spacing: 0.5px;
+            }
+            
+            /* Pulse animation for refresh button */
+            .pulse-animation {
+                position: relative;
+                overflow: visible;
+            }
+            
+            .pulse-animation:after {
+                content: '';
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                border-radius: inherit;
+                box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.7);
+                animation: pulse 2s infinite;
+                pointer-events: none;
+            }
+            
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.7);
+                }
+                70% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 10px rgba(var(--primary-rgb), 0);
+                }
+                100% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
+                }
+            }
+            
+            /* Company logo styling */
+            .company-logo {
+                object-fit: contain;
+                transition: transform 0.3s ease;
+            }
+            
+            .stock-icon {
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+            }
+            
+            tr:hover .stock-icon {
+                transform: scale(1.05);
+            }
+            
+            /* Enhanced card styling */
+            .market-card {
+                border-left: 3px solid transparent;
+                transition: all 0.3s ease;
+            }
+            
+            .market-card:hover {
+                border-left-color: var(--primary);
+                transform: translateY(-2px);
+            }
+            
+            /* Date-time picker styling */
+            .date-time-picker {
+                border-radius: 4px;
+                transition: all 0.3s ease;
+            }
+            
+            .date-time-picker:hover {
+                background-color: rgba(var(--primary-rgb), 0.1);
+            }
+            
+            /* Enhanced dropdown styling */
+            .dropdown-menu {
+                border-radius: 6px;
+                overflow: hidden;
+                animation: fadeInUp 0.3s ease;
+            }
+            
+            .dropdown-header {
+                padding: 8px 16px;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            
+            .dropdown-item {
+                padding: 8px 16px;
+                transition: all 0.2s ease;
+            }
+            
+            .dropdown-item:hover {
+                background-color: rgba(var(--primary-rgb), 0.1);
+                transform: translateX(3px);
+            }
+            
+            /* Table row hover effect */
+            .table tbody tr {
+                transition: all 0.2s ease;
+            }
+            
+            .table tbody tr:hover {
+                background-color: rgba(255, 255, 255, 0.03);
+                transform: translateX(3px);
+            }
+            
+            /* Pagination enhancements */
+            .pagination .page-link {
+                transition: all 0.2s ease;
+            }
+            
+            .pagination .page-link:hover:not(.disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* Add subtle animations */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .market-card, .card {
+                animation: fadeInUp 0.5s ease;
+            }
+        </style>
+        
+        <!-- Add JavaScript for Range Sliders -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize price range slider
+                const priceMinSlider = document.getElementById('price-range-min');
+                const priceMaxSlider = document.getElementById('price-range-max');
+                const priceMinInput = document.getElementById('price_min');
+                const priceMaxInput = document.getElementById('price_max');
+                const priceDisplay = document.getElementById('price-range-display');
+                
+                // Initialize volume range slider
+                const volumeMinSlider = document.getElementById('volume-range-min');
+                const volumeMaxSlider = document.getElementById('volume-range-max');
+                const volumeMinInput = document.getElementById('volume_min');
+                const volumeMaxInput = document.getElementById('volume_max');
+                const volumeDisplay = document.getElementById('volume-range-display');
+                
+                // Set initial values from hidden inputs if they exist
+                if (priceMinInput.value) {
+                    priceMinSlider.value = Math.min(priceMinInput.value, 1000);
+                }
+                
+                if (priceMaxInput.value) {
+                    priceMaxSlider.value = Math.min(priceMaxInput.value, 1000);
+                }
+                
+                if (volumeMinInput.value) {
+                    volumeMinSlider.value = Math.min(volumeMinInput.value / 1000000, 100);
+                }
+                
+                if (volumeMaxInput.value) {
+                    volumeMaxSlider.value = Math.min(volumeMaxInput.value / 1000000, 100);
+                }
+                
+                // Update price range display
+                function updatePriceRange() {
+                    const min = priceMinSlider.value;
+                    const max = priceMaxSlider.value;
+                    
+                    priceMinInput.value = min;
+                    priceMaxInput.value = max;
+                    
+                    const maxDisplay = max >= 1000 ? '1000+' : max;
+                    priceDisplay.textContent = `$${min} - $${maxDisplay}`;
+                }
+                
+                // Update volume range display
+                function updateVolumeRange() {
+                    const min = volumeMinSlider.value;
+                    const max = volumeMaxSlider.value;
+                    
+                    volumeMinInput.value = min * 1000000;
+                    volumeMaxInput.value = max * 1000000;
+                    
+                    const maxDisplay = max >= 100 ? '100M+' : max + 'M';
+                    volumeDisplay.textContent = `${min}M - ${maxDisplay}`;
+                }
+                
+                // Event listeners for price slider
+                priceMinSlider.addEventListener('input', function() {
+                    if (parseInt(priceMinSlider.value) > parseInt(priceMaxSlider.value)) {
+                        priceMinSlider.value = priceMaxSlider.value;
+                    }
+                    updatePriceRange();
+                });
+                
+                priceMaxSlider.addEventListener('input', function() {
+                    if (parseInt(priceMaxSlider.value) < parseInt(priceMinSlider.value)) {
+                        priceMaxSlider.value = priceMinSlider.value;
+                    }
+                    updatePriceRange();
+                });
+                
+                // Event listeners for volume slider
+                volumeMinSlider.addEventListener('input', function() {
+                    if (parseInt(volumeMinSlider.value) > parseInt(volumeMaxSlider.value)) {
+                        volumeMinSlider.value = volumeMaxSlider.value;
+                    }
+                    updateVolumeRange();
+                });
+                
+                volumeMaxSlider.addEventListener('input', function() {
+                    if (parseInt(volumeMaxSlider.value) < parseInt(volumeMinSlider.value)) {
+                        volumeMaxSlider.value = volumeMinSlider.value;
+                    }
+                    updateVolumeRange();
+                });
+                
+                // Initialize displays
+                updatePriceRange();
+                updateVolumeRange();
+                
+                // Add animation delay to stock rows
+                const stockRows = document.querySelectorAll('.stock-row');
+                stockRows.forEach((row, index) => {
+                    row.style.setProperty('--row-index', index);
+                });
+                
+                // Add watchlist functionality
+                const watchlistButtons = document.querySelectorAll('.add-to-watchlist');
+                watchlistButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const symbol = this.getAttribute('data-symbol');
+                        // Toggle star icon
+                        const icon = this.querySelector('i');
+                        if (icon.classList.contains('far')) {
+                            icon.classList.replace('far', 'fas');
+                            this.classList.add('btn-primary');
+                            this.classList.remove('btn-outline-primary');
+                            // Here you would add to watchlist via AJAX
+                            console.log(`Added ${symbol} to watchlist`);
+                        } else {
+                            icon.classList.replace('fas', 'far');
+                            this.classList.remove('btn-primary');
+                            this.classList.add('btn-outline-primary');
+                            // Here you would remove from watchlist via AJAX
+                            console.log(`Removed ${symbol} from watchlist`);
+                        }
+                    });
+                });
+                
+                // Make entire row clickable to go to stock detail
+                stockRows.forEach(row => {
+                    row.addEventListener('click', function() {
+                        const symbol = this.getAttribute('data-symbol');
+                        window.location.href = `/stockscreener/stock/${symbol}/`;
+                    });
+                });
+                
+                // Toggle between table and card view
+                const toggleViewButton = document.getElementById('toggle-table-view');
+                if (toggleViewButton) {
+                    toggleViewButton.addEventListener('click', function() {
+                        const icon = this.querySelector('i');
+                        if (icon.classList.contains('fa-th-large')) {
+                            icon.classList.replace('fa-th-large', 'fa-table');
+                            // Switch to card view logic would go here
+                            console.log('Switching to card view');
+                        } else {
+                            icon.classList.replace('fa-table', 'fa-th-large');
+                            // Switch to table view logic would go here
+                            console.log('Switching to table view');
+                        }
+                    });
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- Custom CSS for Stock Screener -->
+<style>
+    /* Stock price indicators */
+    .stock-price-up {
+        color: #4caf50;
+        font-weight: 500;
+    }
+    
+    .stock-price-down {
+        color: #f44336;
+        font-weight: 500;
+    }
+    
+    /* Table styles */
+    .table thead th {
+        font-weight: 600;
+        border-bottom: none;
+        padding: 1rem;
+        background-color: rgba(0,0,0,0.1);
+    }
+    
+    .table tbody tr {
+        transition: all 0.2s ease;
+    }
+    
+    .table tbody tr:hover {
+        background-color: rgba(var(--primary-rgb), 0.05);
+    }
+    
+    .table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    /* Light theme specific styles */
+    .light-theme .bg-card {
+        background-color: #ffffff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    .light-theme .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .light-theme .bg-input {
+        background-color: #f8f9fa;
+    }
+    
+    .light-theme .table thead th {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+    
+    .light-theme .table tbody tr:hover {
+        background-color: rgba(var(--primary-rgb), 0.05);
+    }
+    
+    .light-theme .table td {
+        border-bottom: 1px solid #e9ecef;
+        color: #212529;
+    }
+    
+    .light-theme .text-white {
+        color: #212529 !important;
+    }
+    
+    .light-theme .text-light {
+        color: #495057 !important;
+    }
+    
+    .light-theme .border-dark {
+        border-color: #dee2e6 !important;
+    }
+    
+    .light-theme .bg-card-header {
+        background-color: #f8f9fa;
+    }
+    
+    .light-theme .market-card {
+        background-color: #ffffff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .light-theme .page-link {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        color: #495057;
+    }
+    
+    .light-theme .page-item.active .page-link {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: #ffffff;
+    }
+    
+    .light-theme .btn-outline-primary {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    
+    .light-theme .btn-outline-primary:hover {
+        background-color: var(--primary);
+        color: #ffffff;
+    }
+    
+    /* Form controls in light theme */
+    .light-theme .form-control,
+    .light-theme .form-select {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        color: #212529;
+    }
+    
+    .light-theme .form-label {
+        color: #495057;
+    }
+    
+    /* Badge styling in light theme */
+    .light-theme .badge.bg-primary-light {
+        background-color: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary);
+    }
+    
+    /* Stock price indicators in light theme */
+    .light-theme .stock-price-up {
+        color: #2e7d32;
+    }
+    
+    .light-theme .stock-price-down {
+        color: #c62828;
+    }
+</style>
+
+<!-- Custom JavaScript for Stock Screener -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Refresh data button
+        const refreshButton = document.getElementById('refresh-data');
+        if (refreshButton) {
+            refreshButton.addEventListener('click', function() {
+                window.location.reload();
+            });
+        }
+        
+        // Add animation to stock rows
+        const stockRows = document.querySelectorAll('.stock-row');
+        stockRows.forEach((row, index) => {
+            row.style.animation = `fadeIn 0.3s ease forwards ${index * 0.05}s`;
+            row.style.opacity = '0';
+        });
+        
+        // Handle theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light-theme');
+                localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+            });
+        }
+    });
+    
+    // Animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}
+
+<style>
+    /* Enhanced filter card styling */
+    .filter-card {
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border-top: 3px solid var(--primary) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .filter-card .card-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background: linear-gradient(to right, rgba(13, 17, 23, 0.95), rgba(22, 28, 36, 0.95)) !important;
+    }
+    
+    /* Enhanced form controls */
+    .form-label {
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    
+    .filter-group {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-group::before {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(to right, rgba(var(--primary-rgb), 0.3), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .filter-group:hover::before {
+        opacity: 1;
+    }
+    
+    .custom-select {
+        position: relative;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%23ffffff' d='M0 0l4 4 4-4z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 8px 8px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    
+    .custom-select:focus {
+        box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25);
+        border-color: var(--primary) !important;
+    }
+    
+    .form-select option {
+        background-color: #1e2732;
+    }
+    
+    /* Button styling */
+    .btn-primary {
+        background: linear-gradient(to right, var(--primary), #0d6efd);
+        border: none;
+        box-shadow: 0 2px 5px rgba(var(--primary-rgb), 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.4);
+    }
+    
+    .btn-outline-secondary {
+        border-color: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    /* Enhanced table styling */
+    .stock-table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .stock-table thead th {
+        font-weight: 500;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: linear-gradient(to right, rgba(13, 17, 23, 0.95), rgba(22, 28, 36, 0.95)) !important;
+    }
+    
+    .stock-table th a {
+        white-space: nowrap;
+    }
+    
+    .stock-table tbody tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    
+    .stock-table tbody tr:last-child {
+        border-bottom: none;
+    }
+    
+    /* Stock symbol styling */
+    .stock-symbol {
+        color: var(--primary);
+        font-family: 'Consolas', monospace;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Enhanced price indicators */
+    .stock-price-up {
+        color: #4caf50;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        background-color: rgba(76, 175, 80, 0.1);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        width: fit-content;
+    }
+    
+    .stock-price-down {
+        color: #f44336;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        background-color: rgba(244, 67, 54, 0.1);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        width: fit-content;
+    }
+    
+    /* Sector badge styling */
+    .sector-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        background-color: rgba(var(--primary-rgb), 0.1);
+        border-radius: 4px;
+        font-size: 0.75rem;
+        color: var(--light);
+    }
+    
+    /* Empty state styling */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+    
+    /* Hover effects for table rows */
+    .stock-row {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .stock-row:hover {
+        background-color: rgba(var(--primary-rgb), 0.05);
+    }
+    
+    /* Company logo fallback and styling */
+    .company-logo {
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+    
+    .stock-icon {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stock-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle, transparent 50%, rgba(var(--primary-rgb), 0.1) 100%);
+        z-index: 1;
+    }
+    
+    /* Table row animation */
+    .stock-row {
+        animation: fadeInUp 0.3s ease forwards;
+        animation-delay: calc(var(--row-index, 0) * 0.05s);
+    }
+    
+    @media (max-width: 767.98px) {
+        .stock-table {
+            min-width: 900px;
+        }
+    }
+</style>

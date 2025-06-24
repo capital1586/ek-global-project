@@ -1,0 +1,2500 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{{ block.super }}
+{% block stylesheets %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+    /* Custom style to handle missing avatar images */
+    .avatar-fallback {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: #e5e7eb;
+        color: #1e3a8a;
+        font-weight: 600;
+        border-radius: 50%;
+        font-size: 16px;
+    }
+    
+    /* Enhanced professional styles */
+        :root {
+            --primary-color: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-hover: #1d4ed8;
+            --secondary-color: #10b981;
+            --light-gray: #f3f4f6;
+            --dark-gray: #6b7280;
+            --positive: #059669;
+            --negative: #dc2626;
+            --border-color: #e5e7eb;
+            --tab-hover: #f9fafb;
+            --header-bg: #f8fafc;
+            --table-header-bg: #f1f5f9;
+            --table-stripe: #f8fafc;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --transition: all 0.2s ease;
+            --radius-sm: 0.25rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --filter-header-bg: #e5e7eb;
+            --filter-row-bg: #f9fafb;
+            --table-hover: #f0f7ff;
+            --table-header-color: #f8fafc;
+            --table-header-hover: #3b82f6;
+            --positive-bg: rgba(5, 150, 105, 0.1);
+            --negative-bg: rgba(220, 38, 38, 0.1);
+            --primary: #1e40af;
+            --primary-dark: #1e3a8a;
+        }
+        
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+            max-width: 100%;
+        }
+        
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0 auto;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pagination .page-item {
+            margin: 0;
+        }
+        
+        .pagination .page-item .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            padding: 0 0.75rem;
+            color: #444;
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .pagination .page-item:not(:last-child) .page-link {
+            border-right: none;
+        }
+        
+        .pagination .page-item .page-link:hover:not(.disabled) {
+            background-color: #f1f5f9;
+            color: #1e40af;
+            z-index: 2;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: #1e40af;
+            color: white;
+            border-color: #1e40af;
+            font-weight: 600;
+            z-index: 3;
+            box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.25);
+        }
+        
+        .pagination .page-item.disabled .page-link {
+            color: #cbd5e1;
+            pointer-events: none;
+            background-color: #f8fafc;
+        }
+        
+        .pagination-info {
+            margin-top: 0.75rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        /* First/last page buttons */
+        .pagination .page-item.first-page .page-link,
+        .pagination .page-item.last-page .page-link {
+            padding: 0 0.6rem;
+        }
+        
+        /* Previous/Next buttons */
+        .pagination .page-item.prev-page .page-link,
+        .pagination .page-item.next-page .page-link {
+            padding: 0 0.6rem;
+        }
+        
+        /* Responsive pagination */
+        @media (max-width: 640px) {
+            .pagination .page-number:not(.active) {
+                display: none;
+            }
+            
+            .pagination .ellipsis {
+                display: none;
+            }
+            
+            .pagination {
+                max-width: 100%;
+            }
+        }
+        
+        /* Loading state */
+        .pagination-container.loading .pagination {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        /* Screener layout */
+        .screener-container {
+            margin: 1.5rem auto;
+            max-width: 100%;
+            font-size: 0.9rem;
+            background-color: white;
+            box-shadow: var(--shadow-md);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        
+        /* Header styles */
+        .screener-header {
+            padding: 1.25rem;
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .header-controls span {
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-group {
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        
+        .control-select {
+            height: 2.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            min-width: 120px;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 16px 12px;
+            padding-right: 2rem;
+        }
+        
+        .control-input {
+            height: 2.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md) 0 0 var(--radius-md);
+            padding: 0 0.75rem;
+            font-size: 0.875rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            flex-grow: 1;
+        }
+        
+        .search-input-group {
+            display: flex;
+            flex-grow: 1;
+        }
+        
+        .search-input-group .btn-filter {
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin-left: -1px;
+        }
+        
+        .filter-status {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--dark-gray);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .me-1 {
+            margin-right: 0.25rem;
+        }
+        
+        .filter-icon {
+            margin-left: 0.25rem;
+        }
+        
+        /* Filter tabs */
+        .filter-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--table-header-bg);
+            padding: 0 1rem;
+        }
+        
+        .filter-tab {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            margin-right: 0.25rem;
+            margin-bottom: -1px;
+            font-weight: 500;
+            transition: var(--transition);
+            color: var(--dark-gray);
+            position: relative;
+        }
+        
+        .filter-tab:hover {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: var(--primary-hover);
+        }
+        
+        .filter-tab.active {
+            background-color: white;
+            border-color: var(--border-color);
+            border-bottom: 2px solid white;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .filter-tab.active:after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+        }
+        
+        /* Filter rows */
+        .filter-section {
+            background-color: white;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .filter-count-header {
+            background-color: var(--filter-header-bg);
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--dark-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .filter-count-header span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            width: 100%;
+        }
+        
+        .filter-cell {
+            display: flex;
+            flex-direction: column;
+            padding: 0.75rem;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--filter-row-bg);
+            transition: var(--transition);
+        }
+        
+        .filter-cell:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .filter-cell:nth-child(5n) {
+            border-right: none;
+        }
+        
+        .filter-cell:last-child {
+            border-bottom: none;
+        }
+        
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 0.375rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        
+        .filter-value select {
+            width: 100%;
+            height: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0 0.5rem;
+            font-size: 0.75rem;
+            background-color: white;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 12px 10px;
+            padding-right: 1.5rem;
+            transition: var(--transition);
+        }
+        
+        .filter-value select:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+        }
+        
+        /* Buttons */
+        .btn-filter {
+            background-color: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            min-height: 2.25rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn-filter:hover {
+            background-color: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-reset {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn-reset:hover {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        
+        /* Stock table */
+        .stock-table-container {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .stock-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+
+        .stock-table th {
+            background-color: #f1f5f9;
+            color: #4b5563;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .stock-table th:hover {
+            background-color: #e2e8f0;
+        }
+
+        .stock-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        .stock-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .stock-table .stock-link {
+            color: #1e40af;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .stock-table .stock-link:hover {
+            text-decoration: underline;
+        }
+
+        .table-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        /* Statistics Bar */
+        .statistics-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .filter-summary, .market-stats {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .market-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stats-label {
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .stats-value {
+            color: #334155;
+        }
+
+        .filter-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            padding: 0 8px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .statistics-bar {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: flex-start;
+            }
+            
+            .market-stats {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+
+        /* Market Chart Styles */
+        .market-chart-section {
+            margin: 1.5rem 0;
+            background-color: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .chart-toggle {
+            display: flex;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.5rem;
+        }
+
+        .chart-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .chart-btn:hover {
+            background-color: #e2e8f0;
+            color: #334155;
+        }
+
+        .chart-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .chart-container {
+            padding: 1rem;
+            height: 250px;
+        }
+
+        #market-chart {
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNMCAxMDAgQzUwIDExMCwgMTAwIDEyMCwgMTUwIDksIDIwMCAxMDAsIDI1MCAxMzAsIDMwMCA5MCwgMzUwIDEwMCwgNDAwIDExMCwgNDUwIDEwMCwgNTAwIDExMCwgNTUwIDEzMCwgNjAwIDEwMCwgNjUwIDksIDcwMCAxMzAsIDc1MCAxMTAsIDgwMCAxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFlM2E4YSIgc3Ryb2tlLXdpZHRoPSIyIiAvPgogIDxwYXRoIGQ9Ik0wIDEwMCBDNTAgMTEwLCAxMDAgMTIwLCAxNTAgOSwgMjAwIDEwMCwgMjUwIDEzMCwgMzAwIDkwLCAzNTAgMTAwLCA0MDAgMTEwLCA0NTAgMTAwLCA1MDAgMTEwLCA1NTAgMTMwLCA2MDAgMTAwLCA2NTAgOSwgNzAwIDEzMCwgNzUwIDExMCwgODAwIDEwMCBMODAwIDIwMCBMMCAyMDAiIGZpbGw9InJnYmEoMzAsNTgsMTM4LDAuMSkiIHN0cm9rZT0ibm9uZSIgLz4KPC9zdmc+');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        @media (max-width: 640px) {
+            .chart-toggle {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 0.25rem;
+            }
+            
+            .chart-container {
+                height: 200px;
+            }
+        }
+
+        .stock-table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .stock-table tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        /* Company Profile Preview */
+        .stock-link {
+            position: relative;
+        }
+
+        .stock-preview {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            width: 250px;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stock-link:hover .stock-preview {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .preview-logo {
+            width: 30px;
+            height: 30px;
+            background-color: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: var(--primary);
+        }
+
+        .preview-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #111827;
+        }
+
+        .preview-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .preview-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .preview-value {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #111827;
+        }
+
+        .preview-desc {
+            font-size: 0.75rem;
+            color: #4b5563;
+            line-height: 1.4;
+            margin-top: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Loading spinner */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(2px);
+        }
+
+        .spinner-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(30, 64, 175, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 15px rgba(30, 64, 175, 0.1);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Applied filter styles */
+        .filter-applied {
+            background-color: rgba(59, 130, 246, 0.1) !important;
+            border-color: var(--primary-light) !important;
+        }
+        
+        .filter-select.has-value {
+            border-color: var(--primary);
+            background-color: rgba(59, 130, 246, 0.05);
+            font-weight: 500;
+        }
+        
+        .filter-active-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background-color: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 50%;
+            margin-left: 0.5rem;
+        }
+
+        /* Chart Modal Styles */
+        .chart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .chart-modal.show {
+            opacity: 1;
+            visibility: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-modal-content {
+            position: relative;
+            background-color: white;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 1200px;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            0% { transform: translateY(-20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .chart-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chart-modal-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0;
+        }
+
+        .chart-modal-close {
+            background: none;
+            border: none;
+            color: var(--dark-gray);
+            font-size: 1.75rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.7;
+        }
+
+        .chart-modal-close:hover {
+            background-color: #f3f4f6;
+            color: #dc2626;
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+
+        .chart-body {
+            padding: 1rem 0;
+        }
+
+        .chart-body .chart-toggle {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 1rem;
+        }
+
+        .chart-body .chart-btn {
+            background-color: #f3f4f6;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chart-body .chart-btn:hover {
+            background-color: #e5e7eb;
+        }
+
+        .chart-body .chart-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 2rem;
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        /* Mobile Improvements */
+        @media (max-width: 768px) {
+            .header-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+            
+            .control-group {
+                flex-wrap: wrap;
+            }
+            
+            .filter-section {
+                padding: 1rem 0.5rem;
+            }
+            
+            .filter-cell {
+                min-width: 140px;
+            }
+            
+            .stock-table {
+                font-size: 0.8rem;
+            }
+            
+            .stock-table th,
+            .stock-table td {
+                padding: 0.5rem 0.25rem;
+            }
+            
+            .table-section {
+                overflow-x: auto;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stock-table tr th:nth-child(4),
+            .stock-table tr th:nth-child(5),
+            .stock-table tr th:nth-child(6),
+            .stock-table tr td:nth-child(4),
+            .stock-table tr td:nth-child(5),
+            .stock-table tr td:nth-child(6) {
+                display: none;
+            }
+            
+            .tabs .tab {
+                font-size: 0.8rem;
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid screener-container">
+    <!-- Stock Results Header -->
+    <div class="stock-results-header">
+        <div><strong><i class="fas fa-table me-1"></i> Results:</strong> <span class="badge">0</span> / {{ total_stocks|default:"0" }} Total</div>
+        <div>
+            <a href="#" class="save-portfolio"><i class="fas fa-save me-1"></i> Save as portfolio</a> | 
+            <a href="#" class="create-alert"><i class="fas fa-bell me-1"></i> Create alert</a>
+        </div>
+        <div>
+            <i class="fas fa-sync-alt me-1"></i> Refresh: <strong>3min</strong> | <a href="#" class="refresh-off">off</a>
+        </div>
+    </div>
+
+    <!-- Header controls section -->
+    <div class="screener-header">
+        <div class="header-controls">
+            <div class="control-group">
+                <select id="presets" name="preset" class="control-select">
+                    <option value="">My Presets</option>
+                    <option value="value">Value Stocks</option>
+                    <option value="growth">Growth Stocks</option>
+                    <option value="dividend">Dividend Payers</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <span>Order by</span>
+                <select id="order-by" name="sort_by" class="control-select">
+                    <option value="Symbol" {% if sort_by == 'Symbol' %}selected{% endif %}>Ticker</option>
+                    <option value="CompanyName" {% if sort_by == 'CompanyName' %}selected{% endif %}>Company</option>
+                    <option value="Sector" {% if sort_by == 'Sector' %}selected{% endif %}>Sector</option>
+                    <option value="CurrentPrice" {% if sort_by == 'CurrentPrice' %}selected{% endif %}>Price</option>
+                    <option value="ChangePercentage" {% if sort_by == 'ChangePercentage' %}selected{% endif %}>Change</option>
+                    <option value="Volume" {% if sort_by == 'Volume' %}selected{% endif %}>Volume</option>
+                </select>
+                
+                <select id="order-direction" name="sort_order" class="control-select">
+                    <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Asc</option>
+                    <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Desc</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <span>Signal</span>
+                <select id="signal" name="signal" class="control-select">
+                    <option value="none">None (all stocks)</option>
+                    <option value="top_gainers">Top Gainers</option>
+                    <option value="top_losers">Top Losers</option>
+                    <option value="new_high">New High</option>
+                    <option value="new_low">New Low</option>
+                </select>
+            </div>
+            
+            <div class="control-group search-group">
+                <span>Tickers</span>
+                <div class="search-input-group">
+                    <input type="text" id="tickers" name="symbol" placeholder="Search tickers..." value="{{ request.GET.symbol|default:'' }}" class="control-input">
+                    <button class="btn-filter" id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            
+            <button class="btn-filter" id="show-filters"><i class="fas fa-filter me-1"></i> Filters <i class="fas fa-chevron-up filter-icon"></i></button>
+        </div>
+        
+        <div class="filter-status">Active Filters: <span id="filter-count" class="badge">{{ active_filters_count|default:'0' }}</span></div>
+    </div>
+
+    <!-- Filter tabs section -->
+    <div class="filter-tabs">
+        <div class="filter-tab active" data-tab="fundamentals">Fundamentals</div>
+        <div class="filter-tab" data-tab="technical">Technical</div>
+        <div class="filter-tab" data-tab="performance">Performance</div>
+        <div class="filter-tab" data-tab="dividend">Dividend</div>
+        <div class="filter-tab" data-tab="ownership">Ownership</div>
+    </div>
+
+    <!-- Filter sections -->
+    <div class="filter-section" id="filter-section">
+        <!-- Fundamentals tab content -->
+        <div id="fundamentals-filters">
+            <div class="filter-count-header">
+                <span>Filters: <span id="fundamental-filter-count">0</span></span>
+                <button class="btn-reset">Reset (0)</button>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-cell">
+                    <div class="filter-label">Exchange</div>
+                    <div class="filter-value">
+                        <select name="exchange" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="PSX">PSX</option>
+                            <option value="ISE">ISE</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Index</div>
+                    <div class="filter-value">
+                        <select name="index" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="KSE100">KSE-100</option>
+                            <option value="KSE30">KSE-30</option>
+                            <option value="KMI30">KMI-30</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Sector</div>
+                    <div class="filter-value">
+                        <select name="sector" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Energy">Energy</option>
+                            <option value="Materials">Materials</option>
+                            <option value="Industrials">Industrials</option>
+                            <option value="Financials">Financials</option>
+                            <option value="Tech">Technology</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Industry</div>
+                    <div class="filter-value">
+                        <select name="industry" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Banking">Banking</option>
+                            <option value="Cement">Cement</option>
+                            <option value="Textile">Textile</option>
+                            <option value="Oil & Gas">Oil & Gas</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Country</div>
+                    <div class="filter-value">
+                        <select name="country" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Pakistan">Pakistan</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Market Cap.</div>
+                    <div class="filter-value">
+                        <select name="market_cap" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Mega">Mega (>$200B)</option>
+                            <option value="Large">Large ($10B-$200B)</option>
+                            <option value="Mid">Mid ($2B-$10B)</option>
+                            <option value="Small">Small ($300M-$2B)</option>
+                            <option value="Micro">Micro (<$300M)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Dividend Yield</div>
+                    <div class="filter-value">
+                        <select name="div_yield" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Positive">Positive (>0%)</option>
+                            <option value="High">High (>3%)</option>
+                            <option value="Very High">Very High (>6%)</option>
+                            <option value="None">None (0%)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Average Volume</div>
+                    <div class="filter-value">
+                        <select name="avg_volume" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Under 100K">Under 100K</option>
+                            <option value="Over 100K">Over 100K</option>
+                            <option value="Over 500K">Over 500K</option>
+                            <option value="Over 1M">Over 1M</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Relative Volume</div>
+                    <div class="filter-value">
+                        <select name="rel_volume" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Over 0.5">Over 0.5</option>
+                            <option value="Over 1">Over 1</option>
+                            <option value="Over 2">Over 2</option>
+                            <option value="Over 3">Over 3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Current Volume</div>
+                    <div class="filter-value">
+                        <select name="current_volume" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Under 100K">Under 100K</option>
+                            <option value="Over 100K">Over 100K</option>
+                            <option value="Over 500K">Over 500K</option>
+                            <option value="Over 1M">Over 1M</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Price</div>
+                    <div class="filter-value">
+                        <select name="price" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Under 1">Under 1</option>
+                            <option value="Under 5">Under 5</option>
+                            <option value="Under 10">Under 10</option>
+                            <option value="Under 20">Under 20</option>
+                            <option value="Over 50">Over 50</option>
+                            <option value="Over 100">Over 100</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Target Price</div>
+                    <div class="filter-value">
+                        <select name="target_price" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Positive">Positive</option>
+                            <option value="Over 5%">Over 5%</option>
+                            <option value="Over 10%">Over 10%</option>
+                            <option value="Over 20%">Over 20%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">IPO Date</div>
+                    <div class="filter-value">
+                        <select name="ipo_date" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="This Year">This Year</option>
+                            <option value="Last 2 Years">Last 2 Years</option>
+                            <option value="Last 5 Years">Last 5 Years</option>
+                            <option value="Over 10 Years">Over 10 Years</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Shares Outstanding</div>
+                    <div class="filter-value">
+                        <select name="shares_outstanding" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Under 10M">Under 10M</option>
+                            <option value="Over 50M">Over 50M</option>
+                            <option value="Over 100M">Over 100M</option>
+                            <option value="Over 500M">Over 500M</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Float</div>
+                    <div class="filter-value">
+                        <select name="float" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Under 10M">Under 10M</option>
+                            <option value="Over 50M">Over 50M</option>
+                            <option value="Over 100M">Over 100M</option>
+                            <option value="Over 500M">Over 500M</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Analyst Recom.</div>
+                    <div class="filter-value">
+                        <select name="analyst_recom" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Strong Buy">Strong Buy</option>
+                            <option value="Buy">Buy</option>
+                            <option value="Hold">Hold</option>
+                            <option value="Sell">Sell</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Option/Short</div>
+                    <div class="filter-value">
+                        <select name="option_short" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Optionable">Optionable</option>
+                            <option value="Shortable">Shortable</option>
+                            <option value="Both">Both</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Earnings Date</div>
+                    <div class="filter-value">
+                        <select name="earnings_date" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Today">Today</option>
+                            <option value="Today Before">Today Before</option>
+                            <option value="Today After">Today After</option>
+                            <option value="Tomorrow">Tomorrow</option>
+                            <option value="This Week">This Week</option>
+                            <option value="Next Week">Next Week</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Trades</div>
+                    <div class="filter-value">
+                        <select name="trades" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Elite only">Elite only</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Technical tab content -->
+        <div id="technical-filters" style="display: none;">
+            <div class="filter-count-header">
+                <span>Filters: <span id="technical-filter-count">0</span></span>
+                <button class="btn-reset">Reset (0)</button>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-cell">
+                    <div class="filter-label">P/E</div>
+                    <div class="filter-value">
+                        <select name="pe_ratio" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Low">Low (<15)</option>
+                            <option value="High">High (>50)</option>
+                            <option value="Negative">Negative</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Forward P/E</div>
+                    <div class="filter-value">
+                        <select name="forward_pe" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Low">Low (<15)</option>
+                            <option value="High">High (>50)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">PEG</div>
+                    <div class="filter-value">
+                        <select name="peg" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Low">Low (<1)</option>
+                            <option value="High">High (>2)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">P/S</div>
+                    <div class="filter-value">
+                        <select name="ps" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Low">Low (<1)</option>
+                            <option value="High">High (>10)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">P/B</div>
+                    <div class="filter-value">
+                        <select name="pb" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Low">Low (<1)</option>
+                            <option value="High">High (>5)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Performance tab content -->
+        <div id="performance-filters" style="display: none;">
+            <div class="filter-count-header">
+                <span>Filters: <span id="performance-filter-count">0</span></span>
+                <button class="btn-reset">Reset (0)</button>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-cell">
+                    <div class="filter-label">Performance</div>
+                    <div class="filter-value">
+                        <select name="performance" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Week Up">Week Up</option>
+                            <option value="Week Down">Week Down</option>
+                            <option value="Month Up">Month Up</option>
+                            <option value="Month Down">Month Down</option>
+                            <option value="Quarter Up">Quarter Up</option>
+                            <option value="Quarter Down">Quarter Down</option>
+                            <option value="Year Up">Year Up</option>
+                            <option value="Year Down">Year Down</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Performance 2</div>
+                    <div class="filter-value">
+                        <select name="performance_2" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Week Up">Week Up</option>
+                            <option value="Week Down">Week Down</option>
+                            <option value="Month Up">Month Up</option>
+                            <option value="Month Down">Month Down</option>
+                            <option value="Quarter Up">Quarter Up</option>
+                            <option value="Quarter Down">Quarter Down</option>
+                            <option value="Year Up">Year Up</option>
+                            <option value="Year Down">Year Down</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Volatility</div>
+                    <div class="filter-value">
+                        <select name="volatility" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Week">Week</option>
+                            <option value="Month">Month</option>
+                            <option value="Low">Low</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">RSI (14)</div>
+                    <div class="filter-value">
+                        <select name="rsi" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Oversold">Oversold (<30)</option>
+                            <option value="Overbought">Overbought (>70)</option>
+                            <option value="Not Overbought">Not Overbought (<70)</option>
+                            <option value="Not Oversold">Not Oversold (>30)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Gap</div>
+                    <div class="filter-value">
+                        <select name="gap" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Up">Up</option>
+                            <option value="Up 0-2%">Up 0-2%</option>
+                            <option value="Up 2-5%">Up 2-5%</option>
+                            <option value="Up 5-10%">Up 5-10%</option>
+                            <option value="Up 10-20%">Up 10-20%</option>
+                            <option value="Down">Down</option>
+                            <option value="Down 0-2%">Down 0-2%</option>
+                            <option value="Down 2-5%">Down 2-5%</option>
+                            <option value="Down 5-10%">Down 5-10%</option>
+                            <option value="Down 10-20%">Down 10-20%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">20-Day Simple Moving Average</div>
+                    <div class="filter-value">
+                        <select name="sma_20" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Price Above SMA20">Price Above SMA20</option>
+                            <option value="Price Below SMA20">Price Below SMA20</option>
+                            <option value="Price Crossed SMA20">Price Crossed SMA20</option>
+                            <option value="SMA20 Crossed SMA50">SMA20 Crossed SMA50</option>
+                            <option value="SMA20 Above SMA50">SMA20 Above SMA50</option>
+                            <option value="SMA20 Below SMA50">SMA20 Below SMA50</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">50-Day Simple Moving Average</div>
+                    <div class="filter-value">
+                        <select name="sma_50" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Price Above SMA50">Price Above SMA50</option>
+                            <option value="Price Below SMA50">Price Below SMA50</option>
+                            <option value="Price Crossed SMA50">Price Crossed SMA50</option>
+                            <option value="SMA50 Crossed SMA200">SMA50 Crossed SMA200</option>
+                            <option value="SMA50 Above SMA200">SMA50 Above SMA200</option>
+                            <option value="SMA50 Below SMA200">SMA50 Below SMA200</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">200-Day Simple Moving Average</div>
+                    <div class="filter-value">
+                        <select name="sma_200" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Price Above SMA200">Price Above SMA200</option>
+                            <option value="Price Below SMA200">Price Below SMA200</option>
+                            <option value="Price Crossed SMA200">Price Crossed SMA200</option>
+                            <option value="SMA200 Above SMA20">SMA200 Above SMA20</option>
+                            <option value="SMA200 Below SMA20">SMA200 Below SMA20</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Change</div>
+                    <div class="filter-value">
+                        <select name="change" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Up">Up</option>
+                            <option value="Up 1%">Up 1%</option>
+                            <option value="Up 2%">Up 2%</option>
+                            <option value="Up 5%">Up 5%</option>
+                            <option value="Up 10%">Up 10%</option>
+                            <option value="Up 15%">Up 15%</option>
+                            <option value="Up 20%">Up 20%</option>
+                            <option value="Down">Down</option>
+                            <option value="Down 1%">Down 1%</option>
+                            <option value="Down 2%">Down 2%</option>
+                            <option value="Down 5%">Down 5%</option>
+                            <option value="Down 10%">Down 10%</option>
+                            <option value="Down 15%">Down 15%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-cell">
+                    <div class="filter-label">Change from Open</div>
+                    <div class="filter-value">
+                        <select name="change_open" class="filter-select">
+                            <option value="Any">Any</option>
+                            <option value="Up">Up</option>
+                            <option value="Up 1%">Up 1%</option>
+                            <option value="Up 2%">Up 2%</option>
+                            <option value="Up 5%">Up 5%</option>
+                            <option value="Down">Down</option>
+                            <option value="Down 1%">Down 1%</option>
+                            <option value="Down 2%">Down 2%</option>
+                            <option value="Down 5%">Down 5%</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dividend tab content -->
+        <div id="dividend-filters" style="display: none;">
+            <!-- Dividend filters will be updated in next edit -->
+        </div>
+        
+        <!-- Ownership tab content -->
+        <div id="ownership-filters" style="display: none;">
+            <!-- Ownership filters will be updated in next edit -->
+        </div>
+    </div>
+
+    <!-- Statistics Bar -->
+    <div class="statistics-bar">
+        <div class="filter-summary">
+            <span class="stats-label">Filters:</span>
+            <span class="filter-count">0</span>
+            <span class="stats-value">{% if total_stocks %}{{ total_stocks }} stocks{% else %}No stocks{% endif %} match your criteria</span>
+        </div>
+        <div class="market-stats">
+            <div class="stat-item">
+                <span class="stats-label">KSE-100:</span>
+                <span class="stats-value {% if kse100_change > 0 %}positive{% elif kse100_change < 0 %}negative{% endif %}">
+                    {{ kse100_index|default:"42,156.28" }} ({{ kse100_change|default:"+0.43" }}%)
+                </span>
+            </div>
+            <div class="stat-item">
+                <span class="stats-label">Market Vol:</span>
+                <span class="stats-value">{{ market_volume|default:"285.2M"|intcomma }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stats-label">Last Update:</span>
+                {% comment %} <span class="stats-value">{{ last_update|default:today }}</span> {% endcomment %}
+            </div>
+        </div>
+    </div>
+
+   
+
+    <!-- Stocks table -->
+    <div class="stock-results">
+        <div class="stock-table-container">
+            <table class="stock-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th class="sorting-enabled" data-sort="Symbol">Ticker</th>
+                        <th class="sorting-enabled" data-sort="CompanyName">Company</th>
+                        <th class="sorting-enabled" data-sort="Sector">Sector</th>
+                        <th class="sorting-enabled" data-sort="Industry">Industry</th>
+                        <th>Country</th>
+                        <th class="sorting-enabled" data-sort="MarketCap">Market Cap</th>
+                        <th class="sorting-enabled" data-sort="PE">P/E</th>
+                        <th class="sorting-enabled" data-sort="Last">Price</th>
+                        <th class="sorting-enabled" data-sort="PctChange">Change</th>
+                        <th class="sorting-enabled" data-sort="Volume">Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="11" class="text-center">Loading stocks data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <span class="page-link">&laquo; Previous</span>
+            </li>
+            <li class="page-item active">
+                <span class="page-link">1</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Next &raquo;</span>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+    <!-- Add Chart.js for stock visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Replace avatar images with fallbacks to prevent 404 errors
+        document.querySelectorAll('img[src*="avatar"]').forEach(img => {
+            const initials = img.getAttribute('alt') || 'U';
+            const fallback = document.createElement('div');
+            fallback.className = 'avatar-fallback';
+            fallback.textContent = initials.charAt(0).toUpperCase();
+            img.parentNode.replaceChild(fallback, img);
+        });
+        
+        // Global variables
+        let currentPage = {{ request.GET.page|default:"1" }};
+        let stockData = [];
+        let isLoading = false;
+        let stockChart = null;
+        let currentTab = 'fundamentals'; // Track which filter tab is active
+        
+        // Find existing spinner or create one if it doesn't exist
+        let spinnerOverlay = document.querySelector('.spinner-overlay');
+        if (!spinnerOverlay) {
+            spinnerOverlay = document.createElement('div');
+            spinnerOverlay.className = 'spinner-overlay';
+            spinnerOverlay.innerHTML = '<div class="spinner"></div>';
+            document.body.appendChild(spinnerOverlay);
+        }
+        
+        // Show loading spinner
+        function showLoading() {
+            isLoading = true;
+            spinnerOverlay.classList.add('active');
+        }
+        
+        // Hide loading spinner
+        function hideLoading() {
+            isLoading = false;
+            spinnerOverlay.classList.remove('active');
+        }
+        
+        // Filter tab switching
+        const filterTabs = document.querySelectorAll('.filter-tabs .filter-tab');
+        
+        // All filter sections
+        const filterSections = {
+            'fundamentals': document.getElementById('fundamentals-filters'),
+            'technical': document.getElementById('technical-filters'),
+            'performance': document.getElementById('performance-filters'),
+            'dividend': document.getElementById('dividend-filters'),
+            'ownership': document.getElementById('ownership-filters')
+        };
+        
+        // Initially hide all filter sections except fundamentals
+        Object.keys(filterSections).forEach(key => {
+            if (filterSections[key]) {
+                filterSections[key].style.display = key === 'fundamentals' ? 'block' : 'none';
+            }
+        });
+        
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabType = this.getAttribute('data-tab');
+                currentTab = tabType; // Update current tab
+                
+                // Deactivate all tabs in the same tab group
+                const tabGroup = this.closest('.filter-tabs');
+                tabGroup.querySelectorAll('.filter-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                
+                // Activate clicked tab
+                this.classList.add('active');
+                
+                // Show/hide filter sections based on tab clicked
+                Object.keys(filterSections).forEach(key => {
+                    if (filterSections[key]) {
+                        filterSections[key].style.display = key === tabType ? 'block' : 'none';
+                    }
+                });
+            });
+        });
+        
+        // Fetch stocks data from API
+        function fetchStocks(filters = {}, page = 1, perPage = 20) {
+            showLoading();
+            
+            // Ensure page is a valid number
+            page = parseInt(page) || 1;
+            console.log('Fetching stocks for page:', page);
+            
+            // Build query parameters
+            let params = new URLSearchParams();
+            params.append('page', page);
+            params.append('per_page', perPage);
+            
+            // Add sort parameters
+            const sortBy = document.getElementById('order-by')?.value || '{{ request.GET.sort_by|default:"Symbol" }}';
+            const sortDir = document.getElementById('order-direction')?.value || '{{ request.GET.sort_dir|default:"asc" }}';
+            params.append('sort_by', sortBy);
+            params.append('sort_dir', sortDir);
+            
+            // Debug log to see filters being applied
+            console.log('Applying filters:', filters);
+            
+            // Add filters to query params
+            for (const [key, value] of Object.entries(filters)) {
+                if (value && value !== 'Any') {
+                    params.append(key, value);
+                    console.log(`Filter added: ${key}=${value}`);
+                }
+            }
+            
+            // Make the API request to the correct endpoint with namespace
+            const apiUrl = `/smartscreener/api/stocks/?${params.toString()}`;
+            console.log('Fetching data from:', apiUrl);
+            
+            // Log complete request information for debugging
+            console.log('Full API request details:', {
+                url: apiUrl,
+                method: 'GET',
+                params: Object.fromEntries(params.entries()),
+                filters: filters
+            });
+            
+            // Return a promise for better error handling
+            return new Promise((resolve, reject) => {
+                fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    console.log('API response received:', data.status, 'with', data.data?.length || 0, 'records');
+                    if (data.data?.length > 0) {
+                        console.log('Sample record:', data.data[0]);
+                    }
+                    
+                    // Remove loading state from pagination
+                    const paginationContainer = document.querySelector('.pagination-container');
+                    if (paginationContainer) {
+                        paginationContainer.classList.remove('loading');
+                    }
+                
+                    if (data.status === 'success') {
+                        stockData = data.data;
+                        
+                        // Update table
+                        updateStockTable(stockData);
+                        
+                        // Update pagination
+                        updatePagination(data.meta);
+                        
+                        // Update counts
+                        document.querySelectorAll('.filter-count').forEach(el => {
+                            el.textContent = Object.keys(filters).filter(k => filters[k] && filters[k] !== 'Any').length;
+                        });
+                        
+                        document.querySelector('.badge').textContent = data.meta.total;
+                        
+                        // Resolve the promise with the data
+                        resolve(data);
+                    } else {
+                        console.error('API error:', data.message || 'Unknown error');
+                        reject(new Error(data.message || 'Unknown API error'));
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    console.error('Fetch error:', error);
+                    
+                    // Remove loading state from pagination
+                    const paginationContainer = document.querySelector('.pagination-container');
+                    if (paginationContainer) {
+                        paginationContainer.classList.remove('loading');
+                    }
+                    
+                    reject(error);
+                });
+            });
+        }
+        
+        // Update stock table with data
+        function updateStockTable(stocks) {
+            const tableBody = document.querySelector('.stock-table tbody');
+            
+            if (!tableBody) {
+                console.error('Table body not found');
+                return;
+            }
+            
+            // Clear existing rows
+            tableBody.innerHTML = '';
+            
+            if (stocks.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = '<td colspan="11" class="text-center">No stocks match your criteria</td>';
+                tableBody.appendChild(emptyRow);
+                return;
+            }
+            
+            // Add stock rows
+            stocks.forEach((stock, index) => {
+                const row = document.createElement('tr');
+                
+                // Calculate the actual row number based on currentPage and perPage
+                const actualRowNum = ((currentPage - 1) * 20) + index + 1;
+                
+                // Format change percentage
+                let changeClass = '';
+                let changeSign = '';
+                
+                if (stock.PctChange !== undefined && stock.PctChange !== null) {
+                    changeClass = stock.PctChange > 0 ? 'positive' : (stock.PctChange < 0 ? 'negative' : '');
+                    changeSign = stock.PctChange > 0 ? '+' : '';
+                }
+                
+                // Format Last price if it exists
+                let lastPrice = '-';
+                if (stock.Last !== undefined && stock.Last !== null) {
+                    try {
+                        lastPrice = parseFloat(stock.Last).toFixed(2);
+                    } catch (e) {
+                        lastPrice = stock.Last;
+                    }
+                }
+                
+                // Format PctChange if it exists
+                let pctChange = '-';
+                if (stock.PctChange !== undefined && stock.PctChange !== null) {
+                    try {
+                        pctChange = `${changeSign}${parseFloat(stock.PctChange).toFixed(2)}%`;
+                    } catch (e) {
+                        pctChange = stock.PctChange;
+                    }
+                }
+                
+                // Format PE if it exists
+                let pe = '-';
+                if (stock.PE !== undefined && stock.PE !== null) {
+                    try {
+                        pe = parseFloat(stock.PE).toFixed(2);
+                    } catch (e) {
+                        pe = stock.PE;
+                    }
+                }
+                
+                row.innerHTML = `
+                    <td>${actualRowNum}</td>
+                    <td><a href="#" class="stock-link" data-symbol="${stock.Symbol}">${stock.Symbol}</a></td>
+                    <td>${stock.CompanyName || 'N/A'}</td>
+                    <td>${stock.Sector || 'N/A'}</td>
+                    <td>${stock.Industry || 'N/A'}</td>
+                    <td>Pakistan</td>
+                    <td>${stock.MarketCap ? formatNumber(stock.MarketCap) : 'N/A'}</td>
+                    <td>${pe}</td>
+                    <td>${lastPrice}</td>
+                    <td class="${changeClass}">${pctChange}</td>
+                    <td>${formatNumber(stock.Volume)}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners for stock links
+            document.querySelectorAll('.stock-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const symbol = this.getAttribute('data-symbol');
+                    showStockChart(symbol);
+                });
+            });
+        }
+        
+        // Update pagination with data
+        function updatePagination(meta) {
+            // Find pagination container or create one if it doesn't exist
+            let paginationContainer = document.querySelector('.pagination-container');
+            if (!paginationContainer) {
+                console.log('Creating new pagination container');
+                paginationContainer = document.createElement('div');
+                paginationContainer.className = 'pagination-container';
+                
+                // Create the pagination structure
+                paginationContainer.innerHTML = `
+                    <ul class="pagination"></ul>
+                    <div class="pagination-info"></div>
+                `;
+                
+                // Find where to insert it (after the table)
+                const stockTable = document.querySelector('.stock-table');
+                if (stockTable && stockTable.parentNode) {
+                    stockTable.parentNode.appendChild(paginationContainer);
+                } else {
+                    console.error('Could not find stock table to append pagination');
+                    return;
+                }
+            }
+            
+            // Get the pagination info element
+            let paginationInfo = paginationContainer.querySelector('.pagination-info');
+            
+            // Update pagination info text
+            if (meta && meta.total > 0) {
+                const from = ((meta.page - 1) * meta.per_page) + 1;
+                const to = Math.min(meta.page * meta.per_page, meta.total);
+                paginationInfo.textContent = `Showing ${from}-${to} of ${meta.total} stocks (Page ${meta.page} of ${meta.total_pages})`;
+            } else {
+                paginationInfo.textContent = 'No results found';
+            }
+            
+            // Get the pagination list element
+            let pagination = paginationContainer.querySelector('.pagination');
+            
+            // Clear existing pagination
+            pagination.innerHTML = '';
+            
+            // If no pages or only one page, don't show pagination
+            if (!meta || !meta.total_pages || meta.total_pages <= 1) {
+                paginationContainer.style.display = 'none';
+                console.log('No pagination needed');
+                return;
+            } else {
+                paginationContainer.style.display = 'flex';
+            }
+            
+            console.log('Updating pagination:', meta);
+            
+            // Add "First" page button
+            const firstDisabled = meta.page <= 1;
+            const firstPageItem = document.createElement('li');
+            firstPageItem.className = `page-item first-page ${firstDisabled ? 'disabled' : ''}`;
+            
+            if (firstDisabled) {
+                firstPageItem.innerHTML = '<span class="page-link"><i class="fas fa-angle-double-left"></i></span>';
+            } else {
+                firstPageItem.innerHTML = '<a href="javascript:void(0)" class="page-link" aria-label="First Page"><i class="fas fa-angle-double-left"></i></a>';
+                firstPageItem.querySelector('a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navigateToPage(1);
+                });
+            }
+            pagination.appendChild(firstPageItem);
+            
+            // Add previous page button
+            const prevDisabled = meta.page <= 1;
+            const prevPageItem = document.createElement('li');
+            prevPageItem.className = `page-item prev-page ${prevDisabled ? 'disabled' : ''}`;
+            
+            if (prevDisabled) {
+                prevPageItem.innerHTML = '<span class="page-link"><i class="fas fa-angle-left"></i></span>';
+            } else {
+                prevPageItem.innerHTML = '<a href="javascript:void(0)" class="page-link" aria-label="Previous Page"><i class="fas fa-angle-left"></i></a>';
+                prevPageItem.querySelector('a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navigateToPage(meta.page - 1);
+                });
+            }
+            pagination.appendChild(prevPageItem);
+            
+            // Determine page range to display
+            let startPage, endPage;
+            if (meta.total_pages <= 5) {
+                // If we have 5 or fewer pages, show all
+                startPage = 1;
+                endPage = meta.total_pages;
+            } else {
+                // Complex pagination
+                if (meta.page <= 3) {
+                    startPage = 1;
+                    endPage = 5;
+                } else if (meta.page + 2 >= meta.total_pages) {
+                    startPage = Math.max(1, meta.total_pages - 4);
+                    endPage = meta.total_pages;
+                } else {
+                    startPage = meta.page - 2;
+                    endPage = meta.page + 2;
+                }
+            }
+            
+            // First page with ellipsis if needed
+            if (startPage > 1) {
+                // Ellipsis if needed
+                const ellipsisItem = document.createElement('li');
+                ellipsisItem.className = 'page-item disabled ellipsis';
+                ellipsisItem.innerHTML = '<span class="page-link">...</span>';
+                pagination.appendChild(ellipsisItem);
+            }
+            
+            // Page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                const pageItem = document.createElement('li');
+                pageItem.className = `page-item page-number ${i === meta.page ? 'active' : ''}`;
+                
+                if (i === meta.page) {
+                    pageItem.innerHTML = `<span class="page-link">${i}</span>`;
+                } else {
+                    pageItem.innerHTML = `<a href="javascript:void(0)" class="page-link">${i}</a>`;
+                    pageItem.querySelector('a').addEventListener('click', function(e) {
+                        e.preventDefault();
+                        navigateToPage(i);
+                    });
+                }
+                
+                pagination.appendChild(pageItem);
+            }
+            
+            // Last page with ellipsis if needed
+            if (endPage < meta.total_pages) {
+                // Ellipsis if needed
+                const ellipsisItem = document.createElement('li');
+                ellipsisItem.className = 'page-item disabled ellipsis';
+                ellipsisItem.innerHTML = '<span class="page-link">...</span>';
+                pagination.appendChild(ellipsisItem);
+            }
+            
+            // Add next page button
+            const nextDisabled = meta.page >= meta.total_pages;
+            const nextPageItem = document.createElement('li');
+            nextPageItem.className = `page-item next-page ${nextDisabled ? 'disabled' : ''}`;
+            
+            if (nextDisabled) {
+                nextPageItem.innerHTML = '<span class="page-link"><i class="fas fa-angle-right"></i></span>';
+            } else {
+                nextPageItem.innerHTML = '<a href="javascript:void(0)" class="page-link" aria-label="Next Page"><i class="fas fa-angle-right"></i></a>';
+                nextPageItem.querySelector('a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navigateToPage(meta.page + 1);
+                });
+            }
+            pagination.appendChild(nextPageItem);
+            
+            // Add "Last" page button
+            const lastDisabled = meta.page >= meta.total_pages;
+            const lastPageItem = document.createElement('li');
+            lastPageItem.className = `page-item last-page ${lastDisabled ? 'disabled' : ''}`;
+            
+            if (lastDisabled) {
+                lastPageItem.innerHTML = '<span class="page-link"><i class="fas fa-angle-double-right"></i></span>';
+            } else {
+                lastPageItem.innerHTML = '<a href="javascript:void(0)" class="page-link" aria-label="Last Page"><i class="fas fa-angle-double-right"></i></a>';
+                lastPageItem.querySelector('a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navigateToPage(meta.total_pages);
+                });
+            }
+            pagination.appendChild(lastPageItem);
+            
+            // Update current page
+            currentPage = meta.page;
+        }
+        
+        // Format numbers with commas
+        function formatNumber(number) {
+            if (number === undefined || number === null) return "N/A";
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        
+        // Update the collectFilters function to properly gather all filters from all tabs
+        function collectFilters() {
+            console.log('Collecting filters from all tabs');
+            const filters = {};
+            
+            // Legacy simple filters
+            if (document.getElementById('symbol')?.value) {
+                filters.symbol = document.getElementById('symbol').value;
+            } else if (document.getElementById('tickers')?.value) {
+                filters.symbol = document.getElementById('tickers').value;
+            }
+            
+            // Collect values from all select filter inputs across ALL tabs
+            document.querySelectorAll('.filter-select').forEach(select => {
+                if (select.value && select.value !== 'Any') {
+                    // Use the name attribute as the filter key
+                    const filterName = select.name;
+                    filters[filterName] = select.value;
+                    console.log(`Added filter: ${filterName} = ${select.value}`);
+                }
+            });
+            
+            // Get signal filter if present
+            const signal = document.getElementById('signal')?.value;
+            if (signal && signal !== 'none') {
+                filters.signal = signal;
+                console.log(`Added signal filter: ${signal}`);
+            }
+            
+            // Log the total number of filters collected
+            console.log(`Collected ${Object.keys(filters).length} filters total`);
+            return filters;
+        }
+        
+        // Apply all filters and fetch data
+        function applyFilters(page = 1) {
+            console.log('Applying filters for page:', page);
+            
+            // Ensure page is a number
+            page = parseInt(page) || 1;
+            
+            // Show loading indicator
+            showLoading();
+            
+            // Collect all filters from all tabs
+            const filters = collectFilters();
+            console.log('Collected filters:', filters);
+            
+            // Update URL with filter parameters and page number
+            const url = new URL(window.location.href);
+            
+            // Clear existing parameters
+            Array.from(url.searchParams.keys()).forEach(key => {
+                url.searchParams.delete(key);
+            });
+            
+            // Add page parameter first to ensure it's given priority
+            url.searchParams.set('page', page);
+            
+            // Add filter parameters
+            for (const [key, value] of Object.entries(filters)) {
+                if (value !== undefined && value !== null && value !== '') {
+                    url.searchParams.set(key, value);
+                }
+            }
+            
+            // Also ensure sort parameters are included
+            const sortBy = document.getElementById('order-by')?.value || '{{ request.GET.sort_by|default:"Symbol" }}';
+            const sortDir = document.getElementById('order-direction')?.value || '{{ request.GET.sort_dir|default:"asc" }}';
+            url.searchParams.set('sort_by', sortBy);
+            url.searchParams.set('sort_dir', sortDir);
+            
+            // Log the URL we're updating to
+            console.log('Updating URL to:', url.toString());
+            
+            // Update browser history without reloading the page
+            try {
+                window.history.pushState({}, '', url);
+            } catch (e) {
+                console.error('Error updating URL:', e);
+            }
+            
+            // Fetch stocks with filters
+            return fetchStocks(filters, page)
+                .then(data => {
+                    console.log('Successfully fetched data for page:', page);
+                    // Update current page after successful fetch
+                    currentPage = page;
+                    return data;
+                })
+                .catch(error => {
+                    console.error('Error fetching stocks:', error);
+                    hideLoading();
+                    
+                    // Remove loading state from pagination
+                    const paginationContainer = document.querySelector('.pagination-container');
+                    if (paginationContainer) {
+                        paginationContainer.classList.remove('loading');
+                    }
+                    
+                    alert('Error fetching stock data. Please try again.');
+                    throw error;
+                });
+        }
+        
+        // Initialize the page
+        // Fetch initial stock data
+        const initialFilters = collectFilters();
+        fetchStocks(initialFilters, currentPage)
+            .then(data => {
+                stockData = data.data;
+                updateStockTable(stockData);
+                updatePagination(data.meta);
+                updateFilterCount();
+            })
+            .catch(error => {
+                console.error('Error fetching initial stock data:', error);
+                hideLoading();
+                alert('Failed to load stock data. Please try again later.');
+            });
+        
+        // Add event listeners for filter changes
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', function() {
+                // Don't apply filters automatically; user needs to click search button
+                console.log(`Filter changed: ${select.name} = ${select.value}`);
+                
+                // Update visual style based on selection
+                if (this.value && this.value !== 'Any') {
+                    this.classList.add('has-value');
+                    this.closest('.filter-cell')?.classList.add('filter-applied');
+                } else {
+                    this.classList.remove('has-value');
+                    this.closest('.filter-cell')?.classList.remove('filter-applied');
+                }
+                
+                // Update filter counts - this helps users see which tabs have active filters
+                updateFilterCount();
+            });
+        });
+        
+        // Add event listener for the search button
+        document.getElementById('search-btn')?.addEventListener('click', function() {
+            // Reset to page 1 when applying new filters
+            applyFilters(1);
+        });
+        
+        // Add event listener for the "show filters" button (toggle)
+        document.getElementById('show-filters')?.addEventListener('click', function() {
+            const filterSection = document.getElementById('filter-section');
+            if (filterSection) {
+                // Toggle filter section visibility
+                const isVisible = filterSection.style.display !== 'none';
+                filterSection.style.display = isVisible ? 'none' : 'block';
+                
+                // Update button icon
+                const icon = this.querySelector('.filter-icon');
+                if (icon) {
+                    icon.classList.toggle('fa-chevron-up', !isVisible);
+                    icon.classList.toggle('fa-chevron-down', isVisible);
+                }
+            }
+        });
+        
+        // Add event listeners for reset buttons
+        document.querySelectorAll('.btn-reset').forEach(button => {
+            button.addEventListener('click', function() {
+                // Find the section this reset button belongs to
+                const section = this.closest('[id$="-filters"]');
+                if (section) {
+                    // Reset all filters in this section to 'Any'
+                    section.querySelectorAll('.filter-select').forEach(select => {
+                        select.value = 'Any';
+                        select.classList.remove('has-value');
+                        select.closest('.filter-cell')?.classList.remove('filter-applied');
+                    });
+                    
+                    // Update counts
+                    updateFilterCount();
+                    
+                    // Apply the updated filters
+                    applyFilters(1);
+                }
+            });
+        });
+
+        // Main reset button to clear all filters
+        document.getElementById('reset-btn')?.addEventListener('click', function() {
+            // Reset all filter selects across all tabs
+            document.querySelectorAll('.filter-select').forEach(select => {
+                select.value = 'Any';
+                select.classList.remove('has-value');
+                select.closest('.filter-cell')?.classList.remove('filter-applied');
+            });
+            
+            // Reset ticker search
+            if (document.getElementById('tickers')) {
+                document.getElementById('tickers').value = '';
+            }
+            
+            // Reset signal dropdown
+            if (document.getElementById('signal')) {
+                document.getElementById('signal').value = 'none';
+            }
+            
+            // Update filter counts
+            updateFilterCount();
+            
+            // Apply empty filters (resets the table)
+            applyFilters(1);
+        });
+        
+        // Add event listeners
+        document.getElementById('search-btn')?.addEventListener('click', function() {
+            applyFilters(1); // Reset to page 1 when applying new filters
+        });
+        
+        document.getElementById('reset-btn')?.addEventListener('click', function() {
+            // Reset all filter selects
+            document.querySelectorAll('.filter-select').forEach(select => {
+                select.value = 'Any';
+                select.classList.remove('has-value');
+                select.closest('.filter-cell')?.classList.remove('filter-applied');
+            });
+            
+            // Reset ticker search
+            document.getElementById('tickers').value = '';
+            
+            // Update filter counts
+            updateFilterCount();
+            
+            // Apply reset (empty filters)
+            applyFilters(1);
+        });
+        
+        // Add event listeners for section reset buttons
+        document.querySelectorAll('.btn-reset').forEach(button => {
+            button.addEventListener('click', function() {
+                // Get the section id from the closest parent with an id ending in "-filters"
+                const section = this.closest('[id$="-filters"]');
+                if (section) {
+                    // Reset only filters in this section
+                    section.querySelectorAll('.filter-select').forEach(select => {
+                        select.value = 'Any';
+                        select.classList.remove('has-value');
+                        select.closest('.filter-cell')?.classList.remove('filter-applied');
+                    });
+                
+                    // Update filter counts
+                    updateFilterCount();
+                    
+                    // Apply filters
+                applyFilters(1);
+                }
+            });
+        });
+        
+        // Add event listeners for filter changes to reset pagination
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', function() {
+                // Don't apply filters automatically; user needs to click search button
+                console.log(`Filter changed: ${select.name} = ${select.value}`);
+                
+                // Update visual style based on selection
+                if (this.value && this.value !== 'Any') {
+                    this.classList.add('has-value');
+                    this.closest('.filter-cell')?.classList.add('filter-applied');
+                } else {
+                    this.classList.remove('has-value');
+                    this.closest('.filter-cell')?.classList.remove('filter-applied');
+                }
+            });
+            
+            // Initialize styles based on current values
+            if (select.value && select.value !== 'Any') {
+                select.classList.add('has-value');
+                select.closest('.filter-cell')?.classList.add('filter-applied');
+            }
+        });
+        
+        // Init chart modal
+        const chartModal = document.getElementById('chartModal');
+        
+        // Function to show stock chart
+        function showStockChart(symbol) {
+            console.log(`Showing chart for symbol: ${symbol}`);
+            
+            // Check if we already have a chart modal
+            let chartModal = document.getElementById('chartModal');
+            
+            // Create chart modal if it doesn't exist
+            if (!chartModal) {
+                chartModal = document.createElement('div');
+                chartModal.id = 'chartModal';
+                chartModal.className = 'chart-modal';
+                
+                const modalContent = `
+                    <div class="chart-modal-content">
+                        <div class="chart-modal-header">
+                            <h2 class="chart-modal-title"><i class="fas fa-chart-line"></i> <span id="chart-symbol"></span></h2>
+                            <button class="chart-modal-close">&times;</button>
+                        </div>
+                        <div class="chart-body">
+                            <div class="chart-toggle">
+                                <button class="chart-btn active" data-period="1d">1 Day</button>
+                                <button class="chart-btn" data-period="1w">1 Week</button>
+                                <button class="chart-btn" data-period="1m">1 Month</button>
+                                <button class="chart-btn" data-period="3m">3 Months</button>
+                                <button class="chart-btn" data-period="1y">1 Year</button>
+                                <button class="chart-btn" data-period="5y">5 Years</button>
+                            </div>
+                            <div id="stock-chart-container" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                `;
+                
+                chartModal.innerHTML = modalContent;
+                document.body.appendChild(chartModal);
+                
+                // Add close button event listener
+                chartModal.querySelector('.chart-modal-close').addEventListener('click', function() {
+                    chartModal.classList.remove('show');
+                });
+            }
+            
+            // Set the chart symbol
+            const chartSymbolElement = document.getElementById('chart-symbol');
+            if (chartSymbolElement) {
+                chartSymbolElement.textContent = symbol;
+            }
+            
+            // Show the modal
+            chartModal.classList.add('show');
+            
+            // Find a stock in our data with the matching symbol
+            const stockDetails = stockData.find(stock => stock.Symbol === symbol);
+            
+            try {
+                // Create TradingView widget
+                new TradingView.widget({
+                    "width": "100%",
+                    "height": 400,
+                    "symbol": `PKX:${symbol}`, // Adjust if needed for your market
+                    "interval": "D",
+                    "timezone": "Etc/UTC",
+                    "theme": "light",
+                    "style": "1",
+                    "locale": "en",
+                    "toolbar_bg": "#f1f3f6",
+                    "enable_publishing": false,
+                    "allow_symbol_change": true,
+                    "container_id": "stock-chart-container",
+                    "hide_side_toolbar": false,
+                    "studies": [
+                        "MASimple@tv-basicstudies",
+                        "RSI@tv-basicstudies"
+                    ]
+                });
+                
+                // Add event listeners to period buttons
+                chartModal.querySelectorAll('.chart-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        chartModal.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                        // We would update the chart period here in a real implementation
+                const period = this.getAttribute('data-period');
+                        console.log(`Changing chart period to ${period}`);
+                    });
+                });
+            } catch (error) {
+                console.error('Error creating chart:', error);
+                // Show error message in chart container
+                const chartContainer = document.getElementById('stock-chart-container');
+                if (chartContainer) {
+                    chartContainer.innerHTML = `<div class="error-message">
+                        <p>Error loading chart for ${symbol}.</p>
+                        <p>Please make sure TradingView widget script is loaded.</p>
+                    </div>`;
+                }
+            }
+        }
+
+        // Update filter count display
+        function updateFilterCount() {
+            const filterCounts = {
+                fundamentals: 0,
+                technical: 0,
+                performance: 0,
+                dividend: 0,
+                ownership: 0
+            };
+            
+            // Count active filters by section
+            document.querySelectorAll('.filter-select').forEach(select => {
+                if (select.value && select.value !== 'Any') {
+                    // Find which section this belongs to
+                    const cell = select.closest('.filter-cell');
+                    const section = cell?.closest('[id$="-filters"]');
+                    if (section) {
+                        const sectionId = section.id.replace('-filters', '');
+                        if (filterCounts[sectionId] !== undefined) {
+                            filterCounts[sectionId]++;
+                        }
+                    }
+                }
+            });
+            
+            // Update count displays
+            for (const [section, count] of Object.entries(filterCounts)) {
+                const countElement = document.getElementById(`${section}-filter-count`);
+                if (countElement) {
+                    countElement.textContent = count;
+                }
+                
+                // Update tab indicator if count > 0
+                const tab = document.querySelector(`.filter-tab[data-tab="${section}"]`);
+                if (tab) {
+                    let countBadge = tab.querySelector('.filter-active-count');
+                    if (count > 0) {
+                        if (!countBadge) {
+                            countBadge = document.createElement('span');
+                            countBadge.className = 'filter-active-count';
+                            tab.appendChild(countBadge);
+                        }
+                        countBadge.textContent = count;
+                    } else if (countBadge) {
+                        tab.removeChild(countBadge);
+                    }
+                }
+            }
+            
+            // Update total count
+            const totalCount = Object.values(filterCounts).reduce((a, b) => a + b, 0);
+            document.getElementById('filter-count').textContent = totalCount;
+        }
+        
+        // Initialize filter counts
+        updateFilterCount();
+        
+        // Add event listener to update counts when filters change
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', updateFilterCount);
+        });
+    });
+    </script>
+
+    <!-- Add loading spinner HTML -->
+    <div class="spinner-overlay">
+        <div class="spinner"></div>
+    </div>
+{% endblock %}

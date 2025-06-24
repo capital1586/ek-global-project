@@ -1,0 +1,204 @@
+<!-- Stock Price Chart Partial -->
+<div class="chart-container" style="position: relative; height: 300px; width: 100%; min-height: 300px;">
+    <canvas id="priceChart"></canvas>
+</div>
+
+<script>
+// Wait for the DOM to be fully loaded
+window.addEventListener('load', function() {
+    console.log("Window fully loaded - initializing chart");
+    initializeChart();
+});
+
+function initializeChart() {
+    try {
+        console.log("Chart initialization starting...");
+        
+        // Get the canvas element
+        const canvas = document.getElementById('priceChart');
+        if (!canvas) {
+            console.error("Canvas element 'priceChart' not found!");
+            return;
+        }
+        
+        // Check if Chart.js is loaded
+        if (typeof Chart === 'undefined') {
+            console.error("Chart.js is not loaded! Loading it now...");
+            
+            // Dynamically load Chart.js if not available
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js';
+            script.integrity = 'sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==';
+            script.crossOrigin = 'anonymous';
+            script.referrerPolicy = 'no-referrer';
+            script.onload = function() {
+                console.log("Chart.js loaded successfully, creating chart now");
+                createChart(canvas);
+            };
+            document.head.appendChild(script);
+            return;
+        }
+        
+        // Chart.js is already loaded, create the chart
+        createChart(canvas);
+        
+    } catch (error) {
+        console.error("Error initializing chart:", error);
+    }
+}
+
+function createChart(canvas) {
+    try {
+        // Basic chart colors
+        const primaryColor = '#1e88e5';
+        const secondaryColor = '#f9a825';
+        const volumeColor = 'rgba(156, 39, 176, 0.2)';
+        
+        // Create simulated data for 30 days
+        const simulatedData = generateSimulatedData(30);
+        console.log("Generated data points:", simulatedData.dates.length);
+        
+        // Create gradient for area
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(30, 136, 229, 0.4)');
+        gradient.addColorStop(1, 'rgba(30, 136, 229, 0)');
+        
+        // Define chart configuration
+        const chartConfig = {
+            type: 'line',
+            data: {
+                labels: simulatedData.dates,
+                datasets: [
+                    {
+                        label: 'Price',
+                        data: simulatedData.prices,
+                        borderColor: primaryColor,
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: 2,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'MA10',
+                        data: calculateMA(simulatedData.prices, 10),
+                        borderColor: secondaryColor,
+                        borderWidth: 1.5,
+                        fill: false,
+                        tension: 0.1,
+                        pointRadius: 0,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Volume',
+                        data: simulatedData.volumes,
+                        backgroundColor: volumeColor,
+                        type: 'bar',
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Price History (Simulated Data)'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Price'
+                        },
+                        position: 'left'
+                    },
+                    y1: {
+                        title: {
+                            display: true,
+                            text: 'Volume'
+                        },
+                        position: 'right',
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        };
+        
+        // Create and render the chart
+        const chart = new Chart(ctx, chartConfig);
+        console.log("Chart created successfully");
+        
+    } catch (error) {
+        console.error("Error creating chart:", error);
+    }
+}
+
+// Generate simulated price and volume data
+function generateSimulatedData(days) {
+    // Make sure we have a valid base price, using 130.20 as a fallback
+    const basePrice = parseFloat("{{ stock.CurrentPrice|default:'130.20' }}");
+    console.log("Using base price:", basePrice);
+    
+    const dates = [];
+    const prices = [];
+    const volumes = [];
+    const today = new Date();
+    
+    let currentPrice = basePrice;
+    
+    for (let i = 0; i < days; i++) {
+        // Create date
+        const date = new Date();
+        date.setDate(today.getDate() - (days - 1) + i);
+        dates.push(date.toISOString().split('T')[0]);
+        
+        // Create price with random walk pattern
+        const dailyChange = (Math.random() * 0.04) - 0.02; // -2% to +2%
+        currentPrice = currentPrice * (1 + dailyChange);
+        prices.push(parseFloat(currentPrice.toFixed(2)));
+        
+        // Create volume with random fluctuations
+        volumes.push(Math.floor(Math.random() * 100000) + 10000);
+    }
+    
+    return { dates, prices, volumes };
+}
+
+// Calculate moving average
+function calculateMA(data, period) {
+    const result = [];
+    for (let i = 0; i < data.length; i++) {
+        if (i < period - 1) {
+            result.push(null);
+            continue;
+        }
+        
+        let sum = 0;
+        for (let j = 0; j < period; j++) {
+            sum += data[i - j];
+        }
+        result.push(parseFloat((sum / period).toFixed(2)));
+    }
+    return result;
+}
+</script> 

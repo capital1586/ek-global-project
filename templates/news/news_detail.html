@@ -1,0 +1,588 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load news_template_tags %} {# Load custom tags if needed for sidebar elements #}
+
+{% block title %}{{ news_item.headline|truncatechars:60 }} - EKG Global News{% endblock %}
+
+{% block stylesheets %}
+<style>
+    /* === Enhanced Professional Styling for News Detail === */
+
+/* --- Detail Page Layout & Structure --- */
+.news-detail-container {
+    max-width: 1200px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+}
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+    .detail-grid {
+        grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    }
+    .detail-sidebar {
+        position: sticky;
+        top: 25px;
+        height: fit-content;
+    }
+}
+
+/* --- Main Content Card --- */
+.detail-main-content {
+    background-color: var(--background-card);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+/* --- Header Section --- */
+.article-header {
+    padding: 2.5rem 3rem 2rem;
+}
+
+/* Category Tags */
+.detail-category-tags {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.detail-category-tag {
+    display: inline-block;
+    background: var(--accent-color);
+    color: white;
+    padding: 0.25rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+.detail-category-tag:hover {
+    background-color: var(--secondary-color);
+    text-decoration: none;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Headline */
+.detail-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.5px;
+}
+
+/* Meta Information */
+.detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+.detail-meta span { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+}
+.detail-meta i { 
+    color: var(--accent-color);
+    font-size: 0.9rem; 
+    width: 1.2em; 
+    text-align: center;
+}
+.detail-meta a { 
+    color: var(--accent-color); 
+    transition: color 0.2s;
+    font-weight: 500;
+}
+.detail-meta a:hover { 
+    color: var(--link-hover-color); 
+    text-decoration: underline; 
+}
+
+/* --- Featured Image --- */
+.detail-image-container {
+    width: 100%;
+    margin: 0;
+    position: relative;
+}
+.detail-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    display: block;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Article Content --- */
+.article-content-wrapper {
+    padding: 2.5rem 3rem 3rem;
+    position: relative;
+}
+.article-content { 
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-color);
+    max-width: 800px; /* Better reading width */
+    margin: 0 auto;
+}
+.article-content p { 
+    margin-bottom: 1.8em; 
+}
+.article-content a { 
+    color: var(--accent-color); 
+    text-decoration: none;
+    border-bottom: 1px solid currentColor; 
+    transition: color 0.2s, border-color 0.2s;
+}
+.article-content a:hover { 
+    color: var(--link-hover-color);
+    border-bottom-color: var(--link-hover-color);
+}
+
+/* Headings */
+.article-content h2,
+.article-content h3,
+.article-content h4 {
+    margin: 2.5em 0 1em;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.3;
+    position: relative;
+}
+.article-content h2 { 
+    font-size: 1.8rem; 
+}
+.article-content h3 { 
+    font-size: 1.4rem; 
+}
+.article-content h4 { 
+    font-size: 1.2rem; 
+}
+
+/* Blockquotes */
+.article-content blockquote {
+    margin: 2.5em 0;
+    padding: 1.5em 2em;
+    background-color: rgba(0, 82, 204, 0.05);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--text-color);
+    position: relative;
+}
+.article-content blockquote::before {
+    content: """;
+    font-family: Georgia, serif;
+    font-size: 4em;
+    position: absolute;
+    left: 10px;
+    top: -10px;
+    color: rgba(0, 82, 204, 0.2);
+}
+.article-content blockquote p { 
+    margin-bottom: 0.5em; 
+}
+.article-content blockquote p:last-child { 
+    margin-bottom: 0; 
+}
+
+/* Lists */
+.article-content ul,
+.article-content ol { 
+    margin-bottom: 1.8em; 
+    padding-left: 2em; 
+}
+.article-content li { 
+    margin-bottom: 0.7em; 
+}
+
+/* Text Formatting */
+.article-content strong, 
+.article-content b { 
+    font-weight: 700; 
+    color: var(--text-color);
+}
+.article-content em, 
+.article-content i { 
+    font-style: italic; 
+}
+
+/* Original Article Link */
+.detail-read-original-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    margin-top: 2rem;
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 82, 204, 0.25);
+}
+.detail-read-original-link:hover {
+    background-color: var(--secondary-color);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 82, 204, 0.3);
+}
+.detail-read-original-link i {
+    font-size: 0.85em;
+}
+
+/* --- Article Tags --- */
+.detail-tags {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+.detail-tags-header {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.detail-tags-header i {
+    color: var(--accent-color);
+}
+.detail-tags-list { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 0.7rem; 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+}
+.detail-tags-list a {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 82, 204, 0.07);
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    transition: all 0.2s ease;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid rgba(0, 82, 204, 0.1);
+}
+.detail-tags-list a:hover {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+/* --- Sidebar Styling --- */
+.detail-sidebar .sidebar-section {
+    background-color: var(--background-card);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+.detail-sidebar .sidebar-header {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.detail-sidebar .sidebar-header i {
+    color: var(--accent-color);
+}
+
+/* News Lists in Sidebar */
+.sidebar-news-list { 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+}
+.sidebar-news-item {
+    margin-bottom: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: transform 0.2s;
+}
+.sidebar-news-item:hover {
+    transform: translateX(3px);
+}
+.sidebar-news-item:last-child { 
+    margin-bottom: 0; 
+    padding-bottom: 0; 
+    border-bottom: none; 
+}
+.sidebar-news-item a { 
+    display: block; 
+    text-decoration: none; 
+}
+.sidebar-news-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+}
+.sidebar-news-item a:hover .sidebar-news-title { 
+    color: var(--accent-color); 
+}
+.sidebar-news-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+.sidebar-news-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.sidebar-news-meta i {
+    color: var(--accent-color);
+    font-size: 0.7rem;
+}
+
+/* Search Form in Sidebar */
+.detail-sidebar .search-form {
+    position: relative;
+    margin-bottom: 0;
+}
+.detail-sidebar .search-form input[type="search"] {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    background-color: var(--background-card);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+.detail-sidebar .search-form input[type="search"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+}
+.detail-sidebar .search-form button {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .article-header,
+    .article-content-wrapper {
+        padding: 2rem;
+    }
+    .detail-headline {
+        font-size: 2.2rem;
+    }
+}
+@media (max-width: 768px) {
+    .news-detail-container {
+        margin: 1.5rem auto;
+        padding: 0 1rem;
+    }
+    .article-header,
+    .article-content-wrapper {
+        padding: 1.5rem;
+    }
+    .detail-headline {
+        font-size: 1.8rem;
+    }
+    .detail-meta {
+        gap: 0.8rem 1.5rem;
+    }
+    .article-content {
+        font-size: 1rem;
+    }
+    .detail-category-tag {
+        font-size: 0.7rem;
+    }
+}
+</style>
+    {# Ensure these are loaded, preferably in base.html or here #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {# Link to your single, refined CSS file #}
+    <link rel="stylesheet" href="{% static 'css/news_style_v2.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% comment %} Market Ticker {% endcomment %}
+{% if market_data %}
+    {% include 'news/partials/market_ticker.html' %}
+{% endif %}
+
+
+<div class="news-detail-container">
+    <div class="detail-grid">
+        <main class="detail-main-content">
+            <article>
+                <header class="article-header">
+                    {% if news_item.category_list %}
+                        <div class="detail-category-tags">
+                            {% for cat in news_item.category_list %}
+                                <a href="{% url 'news:news_list' %}?category={{ cat|urlencode }}" class="detail-category-tag">{{ cat }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <h1 class="detail-headline">{{ news_item.headline }}</h1>
+
+                    <div class="detail-meta">
+                        {% if news_item.author_name %}
+                            <span class="detail-author"><i class="fas fa-user-edit"></i> {{ news_item.author_name }}</span>
+                        {% endif %}
+                        {% if news_item.news_date %}
+                            <span class="detail-date"><i class="far fa-calendar-alt"></i> {{ news_item.news_date|date:"F d, Y" }}</span>
+                        {% endif %}
+                        {% if news_item.source_domain %}
+                            <span class="detail-source">
+                                <i class="fas fa-globe"></i>
+                                {% if news_item.news_link %}
+                                    <a href="{{ news_item.news_link }}" target="_blank" rel="noopener noreferrer nofollow" title="Read original article at {{ news_item.source_domain }}">
+                                        {{ news_item.source_domain }}
+                                    </a>
+                                {% else %}
+                                    {{ news_item.source_domain }}
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    </div>
+                </header>
+
+                {% if news_item.image_url %}
+                <div class="detail-image-container">
+                    <img src="{{ news_item.image_url }}" alt="{{ news_item.headline }}" class="detail-image" onerror="this.style.display='none';">
+                </div>
+                {% endif %}
+
+                <div class="article-content-wrapper">
+                    <div class="article-content">
+                        {% if news_item.news_content %}
+                            {{ news_item.news_content|safe }}
+                        {% elif news_item.description %}
+                            <p><em>{{ news_item.description|linebreaksbr }}</em></p>
+                            {% if news_item.news_link %}
+                                <a href="{{ news_item.news_link }}" target="_blank" rel="noopener noreferrer nofollow" class="detail-read-original-link">
+                                    Read full article <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <p>Article content could not be loaded.</p>
+                            {% if news_item.news_link %}
+                                <a href="{{ news_item.news_link }}" target="_blank" rel="noopener noreferrer nofollow" class="detail-read-original-link">
+                                    View original article <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    {% if news_item.tag_list %}
+                    <div class="detail-tags">
+                        <h3 class="detail-tags-header"><i class="fas fa-tags"></i> Article Tags</h3>
+                        <ul class="detail-tags-list">
+                            {% for tag in news_item.tag_list %}
+                            <li><a href="{% url 'news:news_list' %}?q={{ tag|urlencode }}">#{{ tag }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </article>
+        </main>
+
+        <aside class="detail-sidebar">
+            <section class="sidebar-section">
+                <form method="GET" action="{% url 'news:news_list' %}" class="search-form">
+                    <input type="search" name="q" placeholder="Search news..." required>
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </section>
+
+            {% if trending_news %}
+            <section class="sidebar-section">
+                <h3 class="sidebar-header"><i class="fas fa-chart-line"></i> Trending Today</h3>
+                <ul class="sidebar-news-list">
+                   {% for item in trending_news %}
+                    <li class="sidebar-news-item">
+                       <a href="{{ item.get_absolute_url }}">
+                           <h4 class="sidebar-news-title">{{ item.headline|truncatechars:70 }}</h4>
+                       </a>
+                        <div class="sidebar-news-meta">
+                            <span><i class="far fa-calendar-alt"></i> {{ item.news_date|date:"M d" }}</span>
+                            {% if item.source_domain %}<span><i class="fas fa-globe"></i> {{ item.source_domain }}</span>{% endif %}
+                        </div>
+                    </li>
+                   {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+
+           {% if related_news %}
+           <section class="sidebar-section">
+               <h3 class="sidebar-header"><i class="fas fa-newspaper"></i> Related News</h3>
+               <ul class="sidebar-news-list">
+                   {% for item in related_news %}
+                   <li class="sidebar-news-item">
+                       <a href="{{ item.get_absolute_url }}">
+                           <h4 class="sidebar-news-title">{{ item.headline|truncatechars:70 }}</h4>
+                       </a>
+                       <div class="sidebar-news-meta">
+                            <span><i class="far fa-calendar-alt"></i> {{ item.news_date|date:"M d" }}</span>
+                            {% if item.source_domain %}<span><i class="fas fa-globe"></i> {{ item.source_domain }}</span>{% endif %}
+                        </div>
+                   </li>
+                   {% endfor %}
+               </ul>
+           </section>
+           {% endif %}
+        </aside>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {# Add specific scripts for detail page if needed #}
+    {{ block.super }}
+{% endblock %}

@@ -1,0 +1,213 @@
+
+
+.asColorPicker-dropdown {
+    max-width: 26rem;
+}
+
+.asColorPicker-trigger {
+    border  : 0 none;
+    height  : 100%;
+    position: absolute;
+    right: 0;
+    top     : 0;
+    width   : 2.1875rem;
+}
+[direction="rtl"] .asColorPicker-trigger{
+	left: 0;
+	right: auto;
+}
+.asColorPicker-clear {
+    display        : none;
+    position       : absolute;
+    right          : 1rem;
+    text-decoration: none;
+    top            : .5rem;
+}
+.picker {
+    color: $white;
+}
+.picker__button--clear, .picker__button--close, .picker__button--today {
+    border: 1px solid #fff;
+    background: var(--bs-body-bg);
+}
+.picker .picker__frame .picker__box .picker__footer .picker__button--clear, .picker .picker__frame .picker__box .picker__footer .picker__button--close, .picker .picker__frame .picker__box .picker__footer .picker__button--today {
+    color: $white;
+}
+.daterangepicker {
+    td.active {
+        background-color: var(--primary);
+
+        &:hover {
+            background-color: var(--primary);
+        }
+    }
+
+    button.applyBtn {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+}
+
+.datepicker {
+
+    &.datepicker-dropdown {
+        background: $l-bg;
+        border-radius: 0.0625rem;
+        border: 0.0625rem solid $gallery;
+
+        td.day, th.next, th.prev {
+            height: 1.875rem;
+            width: 1.875rem !important;
+            padding: 0;
+            text-align: center;
+            font-weight: 300;
+            border-radius: 3.125rem;
+
+            &:hover {
+                @extend %gradient-9;
+                box-shadow: 0rem 0rem 1.875rem 0.3125rem rgba(243,30,122,0.3);
+                color: $white;
+            }
+        }
+
+        th.datepicker-switch, th.next, th.prev {
+            font-weight: 300;
+            color: $heading;
+        }
+
+        th.dow {
+            font-weight: 300;
+        }
+    }
+    table {
+
+        
+
+        tr td.selected, tr td.active.active {
+            @extend %gradient-9;
+            box-shadow: 0rem 0rem 1.875rem 0.3125rem rgba(243,30,122,0.3);
+            border: 0;
+        }
+
+        tr {
+            td.today {
+                @extend %gradient-9;
+                box-shadow: 0rem 0rem 1.875rem 0.3125rem rgba(243,30,122,0.3);
+                color     : #ffffff;
+
+                &:hover {
+                    @extend %gradient-9;
+                    box-shadow: 0rem 0rem 1.875rem 0.3125rem rgba(243,30,122,0.3);
+                    color     : #ffffff;
+                }
+            }
+
+            td.today.disabled {
+                @extend %gradient-9;
+                box-shadow: 0rem 0rem 1.875rem 0.3125rem rgba(243,30,122,0.3);
+                color     : #ffffff;
+
+                &:hover {
+                    @extend %gradient-9;
+                    box-shadow: 0rem 0rem 1.875rem 0.3125rem rgba(243,30,122,0.3);
+                    color     : #ffffff;
+                }
+            }
+        }
+    }
+}
+
+
+.picker {
+    &__select--month, &__select--year {
+        height: 2.5em;
+    }
+
+    &__input {
+        background-color: transparent !important;
+
+        @at-root [data-theme-version="dark"] & {
+            background-color: transparent !important;
+            border: 0.0625rem solid $d-border;
+        }
+    }
+}
+.asColorPicker-trigger span{
+	border-radius: 0 0.5rem 0.5rem 0;
+}
+.asColorPicker-trigger{
+	background: none;
+}
+.ck.ck-list{
+	background: #4f2ebf!important;
+}
+.ck.ck-dropdown__panel.ck-dropdown__panel_ne{
+	border-color:var(--primary);
+}
+
+// ---celander
+.daterangepicker .calendar-table .next span, .daterangepicker .calendar-table .prev span {
+    color: #fff;
+    border: solid $light-text;
+    border-width: 0 2px 2px 0;
+}
+s 
+// -------Clock -picker---
+
+.dtp div.dtp-date, .dtp div.dtp-time {
+    background:$light-blur;
+}
+.dtp > .dtp-content > .dtp-date-view > header.dtp-header {
+   background: var(--bs-body-bg);
+}
+.dtp table.dtp-picker-days tr > td > a, .dtp .dtp-picker-time > a {
+    color: $light-text;
+}
+.dtp table.dtp-picker-days tr > th {
+    color: $white;
+}
+.material-icons {
+    color: $white;
+}
+.dtp div.dtp-picker {
+    background-color: var(--bs-body-bg);
+}
+.dtp .dtp-buttons {
+   background-color: var(--bs-card-bg);
+}
+.dtp table.dtp-picker-days{
+    tr{
+        td{
+            a.selected {
+                background:$bg-light;
+                color: $white;
+            }
+        }  
+    } 
+} 
+
+
+    circle[r='192'] {
+        fill: $body-bg;
+        stroke: $bg-light;
+    }
+    line.hour-hand {
+        stroke: #5b27c1;
+    }
+    circle#h-16 {
+        fill: #5b27c1;
+    }
+    line.minute-hand {
+        stroke: #422c99;
+    }
+    circle[r='15'] {
+        fill: #5b27c1;
+    }
+    text {
+		fill: #fff;
+		font-weight: 500;
+	}
+	.dtp div.dtp-date, .dtp div.dtp-time {
+		background: $light-blur;
+		
+	}

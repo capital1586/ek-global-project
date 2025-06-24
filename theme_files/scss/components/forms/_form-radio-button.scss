@@ -1,0 +1,16 @@
+
+input[type="radio"] {
+	width: 0.9375rem;
+	height: 0.9375rem;
+}
+
+
+.form-check-input{
+	&:checked {
+		background-color: var(--primary);
+		border-color: var(--primary);	
+	}
+	&:focus {
+		border-color: var(--primary);
+	}
+}

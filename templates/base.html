@@ -1,0 +1,1807 @@
+{% load static %}
+
+{{ block.super }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="keywords" content="">
+	<meta name="author" content="">
+	<meta name="robots" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="EK Global">
+	<meta property="og:title" content="EK Global">
+	<meta property="og:description" content="EK Global">
+	<meta property="og:image" content="https://dolab. DexignZone.com/xhtml/social-image.png">
+	<meta name="format-detection" content="telephone=no">
+	{% block meta %}
+	{% endblock meta %}
+	
+	<!-- PAGE TITLE HERE -->
+	{% block title %}
+	{% endblock title %}
+
+	<!-- Preloads -->
+	<link rel="prefetch" href="{% static 'images/favicon.png' %}" as="image">
+	<link rel="preload" href="{% static 'vendor/jquery-nice-select/css/nice-select.css' %}" as="style">
+	<link rel="preload" href="{% static 'vendor/jquery-autocomplete/jquery-ui.css' %}" as="style">
+	<link rel="preload" href="https://cdn.jsdelivr.net/npm/noty/lib/noty.min.css" as="style">
+	<link rel="preload" href="https://cdn.jsdelivr.net/npm/noty/lib/themes/semanticui.css" as="style">
+	<link rel="preload" href="{% static 'core/styles/main.css' %}" as="style">
+	<link rel="preload" href="{% static 'vendor/global/global.min.js' %}" as="script">
+	<link rel="preload" href="{% static 'vendor/jquery-nice-select/js/jquery.nice-select.min.js' %}" as="script">
+	<link rel="preload" href="{% static 'vendor/jquery-autocomplete/jquery-ui.js' %}" as="script">
+	<link rel="preload" href="{% static 'js/custom.min.js' %}" as="script">
+	<link rel="preload" href="{% static 'js/dlabnav-init.js' %}" as="script">
+	<link rel="preload" href="https://cdn.jsdelivr.net/npm/noty/lib/noty.min.js" as="script">
+	<link rel="preload" href="{% static 'core/scripts/utils.js' %}" as="script">
+	<link rel="preload" href="{% static 'css/style.css' %}" as="style">
+	<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" as="script">
+
+	<!-- Prefetches -->
+	<link rel="prefetch" href="{% static 'core/styles/form_card.css' %}" as="style">
+	<link href="{% static 'core/styles/tabs.css' %}" rel="prefetch" as="style">
+	<link rel="prefetch" href="{% static 'core/scripts/formCard.js' %}" as="script">
+	<link rel="prefetch" href="{% static 'core/scripts/tabs.js' %}" as="script">
+
+	<!-- FAVICONS ICON -->
+	
+	<link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}">
+	<link href="{% static 'vendor/jquery-nice-select/css/nice-select.css' %}" rel="stylesheet">
+	<link href="{% static 'vendor/jquery-autocomplete/jquery-ui.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" integrity="sha512-5vJn8XQV8HjV1RTUCVaLg1KD58SfHjgIeiYDlM9QmI9IUFr8gKC0VHzu5LKUOqVRTZqSQJ+5xgFL7rvlQGE7SQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+	<!-- Noty.js Themes-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty/lib/noty.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty/lib/themes/semanticui.css">
+
+	<!-- Custom Styling -->
+	<link href="{% static 'core/styles/main.css' %}" rel="stylesheet">
+	{% block stylesheets %}
+	{% endblock stylesheets %}
+	
+	<style>
+    :root {
+        --primary: #1E88E5;
+        --primary-light: rgba(30, 136, 229, 0.1);
+        --secondary: #0D47A1;
+        --accent: #2962FF;
+        --success: #00C853;
+        --warning: #FFD600;
+        --danger: #FF1744;
+        --light: #F5F7FA;
+        --dark: #0A1929;
+        --body-bg: #131722;
+        --sidebar-bg: linear-gradient(180deg, #1a1f2c 0%, #131722 100%);
+        --header-bg: rgba(26, 31, 44, 0.95);
+        --card-bg: #1E2637;
+        --text-color: #e4e6eb;
+        --text-muted: #8A97A8;
+        --border-color: rgba(255,255,255,0.05);
+        --shadow-color: rgba(0,0,0,0.2);
+        --transition: all 0.3s ease;
+    }
+
+    /* Light theme improvements - updated */
+    .light-theme {
+        --primary: #1E88E5;
+        --primary-light: rgba(30, 136, 229, 0.1);
+        --secondary: #0D47A1;
+        --accent: #2962FF;
+        --success: #00C853;
+        --warning: #FFD600;
+        --danger: #FF1744;
+        --text-color: #263238;
+        --text-muted: #546E7A;
+        --border-color: #E0E0E0;
+        --card-bg: #ffffff;
+        --body-bg: #F5F7FA;
+        --sidebar-bg: #FFFFFF;
+        --sidebar-text: #263238;
+        --sidebar-hover: rgba(30, 136, 229, 0.1);
+        --sidebar-active: rgba(30, 136, 229, 0.2);
+        --header-bg: #FFFFFF;
+        --header-text: #263238;
+        --shadow-color: rgba(0,0,0,0.1);
+    }
+
+    /* Dark theme improvements */
+    .dark-theme {
+        --primary: #8a56e8;
+        --secondary: #6a4cb8;
+        --primary-light: rgba(138, 86, 232, 0.15);
+        --text-color: #e4e6eb;
+        --text-muted: #b0b3b8;
+        --text-light: #ffffff;
+        --body-bg: #18191a;
+        --card-bg: #242526;
+        --sidebar-bg: #242526;
+        --border-color: #3e4042;
+        --shadow-color: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Dark Theme Background */
+    body {
+        background: var(--body-bg);
+        color: var(--text-color);
+        background-image: 
+            linear-gradient(to bottom right, rgba(13, 71, 161, 0.1) 0%, rgba(30, 136, 229, 0.1) 100%),
+            radial-gradient(circle at top right, rgba(41, 98, 255, 0.1), transparent 400px),
+            radial-gradient(circle at bottom left, rgba(0, 200, 83, 0.05), transparent 400px);
+        background-attachment: fixed;
+        transition: var(--transition);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Light Theme Background */
+    .light-theme {
+        background-image: 
+            linear-gradient(to bottom right, rgba(236, 240, 241, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%),
+            radial-gradient(circle at top right, rgba(30, 136, 229, 0.05), transparent 400px),
+            radial-gradient(circle at bottom left, rgba(0, 200, 83, 0.02), transparent 400px);
+    }
+
+    /* Enhanced Sidebar for Light Theme */
+    .light-theme .dlabnav {
+        background: var(--sidebar-bg);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        border-right: 1px solid var(--border-color);
+    }
+
+    .light-theme .metismenu > li > a {
+        color: var(--sidebar-text);
+        font-weight: 500;
+    }
+
+    .light-theme .metismenu > li:hover > a, 
+    .light-theme .metismenu > li.mm-active > a {
+        background: var(--sidebar-active);
+        color: var(--primary);
+    }
+
+    .light-theme .metismenu > li > a svg path {
+        stroke: var(--sidebar-text);
+    }
+
+    .light-theme .metismenu > li:hover > a svg path,
+    .light-theme .metismenu > li.mm-active > a svg path {
+        stroke: var(--primary);
+    }
+
+    /* Menu item hover effects */
+    .dlabnav .metismenu > li > a {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 0 10px;
+        padding: 12px 15px;
+    }
+
+    .dlabnav .metismenu > li > a:hover {
+        transform: translateX(5px);
+    }
+
+    /* User profile in sidebar */
+    .light-theme .sidebar-info .user-info span {
+        color: var(--sidebar-text) !important;
+    }
+
+    .light-theme .sidebar-info .user-info small {
+        color: var(--text-muted) !important;
+    }
+
+    .light-theme .sidebar-info svg path {
+        stroke: var(--sidebar-text) !important;
+    }
+
+    /* Header in light theme */
+    .light-theme .header {
+        background: var(--header-bg);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .light-theme .header-right .notification-icon svg path {
+        stroke: var(--text-color);
+    }
+
+    /* Cards and Content Areas */
+    .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px var(--shadow-color);
+        transition: var(--transition);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+        border-bottom: 1px solid var(--border-color);
+        background: rgba(0,0,0,0.02);
+        padding: 1rem 1.25rem;
+        font-weight: 600;
+    }
+
+    .light-theme .card-header {
+        background: rgba(0,0,0,0.01);
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .content-body {
+        position: relative;
+        transition: var(--transition);
+        padding: 1.5rem;
+    }
+
+    .content-body .container-fluid {
+        padding: 0.75rem;
+    }
+
+    /* Chart and Graph Containers */
+    .chart-container {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 20px var(--shadow-color);
+        border: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Buttons */
+    .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: var(--transition);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.875rem;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    /* Fix for the logo in navbar */
+    .nav-header {
+        background: var(--sidebar-bg);
+        padding: 0 1.25rem;
+        height: 5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 2px 5px var(--shadow-color);
+    }
+
+    /* Logo container in nav header */
+    .nav-brand-logo {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-brand-logo:hover {
+        transform: scale(1.02);
+    }
+
+    .nav-brand-logo img {
+        height: 38px;
+        width: auto;
+        margin-right: 0.75rem;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .light-theme .nav-brand-logo img {
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .nav-brand-logo h3 {
+        color: var(--text-color);
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.5rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Improved sidebar menu items */
+    .dlabnav .metismenu {
+        padding: 10px 0;
+    }
+
+    .dlabnav .metismenu > li {
+        margin-bottom: 5px;
+    }
+
+    .dlabnav .metismenu > li > a {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        border-radius: 10px;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .dlabnav .metismenu > li > a .menu-icon {
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dlabnav .metismenu > li > a .nav-text {
+        font-weight: 500;
+        font-size: 15px;
+    }
+
+    /* Active menu item styling */
+    .dlabnav .metismenu > li.mm-active > a {
+        background-color: var(--primary-light);
+        color: var(--primary);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .dlabnav .metismenu > li > a:hover {
+        transform: translateX(5px);
+        background-color: var(--primary-light);
+    }
+
+    /* Table Refinements */
+    .table {
+        background: var(--card-bg);
+        color: var(--text-color);
+        transition: var(--transition);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background: rgba(0,0,0,0.03);
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-color);
+        transition: var(--transition);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Dashboard Bar */
+    .dashboard_bar {
+        color: var(--text-color);
+        transition: var(--transition);
+        font-weight: 600;
+        font-size: 1.5rem;
+        margin-bottom: 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--body-bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(30, 136, 229, 0.3);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(30, 136, 229, 0.5);
+    }
+
+    /* Stock Market specific styling */
+    .stock-up {
+        color: var(--success) !important;
+        font-weight: 600;
+    }
+
+    .stock-down {
+        color: var(--danger) !important;
+        font-weight: 600;
+    }
+
+    .market-index {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 10px var(--shadow-color);
+        transition: all 0.3s ease;
+    }
+
+    .market-index:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px var(--shadow-color);
+    }
+
+    .market-index .index-name {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+
+    .market-index .index-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .market-index .index-change {
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    /* Professional financial data tables */
+    .financial-table th {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 12px 15px;
+        background: rgba(0,0,0,0.05);
+    }
+
+    .financial-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .financial-table tr:hover {
+        background: rgba(30, 136, 229, 0.05);
+    }
+
+    /* Dropdown Menus */
+    .dropdown-menu {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px var(--shadow-color);
+        transition: var(--transition);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .dropdown-item {
+        color: var(--text-color);
+        transition: var(--transition);
+        padding: 0.5rem 1rem;
+    }
+
+    .dropdown-item:hover {
+        background-color: rgba(30, 136, 229, 0.1);
+    }
+
+    /* Theme toggle improvements */
+    .theme-toggle-container {
+        margin: 0 15px;
+        display: flex;
+        align-items: center;
+    }
+
+    .theme-toggle {
+        position: relative;
+        width: 62px;
+        height: 32px;
+        background: linear-gradient(180deg, #0D47A1, #1E88E5);
+        border-radius: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 2px;
+        box-shadow: 0 2px 5px var(--shadow-color);
+        transition: var(--transition);
+    }
+
+    .light-theme .theme-toggle {
+        background: linear-gradient(180deg, #1E88E5, #64B5F6);
+    }
+
+    .toggle-circle {
+        position: absolute;
+        left: 2px;
+        width: 28px;
+        height: 28px;
+        background: #FFFFFF;
+        border-radius: 50%;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .light-theme .toggle-circle {
+        left: calc(100% - 30px);
+    }
+
+    .toggle-circle i {
+        font-size: 16px;
+        color: #0D47A1;
+    }
+
+    .light-theme .toggle-circle i {
+        color: #1E88E5;
+    }
+
+    /* Navigation Enhancements */
+    .dlabnav {
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border-color);
+        transition: var(--transition);
+        box-shadow: 2px 0 10px var(--shadow-color);
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .dlabnav-scroll {
+        position: relative;
+        height: calc(100vh - 80px);
+        padding-bottom: 50px;
+    }
+
+    /* Enhanced menu items with better spacing and hover effects */
+    .metismenu > li {
+        margin-bottom: 5px;
+        position: relative;
+    }
+
+    .metismenu > li > a {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin: 0 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        color: var(--text-color);
+    }
+
+    .metismenu > li > a:hover {
+        background-color: var(--primary-light);
+        transform: translateX(5px);
+    }
+
+    .metismenu > li.mm-active > a {
+        background-color: var(--primary-light);
+        color: var(--primary);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .metismenu > li > a .menu-icon {
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .metismenu > li > a .nav-text {
+        font-weight: 500;
+        font-size: 15px;
+    }
+
+    /* Content Body Improvements */
+    .content-body {
+        padding: 1.875rem;
+        margin-top: 5px;
+    }
+
+    /* Dashboard Widgets */
+    .widget-stat {
+        position: relative;
+        border-radius: 10px;
+        padding: 20px;
+        background: var(--card-bg);
+        box-shadow: 0 5px 20px var(--shadow-color);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .widget-stat:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px var(--shadow-color);
+    }
+
+    .widget-stat .media {
+        display: flex;
+        align-items: center;
+    }
+
+    .widget-stat .media-body {
+        flex: 1;
+    }
+
+    .widget-stat .media .icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        background: var(--primary-light);
+    }
+
+    .widget-stat .media .icon svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .widget-stat h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .widget-stat .progress {
+        height: 6px;
+        margin-top: 15px;
+        border-radius: 10px;
+        background: rgba(0,0,0,0.1);
+    }
+
+    .widget-stat .progress-bar {
+        border-radius: 10px;
+    }
+
+    /* Stock Market Specific Widgets */
+    .market-overview {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        border: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .market-overview .title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .market-overview .title .refresh-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-light);
+        color: var(--primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .market-overview .title .refresh-btn:hover {
+        background: var(--primary);
+        color: white;
+        transform: rotate(180deg);
+    }
+
+    .stock-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .stock-item:last-child {
+        border-bottom: none;
+    }
+
+    .stock-item .stock-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stock-item .stock-name {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .stock-item .stock-exchange {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .stock-item .stock-price {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .stock-item .stock-change {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .stock-item .stock-change.positive {
+        color: var(--success);
+    }
+
+    .stock-item .stock-change.negative {
+        color: var(--danger);
+    }
+
+    /* Improved Form Controls */
+    .form-control {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        border-radius: 8px;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--text-color);
+    }
+
+    /* Improved Preloader */
+    #preloader {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background-color: var(--body-bg);
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sk-three-bounce {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        background-color: var(--body-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sk-three-bounce .sk-child {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        background-color: var(--primary);
+        border-radius: 100%;
+        display: inline-block;
+        animation: sk-three-bounce 1.4s ease-in-out 0s infinite both;
+        margin: 0 5px;
+    }
+
+    .sk-three-bounce .sk-bounce1 {
+        animation-delay: -0.32s;
+    }
+
+    .sk-three-bounce .sk-bounce2 {
+        animation-delay: -0.16s;
+    }
+
+    @keyframes sk-three-bounce {
+        0%, 80%, 100% {
+            transform: scale(0);
+        }
+        40% {
+            transform: scale(1);
+        }
+    }
+
+    /* Table Enhancements */
+    .table {
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table-responsive {
+        border-radius: 10px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+
+    .table thead th {
+        font-weight: 600;
+        font-size: 14px;
+        padding: 15px 20px;
+        background-color: var(--primary-light);
+        color: var(--primary);
+        border: none;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    .table tbody td {
+        padding: 15px 20px;
+        vertical-align: middle;
+        border-top: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-size: 14px;
+    }
+
+    /* Card Enhancements */
+    .card {
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 5px 20px var(--shadow-color);
+        background-color: var(--card-bg);
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid var(--border-color);
+        padding: 20px;
+        position: relative;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    /* Button Enhancements */
+    .btn {
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(30, 136, 229, 0.3);
+    }
+
+    .btn-secondary {
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(90, 60, 159, 0.3);
+    }
+
+    .btn-success {
+        background-color: var(--success);
+        border-color: var(--success);
+    }
+
+    .btn-success:hover {
+        background-color: #2e7d32;
+        border-color: #2e7d32;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-danger {
+        background-color: var(--danger);
+        border-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+        background-color: #c62828;
+        border-color: #c62828;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(198, 40, 40, 0.3);
+    }
+
+    .btn-icon {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .btn-icon i, .btn-icon svg {
+        font-size: 18px;
+    }
+
+    /* Badge Enhancements */
+    .badge {
+        padding: 6px 10px;
+        font-weight: 500;
+        border-radius: 6px;
+        font-size: 12px;
+    }
+
+    .badge-primary {
+        background-color: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .badge-secondary {
+        background-color: rgba(90, 60, 159, 0.1);
+        color: var(--secondary);
+    }
+
+    .badge-success {
+        background-color: rgba(76, 175, 80, 0.1);
+        color: var(--success);
+    }
+
+    .badge-danger {
+        background-color: rgba(244, 67, 54, 0.1);
+        color: var(--danger);
+    }
+
+    .badge-warning {
+        background-color: rgba(255, 152, 0, 0.1);
+        color: var(--warning);
+    }
+
+    /* Stock-specific Styles */
+    .stock-price-up {
+        color: var(--success);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .stock-price-down {
+        color: var(--danger);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .stock-price-up i, .stock-price-down i {
+        margin-right: 5px;
+        font-size: 14px;
+    }
+
+    /* Pagination Enhancements */
+    .pagination {
+        margin-bottom: 0;
+    }
+
+    .page-item {
+        margin: 0 3px;
+    }
+
+    .page-item:first-child .page-link, .page-item:last-child .page-link {
+        border-radius: 8px;
+    }
+
+    .page-link {
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        color: var(--text-color);
+        background-color: var(--card-bg);
+        box-shadow: 0 2px 5px var(--shadow-color);
+        transition: all 0.3s ease;
+    }
+
+    .page-link:hover {
+        background-color: var(--primary-light);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px var(--shadow-color);
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    /* Footer Enhancements */
+    .footer {
+        padding: 1.25rem 1.875rem;
+        background-color: var(--card-bg);
+        border-top: 1px solid var(--border-color);
+        transition: var(--transition);
+    }
+
+    .footer .copyright {
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+
+    .footer .copyright a {
+        color: var(--primary);
+        font-weight: 500;
+        transition: var(--transition);
+    }
+
+    .footer .copyright a:hover {
+        text-decoration: underline;
+    }
+
+    .footer .footer-menu {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .footer .footer-menu a {
+        color: var(--text-color);
+        margin-left: 20px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .footer .footer-menu a:hover {
+        color: var(--primary);
+    }
+
+    /* Responsive Enhancements */
+    @media (max-width: 767.98px) {
+        .content-body {
+            padding: 1rem;
+        }
+        
+        .card-header, .card-body {
+            padding: 15px;
+        }
+        
+        .table thead th, .table tbody td {
+            padding: 10px 15px;
+        }
+        
+        .footer {
+            text-align: center;
+        }
+        
+        .footer .footer-menu {
+            justify-content: center;
+            margin-top: 10px;
+        }
+    }
+
+    /* Enhanced Header Styles */
+    .header {
+        background-color: var(--card-bg);
+        box-shadow: 0 5px 20px var(--shadow-color);
+        border-bottom: 1px solid var(--border-color);
+        padding: 0 1.875rem;
+        position: relative;
+        z-index: 2;
+        transition: var(--transition);
+    }
+
+    .header-content {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .header .nav-control {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background-color: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .header .nav-control:hover {
+        background-color: var(--primary);
+    }
+
+    .header .nav-control .hamburger {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .header .nav-control .hamburger .line {
+        width: 22px;
+        height: 2px;
+        background-color: var(--primary);
+        display: block;
+        margin: 2px 0;
+        transition: var(--transition);
+    }
+
+    .header .nav-control:hover .hamburger .line {
+        background-color: white;
+    }
+	</style>
+	
+</head>
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="inner">
+            <span>Loading </span>
+            <div class="loading">  
+            </div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+		<div class="nav-header">
+            <a href="/" class="nav-brand-logo">
+				<img src="https://ekglobalcapital.com/wp-content/uploads/2021/03/Ek-Global-Capital-Logo.png" alt="{{ app_name }} Logo">
+				<h3>{{ app_alias }}</h3>
+            </a>
+
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span>
+					<span class="line"></span>
+					<span class="line"></span>
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path opacity="0.4" d="M16.7548 0.333313H20.7051C22.341 0.333313 23.6667 1.67014 23.6667 3.31994V7.30359C23.6667 8.95339 22.341 10.2902 20.7051 10.2902H16.7548C15.1188 10.2902 13.7932 8.95339 13.7932 7.30359V3.31994C13.7932 1.67014 15.1188 0.333313 16.7548 0.333313Z" fill="white"/>
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M3.29492 0.333313H7.24522C8.8812 0.333313 10.2068 1.67014 10.2068 3.31994V7.30359C10.2068 8.95339 8.8812 10.2902 7.24522 10.2902H3.29492C1.65894 10.2902 0.333313 8.95339 0.333313 7.30359V3.31994C0.333313 1.67014 1.65894 0.333313 3.29492 0.333313ZM3.29492 13.7097H7.24522C8.8812 13.7097 10.2068 15.0466 10.2068 16.6964V20.68C10.2068 22.3287 8.8812 23.6666 7.24522 23.6666H3.29492C1.65894 23.6666 0.333313 22.3287 0.333313 20.68V16.6964C0.333313 15.0466 1.65894 13.7097 3.29492 13.7097ZM20.705 13.7097H16.7547C15.1188 13.7097 13.7931 15.0466 13.7931 16.6964V20.68C13.7931 22.3287 15.1188 23.6666 16.7547 23.6666H20.705C22.341 23.6666 23.6666 22.3287 23.6666 20.68V16.6964C23.6666 15.0466 22.341 13.7097 20.705 13.7097Z" fill="white"/>
+					</svg>
+                </div>
+            </div>
+		
+        </div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+					
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+							<div class="dashboard_bar">
+                                {{ app_alias }}
+                            </div>
+                        </div>
+                        {% comment %} <ul class="navbar-nav header-right">
+							<li class="nav-item d-flex align-items-start">
+								<!-- <div class="input-group search-area">
+									<input type="text" class="form-control" id="search" placeholder="Search here...">
+									<span class="input-group-text"><a href="javascript:void(0)"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M16.6751 2H19.4614C20.8636 2 21.9999 3.14585 21.9999 4.55996V7.97452C21.9999 9.38864 20.8636 10.5345 19.4614 10.5345H16.0754C14.6731 10.5345 13.5369 9.38864 13.5369 7.97452V4.55996C13.5369 3.14585 14.6731 2 16.0754 2ZM5 5H19V16H5V5ZM8 8V14H10V8H8ZM12 8V14H14V8H12ZM16 8V14H18V8H16Z" fill="#130F26"/>
+										</svg>
+										</a></span>
+								</div> -->
+							</li>
+                        </ul> {% endcomment %}
+                        <div>
+                            <li class="nav-item theme-toggle-wrapper">
+                                <div class="theme-toggle-container">
+                                    <div class="theme-toggle" id="themeToggle">
+                                        <span class="toggle-icon toggle-moon">🌙</span>
+                                        <span class="toggle-icon toggle-sun">☀️</span>
+                                        <div class="toggle-circle">
+                                            <i class="fas fa-moon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </div>
+						<div class="dropdown header-profile2 ">
+							<ul class="navbar-nav header-right me-sm-4">
+								
+                                <li class="nav-item dropdown notification_dropdown">
+                                    <a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
+                                      <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                          d="M15.8333 11H17.5833C18.5498 11 19.3333 11.7835 19.3333 12.75C19.3333 13.7165 18.5498 14.5 17.5833 14.5H2.41666C1.45016 14.5 0.666656 13.7165 0.666656 12.75C0.666656 11.7835 1.45016 11 2.41666 11H4.16666L4.81798 5.13812C5.11136 2.49763 7.34325 0.5 9.99999 0.5C12.6567 0.5 14.8886 2.49763 15.182 5.13812L15.8333 11Z" fill="#763ed0"></path>
+                                        <path opacity="0.3"
+                                          d="M12.3333 18C12.3333 16.7114 11.2887 15.6667 9.99999 15.6667C8.71133 15.6667 7.66666 16.7114 7.66666 18C7.66666 19.2887 8.71133 20.3334 9.99999 20.3334C11.2887 20.3334 12.3333 19.2887 12.3333 18ZM5 5H19V16H5V5ZM8 8V14H10V8H8ZM12 8V14H14V8H12ZM16 8V14H18V8H16Z" fill="#B9A8FF"></path>
+                                      </svg>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                      <div id="DZ_W_Notification1" class="widget-media dz-scroll p-3" style="height:380px;">
+                                        <ul class="timeline">
+                                          <li>
+                                            <div class="timeline-panel">
+                                              <div class="media me-2">
+                                                <img alt="image" width="50" src="images/avatar/1.jpg">
+                                              </div>
+                                              <div class="media-body">
+                                                <h6 class="mb-1"><a href="javascript:voiud(0)"> Dr sultads Send you Photo</a></h6>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-panel">
+                                              <div class="media me-2 media-info">
+                                                KG
+                                              </div>
+                                              <div class="media-body">
+                                                <h6 class="mb-1"><a href="javascript:voiud(0)">Resport created successfully</a></h6>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-panel">
+                                              <div class="media me-2 media-success">
+                                                <i class="fa fa-home"></i>
+                                              </div>
+                                              <div class="media-body">
+                                                <h6 class="mb-1"><a href="javascript:voiud(0)">Reminder : Treatment Time!</a></h6>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-panel">
+                                              <div class="media me-2">
+                                                <img alt="image" width="50" src="images/avatar/1.jpg">
+                                              </div>
+                                              <div class="media-body">
+                                                <h6 class="mb-1"><a href="javascript:voiud(0)">Dr sultads Send you Photo</a></h6>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-panel">
+                                              <div class="media me-2 media-danger">
+                                                KG
+                                              </div>
+                                              <div class="media-body">
+                                                <h6 class="mb-1"><a href="javascript:voiud(0)"> Resport created successfully </a></h6>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-panel">
+                                              <div class="media me-2 media-primary">
+                                                <i class="fa fa-home"></i>
+                                              </div>
+                                              <div class="media-body">
+                                                <h6 class="mb-1"><a href="javascript:voiud(0)"> Reminder : Treatment Time! </a></h6>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                              </div>
+                                            </div>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                      <a class="all-notification" href="javascript:void(0);">See all notifications <i
+                                          class="ti-arrow-end"></i></a>
+                                    </div>
+                                  </li>
+                                  <li class="nav-item dropdown notification_dropdown">
+                                    <a class="nav-link " href="javascript:void(0);" data-bs-toggle="dropdown">
+                                      <svg width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                          d="M3.5 19.7699V10.8881H24.5V19.8411C24.5 23.5032 22.1948 25.7549 18.5066 25.7549H9.48189C5.82821 25.7549 3.5 23.4566 3.5 19.7699ZM13.3298 14.7593L16.2198 11.0303L16.1798 11.0503C16.3398 10.8303 16.3698 10.5503 16.2598 10.3003C16.1508 10.0503 15.9098 9.8803 15.6508 9.8603C15.3798 9.8303 15.1108 9.9503 14.9498 10.1703L12.5308 13.3003L9.75976 11.1203C9.58976 10.9903 9.38976 10.9393 9.18976 10.9603C8.99076 10.9903 8.81076 11.0993 8.68976 11.2593L5.73076 15.1103L5.66976 15.2003C5.49976 15.5193 5.57976 15.9293 5.87976 16.1503C6.01976 16.2403 6.16976 16.3003 6.33976 16.3003C6.57076 16.3103 6.78976 16.1893 6.92976 16.0003L9.43976 12.7693L12.2898 14.9103L12.3798 14.9693C12.6998 15.1393 13.0998 15.0603 13.3298 14.7593ZM5 5H19V16H5V5ZM8 8V14H10V8H8ZM12 8V14H14V8H12ZM16 8V14H18V8H16Z" fill="#130F26"/>
+                                      </svg>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                      <div id="DZ_W_TimeLine02" class="widget-timeline dz-scroll style-1 ps ps--active-y p-3 height370">
+                                        <ul class="timeline">
+                                          <li>
+                                            <div class="timeline-badge primary"></div>
+                                            <a class="timeline-panel text-muted" href="javascript:void(0);">
+                                              <span>10 minutes ago</span>
+                                              <h6 class="mb-0">Youtube, a video-sharing website, goes live <strong
+                                                  class="text-primary">$500</strong>.</h6>
+                                            </a>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-badge info">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="javascript:void(0);">
+                                              <span>20 minutes ago</span>
+                                              <h6 class="mb-0">New order placed <strong class="text-info">#XF-2356.</strong></h6>
+                                              <p class="mb-0">Quisque a consequat ante Sit amet magna at volutapt...</p>
+                                            </a>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-badge danger">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="javascript:void(0);">
+                                              <span>30 minutes ago</span>
+                                              <h6 class="mb-0">john just buy your product <strong class="text-warning">Sell $250</strong>
+                                              </h6>
+                                            </a>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-badge success">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="javascript:void(0);">
+                                              <span>15 minutes ago</span>
+                                              <h6 class="mb-0">StumbleUpon is acquired by eBay. </h6>
+                                            </a>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-badge warning">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="javascript:void(0);">
+                                              <span>20 minutes ago</span>
+                                              <h6 class="mb-0">Mashable, a news website and blog, goes live.</h6>
+                                            </a>
+                                          </li>
+                                          <li>
+                                            <div class="timeline-badge dark">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="javascript:void(0);">
+                                              <span>20 minutes ago</span>
+                                              <h6 class="mb-0">Mashable, a news website and blog, goes live.</h6>
+                                            </a>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </li>
+							</ul>
+                            
+							<a class="nav-link user-profile" href="javascript:void(0);"  role="button" data-bs-toggle="dropdown">
+								<div class="header-info2 d-flex align-items-center">
+									<img src="{% static 'images/placeholder.jpg' %}" alt="">
+									<div class="d-flex align-items-center sidebar-info">
+										{% if request.user.is_authenticated %}
+										<div class="user-info">
+											<span class="font-w500 d-block  fs-5 text-white">{{ request.user.name }}</span>
+											<small class="text-end font-w400">{{ request.user.account_type | upper }}</small>
+										</div>
+										{% else %}
+										<span class="text-white" style="padding: 6px; margin-right: 4px;">MENU</span>
+										{% endif %}
+										<svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M12.3333 1.08331L7.00002 6.91665L1.16669 1.08331" stroke="#FFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>	
+									</div>
+									
+								</div>
+							</a>
+							<div class="dropdown-menu profile dropdown-menu-end">
+								<!-- <a href="app-profile.html" class="dropdown-item ai-icon ">
+									<svg  xmlns="http://www.w3.org/2000/svg" class="text-primary" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+									<span class="ms-2">Profile </span>
+								</a> -->
+								{% if request.user.is_authenticated %}
+								<a href="{% url 'accounts:signout' %}" class="dropdown-item ai-icon">
+									<svg  xmlns="http://www.w3.org/2000/svg" style="transform: rotate(180deg);" class="text-danger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+									<span class="ms-2">Logout </span>
+								</a>
+								{% else %}
+								<a href="{% url 'accounts:signin' %}" class="dropdown-item ai-icon">
+									<svg  xmlns="http://www.w3.org/2000/svg" class="text-success" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+									<span class="ms-2">Login</span>
+								</a>
+								{% endif %}
+							</div>
+						
+						</div>
+                    </div>
+				</nav>
+			</div>
+		</div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+		<div class="dlabnav">
+			<div class="dlabnav-scroll">
+				
+				<ul class="metismenu" id="menu">
+					{% comment %} <li><a href="/" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path opacity="0.4" d="M16.0754 2H19.4614C20.8636 2 21.9999 3.14585 21.9999 4.55996V7.97452C21.9999 9.38864 20.8636 10.5345 19.4614 10.5345H16.0754C14.6731 10.5345 13.5369 9.38864 13.5369 7.97452V4.55996C13.5369 3.14585 14.6731 2 16.0754 2Z" fill="#763ed0"></path>
+							<path fill-rule="evenodd" clip-rule="evenodd" d="M4.53852 2H7.92449C9.32676 2 10.463 3.14585 10.463 4.55996V7.97452C10.463 9.38864 9.32676 10.5345 7.92449 10.5345H4.53852C3.13626 10.5345 2 9.38864 2 7.97452V4.55996C2 3.14585 3.13626 2 4.53852 2ZM4.53852 13.4655H7.92449C9.32676 13.4655 10.463 14.6114 10.463 16.0255V19.44C10.463 20.8532 9.32676 22 7.92449 22H4.53852C3.13626 22 2 20.8532 2 19.44V16.0255C2 14.6114 3.13626 13.4655 4.53852 13.4655ZM19.4615 13.4655H16.0755C14.6732 13.4655 13.537 14.6114 13.537 16.0255V19.44C13.537 20.8532 14.6732 22 16.0755 22H19.4615C20.8637 22 22 20.8532 22 19.44V16.0255C22 14.6114 20.8637 13.4655 19.4615 13.4655Z" fill="#B9A8FF"></path>
+							</svg>
+						</div>	
+							<span class="nav-text">Market Snapshort</span>
+						</a>
+					</li> {% endcomment %}
+
+					{% comment %} <li><a href="/" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g id="IconlyFilter">
+								<g id="Filter">
+								<path id="Filter_2" fill-rule="evenodd" clip-rule="evenodd" d="M8.87774 6.37856C8.87774 8.24523 7.33886 9.75821 5.43887 9.75821C3.53999 9.75821 2 8.24523 2 6.37856C2 4.51298 3.53999 3 5.43887 3C7.33886 3 8.87774 4.51298 8.87774 6.37856ZM20.4933 4.89833C21.3244 4.89833 22 5.56203 22 6.37856C22 7.19618 21.3244 7.85989 20.4933 7.85989H13.9178C13.0856 7.85989 12.4101 7.19618 12.4101 6.37856C12.4101 5.56203 13.0856 4.89833 13.9178 4.89833H20.4933ZM3.50777 15.958H10.0833C10.9155 15.958 11.5911 16.6217 11.5911 17.4393C11.5911 18.2558 10.9155 18.9206 10.0833 18.9206H3.50777C2.67555 18.9206 2 18.2558 2 17.4393C2 16.6217 2.67555 15.958 3.50777 15.958ZM18.5611 20.7778C20.4611 20.7778 22 19.2648 22 17.3992C22 15.5325 20.4611 14.0196 18.5611 14.0196C16.6623 14.0196 15.1223 15.5325 15.1223 17.3992C15.1223 19.2648 16.6623 20.7778 18.5611 20.7778Z" fill="#130F26"></path>
+								</g></g>
+							</svg>
+						</div>	
+							<span class="nav-text">Market Snapshort</span>
+						</a>
+					</li> {% endcomment %}
+				</ul>
+			</div>
+		</div>
+        
+		<div class="dlabnav">
+			<div class="dlabnav-scroll">
+				
+				<ul class="metismenu" id="menu">
+					<li><a href="#" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path opacity="0.4" d="M16.0754 2H19.4614C20.8636 2 21.9999 3.14585 21.9999 4.55996V7.97452C21.9999 9.38864 20.8636 10.5345 19.4614 10.5345H16.0754C14.6731 10.5345 13.5369 9.38864 13.5369 7.97452V4.55996C13.5369 3.14585 14.6731 2 16.0754 2Z" fill="#763ed0"></path>
+							<path fill-rule="evenodd" clip-rule="evenodd" d="M4.53852 2H7.92449C9.32676 2 10.463 3.14585 10.463 4.55996V7.97452C10.463 9.38864 9.32676 10.5345 7.92449 10.5345H4.53852C3.13626 10.5345 2 9.38864 2 7.97452V4.55996C2 3.14585 3.13626 2 4.53852 2ZM4.53852 13.4655H7.92449C9.32676 13.4655 10.463 14.6114 10.463 16.0255V19.44C10.463 20.8532 9.32676 22 7.92449 22H4.53852C3.13626 22 2 20.8532 2 19.44V16.0255C2 14.6114 3.13626 13.4655 4.53852 13.4655ZM19.4615 13.4655H16.0755C14.6732 13.4655 13.537 14.6114 13.537 16.0255V19.44C13.537 20.8532 14.6732 22 16.0755 22H19.4615C20.8637 22 22 20.8532 22 19.44V16.0255C22 14.6114 20.8637 13.4655 19.4615 13.4655Z" fill="#B9A8FF"></path>
+							</svg>
+						</div>	
+							<span class="nav-text">Market Snapshort</span>
+						</a>
+					</li>
+                    <li>
+						<a href="{% url 'psxscreener:index' %}" class="" aria-expanded="false">
+							<div class="menu-icon">
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M3 4C3 2.9 3.9 2 5 2H19C20.1 2 21 2.9 21 4V4.51114C16.8823 5.37842 19 8.05995 19 11V16L21 18V19H3V18L5 16V11C5 8.05995 7.11775 5.37842 10 4.51114V4C10 2.9 10.8954 2 12 2ZM8 20H16C16 21.1046 14.6569 22 12 22C9.34315 22 8 21.1046 8 20Z" fill="#130F26"/>
+								</svg>
+							</div>
+							<span class="nav-text">Smart Screener</span>
+						</a>
+					</li>
+				
+                    <li>
+                    <a href="#" class="" aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g id="IconlyActivity">
+								<g id="Activity">
+								<path id="Activity_2" fill-rule="evenodd" clip-rule="evenodd" d="M17.1799 4.41C17.1799 3.08 18.2599 2 19.5899 2C20.9199 2 21.9999 3.08 21.9999 4.41C21.9999 5.74 20.9199 6.82 19.5899 6.82C18.2599 6.82 17.1799 5.74 17.1799 4.41ZM13.3298 14.7593L16.2198 11.0303L16.1798 11.0503C16.3398 10.8303 16.3698 10.5503 16.2598 10.3003C16.1508 10.0503 15.9098 9.8803 15.6508 9.8603C15.3798 9.8303 15.1108 9.9503 14.9498 10.1703L12.5308 13.3003L9.75976 11.1203C9.58976 10.9903 9.38976 10.9393 9.18976 10.9603C8.99076 10.9903 8.81076 11.0993 8.68976 11.2593L5.73076 15.1103L5.66976 15.2003C5.49976 15.5193 5.57976 15.9293 5.87976 16.1503C6.01976 16.2403 6.16976 16.3003 6.33976 16.3003C6.57076 16.3103 6.78976 16.1893 6.92976 16.0003L9.43976 12.7693L12.2898 14.9103L12.3798 14.9693C12.6998 15.1393 13.0998 15.0603 13.3298 14.7593ZM5 5H19V16H5V5ZM8 8V14H10V8H8ZM12 8V14H14V8H12ZM16 8V14H18V8H16Z" fill="#130F26"/>
+								</g></g>
+							</svg>	
+						</div>	
+							<span class="nav-text">Risk Management</span>
+						</a>
+					</li>
+					<li><a href="{% url 'copilot:tradingview' %}" class="" aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M3 4C3 2.9 3.9 2 5 2H19C20.1 2 21 2.9 21 4V16C21 17.1 20.1 18 19 18H14V20H16C16.55 20 17 20.45 17 21C17 21.55 16.55 22 16 22H8C7.45 22 7 21.55 7 21C7 20.45 7.45 20 8 20H10V18H5C3.9 18 2 17.1 2 16V4C2 2.9 3.9 2 5 2ZM5 4V16H19V4H5ZM8 8V14H10V8H8ZM12 8V14H14V8H12ZM16 8V14H18V8H16Z" fill="#130F26"/>
+							</svg>    
+						</div>    
+						<span class="nav-text">Trading View</span>
+					</a></li>
+
+					<li><a href="{% url 'portfolios:portfolio_list' %}" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg style="fill: rgb(208, 196, 235);" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 128 128">
+								<path d="M 55.199219 6 C 50.299219 6 45.900781 8.4996094 43.300781 12.599609 C 42.400781 13.999609 42.800781 15.899219 44.300781 16.699219 C 45.700781 17.599219 47.600391 17.199219 48.400391 15.699219 C 49.900391 13.299219 52.399219 11.900391 55.199219 11.900391 L 72.800781 11.900391 C 77.200781 11.900391 80.800781 15.500391 80.800781 19.900391 L 80.800781 22.900391 L 19 22.900391 C 11.8 22.900391 6 28.700391 6 35.900391 L 6 55.599609 C 6 56.699609 6.6 57.599219 7.5 58.199219 C 22.9 67.399219 39.999219 72.599219 57.199219 73.699219 L 57.199219 79.300781 C 57.199219 83.700781 60.799219 87.300781 65.199219 87.300781 C 69.599219 87.300781 73.199219 83.700781 73.199219 79.300781 L 73.199219 73.5 C 89.699219 72.1 105.89961 66.999219 120.59961 58.199219 C 121.49961 57.699219 122.09961 56.699609 122.09961 55.599609 L 122.09961 36 C 121.99961 28.8 116.2 23 109 23 L 86.800781 23 L 86.800781 20 C 86.800781 12.3 80.500781 6 72.800781 6 L 55.199219 6 z M 19 29 L 109 29 C 112.9 29 116 32.1 116 36 L 116 54 C 83.8 72.6 44.2 72.6 12 54 L 12 36 C 12 32.1 15.1 29 19 29 z M 9 67.699219 C 7.3 67.699219 6 68.999219 6 70.699219 L 6 114 C 6 121.2 11.8 127 19 127 L 109 127 C 116.2 127 122 121.2 122 114 L 122 70.699219 C 122 68.999219 120.7 67.699219 119 67.699219 C 117.3 67.699219 116 68.999219 116 70.699219 L 116 114 C 116 117.9 112.9 121 109 121 L 19 121 C 15.1 121 12 117.9 12 114 L 12 70.699219 C 12 68.999219 10.7 67.699219 9 67.699219 z"></path>
+							</svg>
+						</div>	
+							<span class="nav-text">My Portfolio</span>
+						</a>
+					</li>
+
+					{% if request.user.is_admin %}
+					<li><a href="{% url 'stocks:uploads' %}" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g id="IconlyFilter">
+								<g id="Filter">
+								<path id="Filter_2" fill-rule="evenodd" clip-rule="evenodd" d="M8.87774 6.37856C8.87774 8.24523 7.33886 9.75821 5.43887 9.75821C3.53999 9.75821 2 8.24523 2 6.37856C2 4.51298 3.53999 3 5.43887 3C7.33886 3 8.87774 4.51298 8.87774 6.37856ZM20.4933 4.89833C21.3244 4.89833 22 5.56203 22 6.37856C22 7.19618 21.3244 7.85989 20.4933 7.85989H13.9178C13.0856 7.85989 12.4101 7.19618 12.4101 6.37856C12.4101 5.56203 13.0856 4.89833 13.9178 4.89833H20.4933ZM3.50777 15.958H10.0833C10.9155 15.958 11.5911 16.6217 11.5911 17.4393C11.5911 18.2558 10.9155 18.9206 10.0833 18.9206H3.50777C2.67555 18.9206 2 18.2558 2 17.4393C2 16.6217 2.67555 15.958 3.50777 15.958ZM18.5611 20.7778C20.4611 20.7778 22 19.2648 22 17.3992C22 15.5325 20.4611 14.0196 18.5611 14.0196C16.6623 14.0196 15.1223 15.5325 15.1223 17.3992C15.1223 19.2648 16.6623 20.7778 18.5611 20.7778Z" fill="#130F26"></path>
+								</g></g>
+							</svg>
+						</div>	
+							<span class="nav-text">Uploads</span>
+						</a>
+					</li>
+					{% endif %}
+					<li><a href="{% url 'fullview:companies_list' %}" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g id="Iconly360View">
+								  <g id="360View">
+									<path id="View_Icon" fill-rule="evenodd" clip-rule="evenodd" d="M12 3C13.1046 2 14 2.89543 14 4V4.51114C16.8823 5.37842 19 8.05995 19 11V16L21 18V19H3V18L5 16V11C5 8.05995 7.11775 5.37842 10 4.51114V4C10 2.89543 10.8954 2 12 2ZM8 20H16C16 21.1046 14.6569 22 12 22C9.34315 22 8 21.1046 8 20Z" fill="#130F26"/>
+								  </g>
+								</g>
+							  </svg>
+							  
+						</div>	
+							<span class="nav-text">360-Degree View </span>
+						</a>
+					</li>
+					<li><a href="{% url 'academy:index' %}" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g id="IconlyAcademy">
+								  <g id="Academy">
+									<path id="Academy_Icon" fill-rule="evenodd" clip-rule="evenodd" d="M12 3L2 9L12 15L22 9L12 3ZM5 5H19V16H5V5ZM8 8V14H10V8H8ZM12 8V14H14V8H12ZM16 8V14H18V8H16Z" fill="#130F26"/>
+								  </g>
+								</g>
+							  </svg>
+							  
+							  
+						</div>	
+							<span class="nav-text">Academy </span>
+						</a>
+					</li>
+					<li><a href="{% url 'news:news_list' %}" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g id="IconlyNews">
+								  <g id="News">
+									<path id="News_Icon" fill-rule="evenodd" clip-rule="evenodd" d="M4 3C3.44772 3 3 3.44772 3 4V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4H12L10 3H4ZM5 6H19V20H5V6ZM7 9H17V11H7V9ZM7 13H14V15H7V13ZM7 17H12V19H7V17Z" fill="#130F26"/>
+								  </g>
+								</g>
+							  </svg>
+							  
+							  
+						</div>	
+							<span class="nav-text">News </span>
+						</a>
+					</li>
+					<li><a href="{% url 'Alerts:alert_list' %}" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g id="IconlyAlert">
+								  <g id="Alert">
+									<path id="Bell_Icon" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C13.1046 2 14 2.89543 14 4V4.51114C16.8823 5.37842 19 8.05995 19 11V16L21 18V19H3V18L5 16V11C5 8.05995 7.11775 5.37842 10 4.51114V4C10 2.89543 10.8954 2 12 2ZM8 20H16C16 21.1046 14.6569 22 12 22C9.34315 22 8 21.1046 8 20Z" fill="#130F26"/>
+								  </g>
+								</g>
+							  </svg>
+							  
+							  
+						</div>	
+							<span class="nav-text">Alerts </span>
+						</a>
+					</li>
+					<li><a href="#" class aria-expanded="false">
+						<div class="menu-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g id="IconlyAISmartAssistant">
+								  <g id="AI">
+									<path id="AI_Icon" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM10 7H14V9H10V7ZM7 11H17V13H7V11ZM9 15H15V17H9V15Z" fill="#130F26"/>
+								  </g>
+								</g>
+							  </svg>
+							  
+							  
+						</div>	
+							<span class="nav-text">AI Smart Assistant </span>
+						</a>
+					</li>
+				</ul>
+				
+				<div class="copyright">
+					<p class="fs-14"><strong>{{ app_name }}</strong> &copy; {{ current_year }} All Rights Reserved</p>
+				</div>
+			<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 694px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 574px;"></div></div></div>
+		</div>
+		
+		<!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <!-- row -->
+			<div class="container-fluid">
+				{% if messages %}
+					{% for msg in messages %}
+						{% if msg.tags == 'error' %}
+							<div class="mt-2 alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+							<div>
+								{{ msg }}
+							</div>
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>
+
+						{% else %}
+						<div class="mt-2 alert alert-{{ msg.tags }} alert-dismissible fade show d-flex align-items-center" role="alert">
+							<div>
+								{{ msg }}
+							</div>
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>
+						
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+
+				{% block content %}
+                {% endblock %}
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+	</div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+	<script src="{% static 'vendor/global/global.min.js' %}"></script>
+    <script src="{% static 'vendor/chart.js/Chart.bundle.min.js' %}"></script>
+    <!-- Chart.js (CDN version for compatibility) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="{% static 'vendor/jquery-nice-select/js/jquery.nice-select.min.js' %}"></script>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    
+    <!-- Apex Chart -->
+    <script src="{% static 'vendor/apexchart/apexchart.js' %}"></script>
+    <!-- Chart piety plugin files -->
+    <script src="{% static 'vendor/peity/jquery.peity.min.js' %}"></script>
+    <script src="{% static 'vendor/chartist/js/chartist.min.js' %}"></script>
+
+	<script src="{% static 'vendor/jquery-autocomplete/jquery-ui.js' %}"></script> 
+	<script src="{% static 'js/custom.min.js' %}"></script>
+	<script src="{% static 'js/dlabnav-init.js' %}"></script>
+	
+	<!-- Noty.js -->
+	<script src="https://cdn.jsdelivr.net/npm/noty/lib/noty.min.js" async></script>
+	<!-- Custom Scripts -->
+	<script src="{% static 'core/scripts/utils.js' %}"></script>
+	<!-- Copilot Modal Script -->
+
+	{% block scripts %}
+	{% endblock scripts %}
+	
+	<script>
+		function cardsCenter()
+		{
+			
+			/*  testimonial one function by = owl.carousel.js */
+			
+	
+			
+			jQuery('.card-slider').owlCarousel({
+				loop:true,
+				margin:0,
+				nav:true,
+				//center:true,
+				slideSpeed: 3000,
+				paginationSpeed: 3000,
+				dots: true,
+				navText: ['<i class="fas fa-arrow-left"></i>', '<i class="fas fa-arrow-right"></i>'],
+				responsive:{
+					0:{
+						items:1
+					},
+					576:{
+						items:1
+					},	
+					800:{
+						items:1
+					},			
+					991:{
+						items:1
+					},
+					1200:{
+						items:1
+					},
+					1600:{
+						items:1
+					}
+				}
+			})
+		}
+		
+		jQuery(window).on('load',function(){
+			setTimeout(function(){
+				cardsCenter();
+			}, 1000); 
+		});
+		
+		// Theme Toggle Functionality
+		document.addEventListener('DOMContentLoaded', function() {
+			const themeToggle = document.getElementById('themeToggle');
+			const body = document.body;
+			
+			// Check if user has a theme preference stored
+			const savedTheme = localStorage.getItem('theme');
+			if (savedTheme === 'light') {
+				body.classList.add('light-theme');
+				updateToggleIcons(true);
+			}
+			
+			themeToggle.addEventListener('click', function() {
+				body.classList.toggle('light-theme');
+				const isLightTheme = body.classList.contains('light-theme');
+				
+				// Save user preference
+				localStorage.setItem('theme', isLightTheme ? 'light' : 'dark');
+				
+				// Update toggle icons
+				updateToggleIcons(isLightTheme);
+			});
+			
+			function updateToggleIcons(isLightTheme) {
+				const toggleCircle = themeToggle.querySelector('.toggle-circle');
+				const moonIcon = toggleCircle.querySelector('i');
+				
+				if (isLightTheme) {
+					moonIcon.classList.remove('fa-moon');
+					moonIcon.classList.add('fa-sun');
+				} else {
+					moonIcon.classList.remove('fa-sun');
+					moonIcon.classList.add('fa-moon');
+				}
+			}
+		});
+	</script>
+</body>
+</html>

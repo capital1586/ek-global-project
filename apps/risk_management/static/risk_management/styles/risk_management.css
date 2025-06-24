@@ -1,0 +1,183 @@
+
+#profileCreateModal{
+    max-height: 95dvh;
+    overflow-y: scroll;
+}
+
+#profileCreateModal::-webkit-scrollbar{
+    display: none;
+}
+
+.profile-form .criteria-selected {
+    width: 100%;
+    min-height: 80px;
+    border: 1px dotted #888;
+    padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.criteria-selected > .criterion {
+    border-radius: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 10px;
+    padding: 8px !important;
+    height: min-content;
+    flex-shrink: 0;
+}
+
+.profile-form .criterion-creation-section-toggle {
+    text-decoration: underline;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    background: transparent;
+    color: inherit;
+    margin-block: 6px;
+}
+
+.profile-form .criterion-creation-section-toggle:hover {
+    color: #888;
+}
+
+
+/* Criteria Creation */
+.profile-form:has(.criterion-creation-section.show-block) .criterion-creation-section-toggle {
+    color: #886;
+}
+
+.criterion-creation-section{
+    display: none;
+    width: 100%;
+    padding: 8px;
+}
+
+.criterion-creation-fields{
+    width: 100%;
+    margin-block: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px 0;
+}
+
+.tab-data-reloader{
+    color: #ccc;
+    cursor: pointer;
+}
+
+
+/* RiskProfile Tabs */
+
+.stockset-form{
+    align-self: flex-end;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: max-content;
+}
+
+.stockset-form select{
+    min-width: 100px;
+    padding: 8px;
+    border-radius: 4px;
+    width: max-content;
+    max-width: 250px;
+}
+
+/* Risk Profile Table */
+
+.risk-profile-table{
+    max-width: 100%;
+    width: min-content;
+    overflow-x: scroll;
+    font-size: 1rem;
+    background: transparent;
+    max-height: 900px;
+}
+
+.risk-profile-table::-webkit-scrollbar{
+    display: none;
+}
+
+.tabulator-table{
+    background-color: transparent !important;
+    color: #ccc !important;
+    max-width: 100%;
+    table-layout: auto;
+    border-collapse: separate; 
+}
+
+
+.tabulator-header {
+    color: #ccc !important;
+    background-color: #4f3c97 !important;
+}
+
+.tabulator-col {
+    background-color: transparent !important;
+    min-width: max-content !important;
+}
+
+.tabulator-col:nth-of-type(1), .tabulator-col:nth-of-type(2){
+    background-color: #4f3c97 !important;
+}
+
+.tabulator-col .tabulator-col-content {
+    background-color: transparent !important;
+    padding: 8px 16px !important;
+    font-weight: normal;
+}
+
+.tabulator-row {
+    background-color: transparent !important;
+    border: none;
+}
+
+.tabulator-row .tabulator-cell {
+    padding: 4px 16px !important;
+    background-color: transparent;
+    border-bottom: 1px solid #888;
+}
+
+.tabulator-row .tabulator-cell:nth-of-type(1), .tabulator-row .tabulator-cell:nth-of-type(2){
+    background-color: #4f3c97 !important;
+}
+
+.tabulator-row.tabulator-selectable:hover {
+    font-weight: 500;
+    background-color: transparent !important;
+    cursor: default !important;
+    color: #fff !important;
+}
+
+.tabulator-footer {
+    background-color: #4f3c97 !important;
+    color: #ccc !important;
+}
+
+.tabulator-paginator {
+    background-color: #4f3c97 !important;
+    color: #ccc !important;
+}
+
+.tabulator-paginator .tabulator-page {
+    background-color: transparent !important;
+    color: #ccc !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+}
+
+.tabulator-paginator .tabulator-page.tabulator-page-active {
+    background-color: #311898 !important;
+    color: #ccc !important;
+}
+
+.tabulator-paginator .tabulator-page.tabulator-page-disabled {
+    background-color: transparent !important;
+    color: #ccc !important;
+}

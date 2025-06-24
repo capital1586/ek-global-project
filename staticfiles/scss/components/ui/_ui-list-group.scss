@@ -1,0 +1,44 @@
+.list-group-item {
+    background-color: rgba(255,255,255,0);
+    border: 1px solid $bg-light;
+	padding: 1rem 1.5rem;
+	color: $white;
+	&.active{
+		background-color :var(--primary);
+		border-color :var(--primary);
+	}
+    @at-root [data-theme-version="dark"] & {
+        border-color: $d-border;
+    }
+}
+
+.list-group-item.disabled, .list-group-item:disabled {
+    color: #fff;
+    background-color: $secondary;
+    border-color: $secondary;
+}
+[class*="bg-"]{
+	.list-group-item{
+		border-color:rgba($white, 0.05);
+	}
+}
+.bg-warning{
+	.list-group-item{
+		border-color:rgba($black, 0.05);
+	}
+}
+// .list-group-item-action {
+//     color: #fff;
+// }
+.list-group-item.list-group-item-action:hover,
+.list-group-item.list-group-item-action:focus{
+	background-color: $bg-light;
+	color: $light-text;
+}
+
+.list-group-item.lh-condensed{
+	small{
+		color: $light-text;
+	}
+}
+

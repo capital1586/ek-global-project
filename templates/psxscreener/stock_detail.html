@@ -1,0 +1,573 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load stock_filters %}
+
+{% block title %}{{ stock.Symbol }} - {{ stock.CompanyName }} | PSX Screener{% endblock %}
+
+{% block stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" integrity="sha512-5vJn8XQV8HjV1RTUCVaLg1KD58SfHjgIeiYDlM9QmI9IUFr8gKC0VHzu5LKUOqVRTZqSQJ+5xgFL7rvlQGE7SQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    .stock-detail-container {
+        margin: 1.5rem auto;
+        max-width: 100%;
+        background-color: var(--content-bg);
+        box-shadow: var(--shadow-md);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+    
+    .stock-header {
+        padding: 1.5rem;
+        background-color: var(--header-bg);
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .price-change-positive {
+        color: var(--positive);
+        background-color: var(--positive-bg);
+    }
+    
+    .price-change-negative {
+        color: var(--negative);
+        background-color: var(--negative-bg);
+    }
+    
+    .data-card {
+        background-color: var(--content-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .data-card-header {
+        padding: 1rem;
+        background-color: var(--table-header-bg);
+        border-bottom: 1px solid var(--border-color);
+        font-weight: 600;
+    }
+    
+    .data-card-body {
+        padding: 1rem;
+    }
+    
+    .data-table {
+        width: 100%;
+    }
+    
+    .data-table td {
+        padding: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .data-table .label {
+        font-weight: 500;
+        color: var(--text-light);
+    }
+    
+    .data-table .value {
+        text-align: right;
+        font-weight: 600;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+        min-height: 300px;
+        background-color: var(--content-bg);
+        border-radius: var(--radius-sm);
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 600;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.375rem;
+    }
+    
+    .badge-pill {
+        border-radius: 50rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center my-3">
+        <h2 class="h4 mb-0">Stock Detail</h2>
+        <a href="{% url 'psxscreener:index' %}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-arrow-left"></i> Back to Screener
+        </a>
+    </div>
+    
+    <div class="stock-detail-container">
+        <div class="stock-header">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 class="mb-1">{{ stock.Symbol }} <small class="text-muted">{{ stock.CompanyName }}</small></h2>
+                    <div class="d-flex align-items-center">
+                        <h3 class="mb-0 me-2">{{ stock.CurrentPrice|default:"0.00"|floatformat:2 }}</h3>
+                        {% if stock.Change|default:0 >= 0 %}
+                        <span class="badge badge-pill price-change-positive px-2 py-1">
+                            +{{ stock.Change|default:"0.00"|floatformat:2 }} (+{{ stock.ChangePercentage|default:"0.00"|floatformat:2 }}%)
+                        </span>
+                        {% else %}
+                        <span class="badge badge-pill price-change-negative px-2 py-1">
+                            {{ stock.Change|default:"0.00"|floatformat:2 }} ({{ stock.ChangePercentage|default:"0.00"|floatformat:2 }}%)
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="mt-2 text-muted">Last Updated: {{ stock.LastUpdated }}</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="float-md-end">
+                        <span class="badge bg-primary">{{ stock.Sector|default:"Other" }}</span>
+                        {% if stock.Industry %}
+                        <span class="badge bg-secondary">{{ stock.Industry }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-4">
+            <div class="row">
+                <!-- Price Chart -->
+                <div class="col-lg-8">
+                    <div class="data-card">
+                        <div class="data-card-header d-flex justify-content-between align-items-center">
+                            <div>Price Chart (Last 30 Days)</div>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Chart Type">
+                                <button type="button" class="btn btn-outline-primary active" id="line-chart-btn">Line</button>
+                                <button type="button" class="btn btn-outline-primary" id="candle-chart-btn">Candlestick</button>
+                            </div>
+                        </div>
+                        <div class="data-card-body">
+                            {% include "psxscreener/partials/stock_chart.html" %}
+                            {% if not history %}
+                            <div class="alert alert-warning mt-3">
+                                <small>Note: Using simulated price data as no historical data is available.</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Key Statistics -->
+                <div class="col-lg-4">
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            Key Statistics
+                        </div>
+                        <div class="data-card-body">
+                            <table class="data-table">
+                                <tr>
+                                    <td class="label">Open</td>
+                                    <td class="value">{{ stock.OpenPrice|default:"-"|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label">High</td>
+                                    <td class="value">{{ stock.HighPrice|default:"-"|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label">Low</td>
+                                    <td class="value">{{ stock.LowPrice|default:"-"|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label">Volume</td>
+                                    <td class="value">{{ stock.Volume|default:"-"|intcomma }}</td>
+                                </tr>
+                                {% if stock.AvgVolume %}
+                                <tr>
+                                    <td class="label">Avg Volume</td>
+                                    <td class="value">{{ stock.AvgVolume|intcomma }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if stock.RelativeVolume %}
+                                <tr>
+                                    <td class="label">Rel Volume</td>
+                                    <td class="value">{{ stock.RelativeVolume|floatformat:2 }}x</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td class="label">P/E Ratio</td>
+                                    <td class="value">{% if stock.PE %}{{ stock.PE|floatformat:2 }}{% else %}N/A{% endif %}</td>
+                                </tr>
+                                {% if stock.PB %}
+                                <tr>
+                                    <td class="label">P/B Ratio</td>
+                                    <td class="value">{{ stock.PB|floatformat:2 }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if stock.PS %}
+                                <tr>
+                                    <td class="label">P/S Ratio</td>
+                                    <td class="value">{{ stock.PS|floatformat:2 }}</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td class="label">Dividend Yield</td>
+                                    <td class="value {% if stock.DividendYield|default:0 > 0 %}text-success{% endif %}">
+                                        {% if stock.DividendYield %}{{ stock.DividendYield|floatformat:2 }}%{% else %}N/A{% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">Market Cap</td>
+                                    <td class="value">
+                                        {% if stock.MarketCap %}
+                                            {{ stock.MarketCap|format_market_cap }}
+                                        {% else %}N/A{% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">VWAP</td>
+                                    <td class="value">{% if stock.VWAP %}{{ stock.VWAP|floatformat:2 }}{% else %}N/A{% endif %}</td>
+                                </tr>
+                                {% if stock.YearHigh %}
+                                <tr>
+                                    <td class="label">52W High</td>
+                                    <td class="value">{{ stock.YearHigh|floatformat:2 }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if stock.YearLow %}
+                                <tr>
+                                    <td class="label">52W Low</td>
+                                    <td class="value">{{ stock.YearLow|floatformat:2 }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if stock.RSI14 %}
+                                <tr>
+                                    <td class="label">RSI (14)</td>
+                                    <td class="value">{{ stock.RSI14|floatformat:2 }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if history %}
+            <!-- Historical Data -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            Historical Data
+                        </div>
+                        <div class="data-card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Open</th>
+                                            <th>High</th>
+                                            <th>Low</th>
+                                            <th>Close</th>
+                                            <th>Change %</th>
+                                            <th>Volume</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in history %}
+                                        <tr>
+                                            <td>{{ item.date }}</td>
+                                            <td>{{ item.open|floatformat:2 }}</td>
+                                            <td>{{ item.high|floatformat:2 }}</td>
+                                            <td>{{ item.low|floatformat:2 }}</td>
+                                            <td>{{ item.price|floatformat:2 }}</td>
+                                            <td class="{% if item.change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                                {{ item.change|floatformat:2 }}%
+                                            </td>
+                                            <td>{{ item.volume|intcomma }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Technical Analysis -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            Technical Analysis & Metrics
+                        </div>
+                        <div class="data-card-body">
+                            <ul class="nav nav-tabs" id="analysisTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="technical-tab" data-bs-toggle="tab" data-bs-target="#technical" type="button" role="tab" aria-controls="technical" aria-selected="true">Technical</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="fundamental-tab" data-bs-toggle="tab" data-bs-target="#fundamental" type="button" role="tab" aria-controls="fundamental" aria-selected="false">Fundamentals</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="dividend-tab" data-bs-toggle="tab" data-bs-target="#dividend" type="button" role="tab" aria-controls="dividend" aria-selected="false">Dividend</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content p-3" id="analysisTabContent">
+                                <!-- Technical Tab -->
+                                <div class="tab-pane fade show active" id="technical" role="tabpanel" aria-labelledby="technical-tab">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="card mb-3 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">Moving Averages</h6>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span>MA(50)</span>
+                                                        <span class="fw-bold">{% if stock.MA50 %}{{ stock.MA50|floatformat:2 }}{% else %}N/A{% endif %}</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span>MA(200)</span>
+                                                        <span class="fw-bold">{% if stock.MA200 %}{{ stock.MA200|floatformat:2 }}{% else %}N/A{% endif %}</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span>Price vs MA(50)</span>
+                                                        {% if stock.MA50 %}
+                                                        <span class="fw-bold {% if stock.CurrentPrice > stock.MA50 %}text-success{% else %}text-danger{% endif %}">
+                                                            {% if stock.CurrentPrice > stock.MA50 %}Above{% else %}Below{% endif %}
+                                                        </span>
+                                                        {% else %}
+                                                        <span class="fw-bold">N/A</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card mb-3 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">Oscillators</h6>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span>RSI(14)</span>
+                                                        {% if stock.RSI14 %}
+                                                        <span class="fw-bold {% if stock.RSI14 > 70 %}text-danger{% elif stock.RSI14 < 30 %}text-success{% endif %}">
+                                                            {{ stock.RSI14|floatformat:2 }}
+                                                            {% if stock.RSI14 > 70 %}(Overbought){% elif stock.RSI14 < 30 %}(Oversold){% endif %}
+                                                        </span>
+                                                        {% else %}
+                                                        <span class="fw-bold">N/A</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span>Volume</span>
+                                                        {% if stock.RelativeVolume %}
+                                                        <span class="fw-bold {% if stock.RelativeVolume > 1.5 %}text-success{% elif stock.RelativeVolume < 0.5 %}text-danger{% endif %}">
+                                                            {{ stock.RelativeVolume|floatformat:2 }}x Avg
+                                                        </span>
+                                                        {% else %}
+                                                        <span class="fw-bold">{{ stock.Volume|intcomma }}</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card mb-3 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">52-Week Range</h6>
+                                                    {% if stock.YearHigh and stock.YearLow %}
+                                                    <div class="mb-3">
+                                                        <span class="d-block text-muted mb-1">Price vs 52-Week Range</span>
+                                                        <div class="progress" style="height: 8px;">
+                                                            {% percentage_of_range stock.CurrentPrice stock.YearLow stock.YearHigh as percentile %}
+                                                            <div class="progress-bar" role="progressbar" 
+                                                                style="width: {{ percentile }}%;" 
+                                                                aria-valuenow="{{ percentile }}" 
+                                                                aria-valuemin="0" 
+                                                                aria-valuemax="100"></div>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between mt-1">
+                                                            <small>{{ stock.YearLow|floatformat:2 }}</small>
+                                                            <small>{{ stock.YearHigh|floatformat:2 }}</small>
+                                                        </div>
+                                                    </div>
+                                                    {% else %}
+                                                    <p class="card-text">52-week range data not available</p>
+                                                    {% endif %}
+                                                    <div class="text-center mt-3">
+                                                        <span class="badge {% if stock.ChangePercentage >= 0 %}bg-success{% else %}bg-danger{% endif %} px-3 py-2">
+                                                            {{ stock.ChangePercentage|floatformat:2 }}% {% if stock.ChangePercentage >= 0 %}▲{% else %}▼{% endif %}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Fundamental Tab -->
+                                <div class="tab-pane fade" id="fundamental" role="tabpanel" aria-labelledby="fundamental-tab">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card mb-3 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">Valuation Metrics</h6>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span>P/E Ratio</span>
+                                                        <span class="fw-bold">{% if stock.PE %}{{ stock.PE|floatformat:2 }}{% else %}N/A{% endif %}</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span>P/B Ratio</span>
+                                                        <span class="fw-bold">{% if stock.PB %}{{ stock.PB|floatformat:2 }}{% else %}N/A{% endif %}</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span>P/S Ratio</span>
+                                                        <span class="fw-bold">{% if stock.PS %}{{ stock.PS|floatformat:2 }}{% else %}N/A{% endif %}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card mb-3 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">Company Information</h6>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span>Market Cap</span>
+                                                        <span class="fw-bold">
+                                                            {% if stock.MarketCap %}
+                                                                {{ stock.MarketCap|format_market_cap }}
+                                                            {% else %}N/A{% endif %}
+                                                        </span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span>Sector</span>
+                                                        <span class="fw-bold">{{ stock.Sector }}</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span>Exchange</span>
+                                                        <span class="fw-bold">{{ stock.Exchange }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Dividend Tab -->
+                                <div class="tab-pane fade" id="dividend" role="tabpanel" aria-labelledby="dividend-tab">
+                                    <div class="row">
+                                        <div class="col-md-6 mx-auto">
+                                            <div class="card mb-3 border-0 shadow-sm">
+                                                <div class="card-body text-center">
+                                                    <h6 class="card-title">Dividend Information</h6>
+                                                    {% if stock.DividendYield and stock.DividendYield > 0 %}
+                                                        <div class="my-4">
+                                                            <h1 class="text-success">{{ stock.DividendYield|floatformat:2 }}%</h1>
+                                                            <p class="text-muted">Annual Dividend Yield</p>
+                                                        </div>
+                                                        
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span>Est. Annual Dividend</span>
+                                                            <span class="fw-bold">PKR {{ stock.CurrentPrice|calculate_dividend:stock.DividendYield|default:"N/A" }}</span>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="my-4">
+                                                            <h3 class="text-muted">No Dividend</h3>
+                                                            <p class="text-muted">This stock does not pay dividends</p>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Market Status -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            Market Summary
+                        </div>
+                        <div class="data-card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card border-0 mb-3">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted">KSE-100 Index</h6>
+                                            <h4>{{ kse100_index|intcomma }}</h4>
+                                            <span class="badge {% if kse100_change >= 0 %}price-change-positive{% else %}price-change-negative{% endif %}">
+                                                {{ kse100_change }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card border-0 mb-3">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted">Trading Date</h6>
+                                            <h4>{{ today|date:"F j, Y" }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card border-0 mb-3">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted">Data Source</h6>
+                                            <h4>{% if from_api %}Live API{% else %}Database{% endif %}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ block.super }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.3.0/luxon.min.js" integrity="sha512-vsUz7JFFpTO/u/3Y6I7+vAEO4AnE9yM76yWqAq9AF5W7SfNjvhvxBVKvoNpM0O+jE1JbcT/w4veTvMjYS5WMcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.min.js"></script>
+
+<script>
+// Add event listeners for chart type toggle buttons
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Adding event listeners for chart buttons");
+    
+    // Toggle between line and candlestick chart
+    document.getElementById('line-chart-btn')?.addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('candle-chart-btn')?.classList.remove('active');
+        // For now just show an alert since we're using the partial
+        console.log("Switched to line chart");
+    });
+    
+    document.getElementById('candle-chart-btn')?.addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('line-chart-btn')?.classList.remove('active');
+        alert('Candlestick chart requires Chart.js Financial plugin which is not included in this demo.');
+        console.log("Attempted to switch to candlestick chart");
+    });
+});
+</script>
+{% endblock %} 

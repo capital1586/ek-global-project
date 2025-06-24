@@ -1,0 +1,25 @@
+{% comment %} news/templates/news/partials/pagination_controls.html {% endcomment %}
+
+<div class="pagination-v2">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if query_string %}&amp;{{ query_string }}{% endif %}" class="pagination-arrow-v2" aria-label="Previous page"><i class="fas fa-angle-left"></i></a>
+    {% else %}
+        <span class="pagination-arrow-v2 disabled"><i class="fas fa-angle-left"></i></span>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="pagination-number-v2 current" aria-current="page">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}{% if query_string %}&amp;{{ query_string }}{% endif %}" class="pagination-number-v2" aria-label="Page {{ num }}">{{ num }}</a>
+        {% elif num == page_obj.number|add:'-4' or num == page_obj.number|add:'4' %}
+             <span class="pagination-ellipsis-v2">...</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query_string %}&amp;{{ query_string }}{% endif %}" class="pagination-arrow-v2" aria-label="Next page"><i class="fas fa-angle-right"></i></a>
+    {% else %}
+         <span class="pagination-arrow-v2 disabled"><i class="fas fa-angle-right"></i></span>
+    {% endif %}
+</div>

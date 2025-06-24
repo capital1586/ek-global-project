@@ -1,0 +1,11 @@
+<a href="?{% if field == current_sort %}sort_by={{ field }}&sort_order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{% else %}sort_by={{ field }}&sort_order=desc{% endif %}{% for key, value in request.GET.items %}{% if key != 'sort_by' and key != 'sort_order' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+   class="sort-link" 
+   aria-label="Sort by {{ label }} {% if field == current_sort %}(currently sorted {% if current_order == 'asc' %}ascending{% else %}descending{% endif %}){% endif %}"
+   title="Sort by {{ label }} {% if field == current_sort %}(click to sort {% if current_order == 'asc' %}descending{% else %}ascending{% endif %}){% endif %}">
+    {{ label }}
+    {% if field == current_sort %}
+        <i class="fas fa-sort-{% if current_order == 'asc' %}up{% else %}down{% endif %}" aria-hidden="true"></i>
+    {% else %}
+        <i class="fas fa-sort text-muted opacity-50" aria-hidden="true"></i>
+    {% endif %}
+</a>

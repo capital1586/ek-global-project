@@ -1,0 +1,46 @@
+
+
+
+.footer {
+	padding: 0.3875rem 0;
+    font-size: 0.875rem;
+    border-top-left-radius: 1.875rem;
+    border-top-right-radius: 1.875rem;
+    margin-top: 1rem;
+    background-color: var(--bs-card-bg);
+    position: relative;
+    z-index: 1;
+    .copyright {
+            padding: 0.5375rem;
+        p {
+            text-align: center;
+            margin: 0;
+        }
+
+        a{
+            color: var(--primary);
+        }
+    }
+}
+.out-footer{
+	width: calc(100% - 23rem);
+    margin-right: 2.375rem;
+    margin-left: auto;
+	@include custommq($max:90rem){
+		width: calc(100% - 21.5rem);
+	}
+	@include custommq($max:63.875rem){
+		width: calc(100% - 8.7rem);
+		margin-right: 1.875rem;
+	}
+	// @include respond('tab-port'){
+		// width: calc(100% - 16.125rem);
+	// }
+	@include respond('phone-land'){
+		width: 100%;
+	}
+	
+	
+}
+
+

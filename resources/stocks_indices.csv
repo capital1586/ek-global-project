@@ -1,0 +1,998 @@
+﻿IndexName,IndexID,CompanyID,Symbol,CompanyName
+KSE100,1,21900,HGFA,HBL Growth Fund
+KSE100,1,31300,FHAM,First Habib Modaraba
+KSE100,1,41097,PGLC,Pak-Gulf Leasing Company Limited
+KSE100,1,51047,PSX,Pakistan Stock Exchange Limited
+KSE100,1,60960,ABL,Allied Bank Limited
+KSE100,1,60980,AKBL,Askari Bank Limited
+KSE100,1,61000,BAFL,Bank Alfalah Limited
+KSE100,1,61004,BIPL,BankIslami Pakistan Limited
+KSE100,1,61010,BAHL,Bank AL Habib Limited
+KSE100,1,61030,BOP,The Bank of Punjab
+KSE100,1,61045,FABL,Faysal Bank Limited
+KSE100,1,61050,HBL,Habib Bank Limited
+KSE100,1,61094,MEBL,Meezan Bank Limited
+KSE100,1,61095,NBP,National Bank of Pakistan
+KSE100,1,61097,HMB,Habib Metropolitan Bank Limited
+KSE100,1,61098,MCB,MCB Bank Limited
+KSE100,1,61153,SCBPL,Standard Chartered Bank (Pak) Ltd
+KSE100,1,61180,UBL,United Bank Limited
+KSE100,1,71000,AICL,Adamjee Insurance Company Limited
+KSE100,1,71100,EFUG,EFU General Insurance Limited
+KSE100,1,81725,GADT,Gadoon Textile Mills Limited
+KSE100,1,82985,UNITY,Unity Foods Limited
+KSE100,1,91220,YOUW,Yousaf Weaving Mills Limited
+KSE100,1,101274,ILP,Interloop Limited
+KSE100,1,101360,KTML,Kohinoor Textile Mills Limited
+KSE100,1,101440,NML,Nishat Mills Limited
+KSE100,1,110980,BNWM,Bannu Woollen Mills Limited
+KSE100,1,121074,IBFL,Ibrahim Fibres Limited
+KSE100,1,131160,THALL,Thal Limited
+KSE100,1,141210,FCEPL,Frieslandcampina Engro Pakistan Limited
+KSE100,1,141320,HABSM,Habib Sugar Mills Limited
+KSE100,1,150960,BWCL,Bestway Cement Limited
+KSE100,1,151000,CHCC,Cherat Cement Company Limited
+KSE100,1,151050,DGKC,D.G. Khan Cement Company Limited
+KSE100,1,151065,FCCL,Fauji Cement Company Limited
+KSE100,1,151100,JVDC,Javedan Corporation Limited
+KSE100,1,151103,KOHC,Kohat Cement Company Limited
+KSE100,1,151105,LUCK,Lucky Cement Limited
+KSE100,1,151110,MLCF,Maple Leaf Cement Factory Limited
+KSE100,1,151150,PIOC,Pioneer Cement Limited
+KSE100,1,161040,PAKT,Pakistan Tobacco Company Limited
+KSE100,1,171000,ATRL,Attock Refinery Limited
+KSE100,1,171010,CNERGY,Cnergyico PK Limited
+KSE100,1,171080,NRL,National Refinery Limited
+KSE100,1,181050,HUBC,The Hub Power Company Limited
+KSE100,1,181060,KEL,K-Electric Limited
+KSE100,1,181080,KAPCO,Kot Addu Power Company Limited
+KSE100,1,181085,NCPL,Nishat Chunian Power Limited
+KSE100,1,181090,NPL,Nishat Power Limited
+KSE100,1,181095,PKGP,Pakgen Power Limited
+KSE100,1,181100,SPWL,Saif Power Limited
+KSE100,1,191000,APL,Attock Petroleum Limited
+KSE100,1,191160,PSO,Pakistan State Oil Company Limited
+KSE100,1,191170,SHEL,Shell Pakistan Limited
+KSE100,1,191200,SNGP,Sui Northern Gas Pipelines Limited
+KSE100,1,201075,MARI,Mari Petroleum Company Limited
+KSE100,1,201080,OGDC,Oil & Gas Development Company Limited
+KSE100,1,201120,POL,Pakistan Oilfields Limited
+KSE100,1,201130,PPL,Pakistan Petroleum Limited
+KSE100,1,211100,INIL,International Industries Limited
+KSE100,1,211110,ISL,International Steels Limited
+KSE100,1,211145,MUGHAL,Mughal Iron & Steel Industries Limited
+KSE100,1,221210,INDU,Indus Motor Company Limited
+KSE100,1,221220,MTL,Millat Tractors Limited
+KSE100,1,241120,PAEL,Pak Elektron Limited
+KSE100,1,241170,AVN,Avanceon Limited
+KSE100,1,251010,PIBTL,Pakistan International Bulk Terminal
+KSE100,1,261020,SYS,Systems Limited
+KSE100,1,261070,PTC,Pakistan Telecommunication Company Ltd
+KSE100,1,261073,TRG,TRG Pakistan Limited
+KSE100,1,271160,DAWH,Dawood Hercules Corporation Limited
+KSE100,1,271200,ENGRO,Engro Corporation Limited
+KSE100,1,271202,EFERT,Engro Fertilizers Limited
+KSE100,1,271205,FFBL,Fauji Fertilizer Bin Qasim Limited
+KSE100,1,271210,FFC,Fauji Fertilizer Company Limited
+KSE100,1,281000,ABOT,Abbott Laboratories (Pakistan) Limited
+KSE100,1,281010,AGP,AGP Limited
+KSE100,1,281240,GLAXO,GlaxoSmithKline Pakistan Limited
+KSE100,1,281250,HINOON,Highnoon Laboratories Limited
+KSE100,1,281530,SEARL,The Searle Company Limited
+KSE100,1,291120,COLG,Colgate-Palmolive (Pakistan) Limited
+KSE100,1,291200,EPCL,Engro Polymer & Chemicals Limited
+KSE100,1,291210,FATIMA,Fatima Fertilizer Company Limited
+KSE100,1,291300,LCI,Lucky Core Industries Limited
+KSE100,1,291390,LOTCHEM,Lotte Chemical Pakistan Limited
+KSE100,1,301060,CEPB,Century Paper & Board Mills Limited
+KSE100,1,301160,PKGS,Packages Limited
+KSE100,1,311200,POML,Punjab Oil Mills Limited
+KSE100,1,321085,SRVI,Service Industries Limited
+KSE100,1,331160,NESTLE,Nestle Pakistan Limited
+KSE100,1,331200,MUREB,Murree Brewery Company Limited
+KSE100,1,331220,NATF,National Foods Limited
+KSE100,1,331295,UPFL,Unilever Pakistan Foods Limited
+KSE100,1,331300,RMPL,Rafhan Maize Products Company Limited
+KSE100,1,341065,GHGL,Ghani Glass Limited
+KSE100,1,341100,TGL,Tariq Glass Industries Limited
+KSE100,1,351180,PABC,Pakistan Aluminium Beverage Cans Limited
+KSE100,1,351240,PSEL,Pakistan Services Limited
+KSE100,1,351270,SHFA,Shifa International Hospitals Limited
+KSE100,1,460000,DCR,Dolmen City REIT
+ALLSHR,2,21900,HGFA,HBL Growth Fund
+ALLSHR,2,21902,INMF,Investec Mutual Fund Limited
+ALLSHR,2,21903,HIFA,HBL Investment Fund
+ALLSHR,2,21913,SINDM,Sindh Modaraba
+ALLSHR,2,21920,PUDF,Prudential Stocks Fund Limited
+ALLSHR,2,21940,TSMF,Tri-Star Mutual Fund Limited
+ALLSHR,2,30980,FANM,First Al-Noor Modaraba
+ALLSHR,2,31010,ARM,Allied Rental Modaraba
+ALLSHR,2,31040,BFMOD,B.F. Modaraba
+ALLSHR,2,31060,BRR,B.R.R. Guardian Modaraba
+ALLSHR,2,31120,FCONM,First Constellation Modaraba
+ALLSHR,2,31150,FIM,First Investec Modaraba
+ALLSHR,2,31180,FECM,First Elite Capital Modaraba
+ALLSHR,2,31220,FEM,First Equity Modaraba
+ALLSHR,2,31235,FFLM,First Fidelity Leasing Modaraba
+ALLSHR,2,31260,OLPM,OLP Modaraba
+ALLSHR,2,31300,FHAM,First Habib Modaraba
+ALLSHR,2,31310,FTMM,First Treet Manufacturing Modaraba
+ALLSHR,2,31330,FIBLM,First IBL Modaraba
+ALLSHR,2,31350,FIMM,First Imrooz Modaraba
+ALLSHR,2,31355,PIM,Popular Islamic Modaraba
+ALLSHR,2,31420,KASBM,KASB Modaraba
+ALLSHR,2,31430,MODAM,Modaraba Al-Mali
+ALLSHR,2,31435,ORM,Orient Rental Mod
+ALLSHR,2,31450,FNBM,First National Bank Modaraba
+ALLSHR,2,31500,PAKMI,First Pak Modaraba
+ALLSHR,2,31510,FPRM,First Paramount Modaraba
+ALLSHR,2,31580,PMI,First Prudential Modaraba
+ALLSHR,2,31640,FPJM,First Punjab Modaraba
+ALLSHR,2,31720,FTSM,First Tri-Star Modaraba
+ALLSHR,2,31760,TRSM,Trust Modaraba
+ALLSHR,2,31780,FUDLM,First UDL Modaraba
+ALLSHR,2,31800,UCAPM,Unicap Modaraba
+ALLSHR,2,41018,CASH,Calcorp Limited
+ALLSHR,2,41022,ENGL,English Leasing Limited
+ALLSHR,2,41032,GRYL,Grays Leasing Limited
+ALLSHR,2,41080,OLPL,OLP Financial Services Pakistan Limited
+ALLSHR,2,41097,PGLC,Pak-Gulf Leasing Company Limited
+ALLSHR,2,41100,PICL,Pakistan Industrial & Commercial Leasing Ltd.
+ALLSHR,2,41110,SLL,SME Leasing Limited
+ALLSHR,2,41135,SLCL,Security Leasing Corporation Limited
+ALLSHR,2,41140,SPLC,Saudi Pak Leasing Company Limited
+ALLSHR,2,41146,SLCPA,Security Leasing Corp.9.10%(Pref)
+ALLSHR,2,50950,AMSL,Al-Mal Securities & Services Limited
+ALLSHR,2,50955,MCBIM,MCB Investment Management Limited
+ALLSHR,2,50960,AHL,Arif Habib Limited
+ALLSHR,2,50970,AHCL,Arif Habib Corporation Limited
+ALLSHR,2,50990,ICIBL,Invest Capital Investment Bank Limited
+ALLSHR,2,51023,FDPL,First Dawood Properties Limited
+ALLSHR,2,51033,JSCL,Jahangir Siddiqui & Co. Ltd.
+ALLSHR,2,51034,AKDSL,AKD Securities Limited
+ALLSHR,2,51037,NEXT,Next Capital Limited
+ALLSHR,2,51040,AMBL,Apna Microfinance Bank Limited
+ALLSHR,2,51042,ESBL,Escorts Investment Bank Limited
+ALLSHR,2,51046,FCEL,First Capital Equities Limited
+ALLSHR,2,51047,PSX,Pakistan Stock Exchange Limited
+ALLSHR,2,51055,FCSC,First Capital Securities Corporation
+ALLSHR,2,51058,FCIBL,First Credit and Investment Bank Limited
+ALLSHR,2,51065,EFGH,EFG Hermes Pakistan Limited
+ALLSHR,2,51070,FNEL,First National Equities Limited
+ALLSHR,2,51087,JSIL,JS Investments Limited
+ALLSHR,2,51090,JSGCL,JS Global Capital Limited
+ALLSHR,2,51098,LSEVL,LSE Ventures Limited
+ALLSHR,2,51099,786,786 Investments Limited
+ALLSHR,2,51102,DEL,Dawood Equities Limited
+ALLSHR,2,51105,PASL,Pervez Ahmed Consultancy Services Ltd.
+ALLSHR,2,51110,PDGH,Prudential Discourt & Guarantee House Ltd
+ALLSHR,2,51120,PRIB,Prudential Investment Bank Limited
+ALLSHR,2,51140,SIBL,Security Investment Bank Limited
+ALLSHR,2,51150,TRIBL,Trust Investment Bank Limited
+ALLSHR,2,51155,TSBL,Trust Securities & Brokerage Limited
+ALLSHR,2,51157,LSEFSL,LSE Financial Services Limited
+ALLSHR,2,51332,JSCLPSA,Jahangir Sidd(Pref)
+ALLSHR,2,60960,ABL,Allied Bank Limited
+ALLSHR,2,60970,BML,Bank Makramah Limited
+ALLSHR,2,60980,AKBL,Askari Bank Limited
+ALLSHR,2,61000,BAFL,Bank Alfalah Limited
+ALLSHR,2,61004,BIPL,BankIslami Pakistan Limited
+ALLSHR,2,61005,BOK,The Bank of Khyber
+ALLSHR,2,61010,BAHL,Bank AL Habib Limited
+ALLSHR,2,61030,BOP,The Bank of Punjab
+ALLSHR,2,61045,FABL,Faysal Bank Limited
+ALLSHR,2,61050,HBL,Habib Bank Limited
+ALLSHR,2,61094,MEBL,Meezan Bank Limited
+ALLSHR,2,61095,NBP,National Bank of Pakistan
+ALLSHR,2,61097,HMB,Habib Metropolitan Bank Limited
+ALLSHR,2,61098,MCB,MCB Bank Limited
+ALLSHR,2,61104,JSBL,JS Bank Limited
+ALLSHR,2,61114,SBL,Samba Bank Limited
+ALLSHR,2,61135,SILK,Silkbank Limited
+ALLSHR,2,61150,SNBL,Soneri Bank Limited
+ALLSHR,2,61153,SCBPL,Standard Chartered Bank (Pak) Ltd
+ALLSHR,2,61180,UBL,United Bank Limited
+ALLSHR,2,71000,AICL,Adamjee Insurance Company Limited
+ALLSHR,2,71005,ALIFE,Adamjee Life Assurance Company Limited
+ALLSHR,2,71010,IGIL,IGI Life Insurance Limited
+ALLSHR,2,71020,ASIC,Asia Insurance Company Limited
+ALLSHR,2,71025,AGIC,Askari General Insurance Company Limited
+ALLSHR,2,71030,BIIC,Business & Industrial Insurance Company Ltd.
+ALLSHR,2,71040,CYAN,Cyan Limited
+ALLSHR,2,71060,CENI,Century Insurance Company Limited
+ALLSHR,2,71070,JLICL,Jubilee Life Insurance Company Limited
+ALLSHR,2,71080,CSIL,Crescent Star Insurance Limited
+ALLSHR,2,71100,EFUG,EFU General Insurance Limited
+ALLSHR,2,71110,EFUL,EFU Life Assurance Limited
+ALLSHR,2,71120,EWIC,East West Insurance Company Limited
+ALLSHR,2,71140,HICL,Habib Insurance Company Limited
+ALLSHR,2,71160,IGIHL,IGI Holdings Limited
+ALLSHR,2,71210,ALAC,Askari Life Assurance Company Limited
+ALLSHR,2,71220,ATIL,Atlas Insurance Limited
+ALLSHR,2,71260,JGICL,Jubilee General Insurance Limited
+ALLSHR,2,71265,PIL,PICIC Insurance Limited
+ALLSHR,2,71275,PKGI,The Pakistan General Insurance Co. Ltd.
+ALLSHR,2,71276,PKGIR,The Pakistan General Insurance Co. Ltd. R
+ALLSHR,2,71310,PAKRI,Pakistan Reinsurance Company Limited
+ALLSHR,2,71400,PINL,Premier Insurance Limited
+ALLSHR,2,71420,PRIC,Progressive Insurance Company Limited
+ALLSHR,2,71440,HCL,Hallmark Company Limited
+ALLSHR,2,71460,RICL,Reliance Insurance Company Limited
+ALLSHR,2,71470,SHNI,Shaheen Insurance Company Limited
+ALLSHR,2,71480,SSIC,Silver Star Insurance Company Limited
+ALLSHR,2,71490,TPLI,TPL Insurance Limited
+ALLSHR,2,71500,SICL,Standard Insurance Company Limited
+ALLSHR,2,71560,UNIC,The United Insurance Company
+ALLSHR,2,71580,UVIC,The Universal Insurance Company Limited
+ALLSHR,2,81080,AATM,Ali Asghar Textile Mills Limited
+ALLSHR,2,81090,AMTEX,Amtex Limited
+ALLSHR,2,81100,AWTX,Allawasaya Tex. & Finishing Mills Ltd
+ALLSHR,2,81180,ANNT,Annoor Textile Mills Limited
+ALLSHR,2,81220,APOT,Apollo Textile Mills Limited
+ALLSHR,2,81225,ASTM,Asim Textile Mills Limited
+ALLSHR,2,81280,AZMT,Azmat Textile Mills Limited
+ALLSHR,2,81325,BILF,Bilal Fibres Limited
+ALLSHR,2,81420,CLOUD,Chakwal Spinning Mills Limited
+ALLSHR,2,81450,HIRAT,Hira Textile Mills Limited
+ALLSHR,2,81470,CFL,Crescent Fibres Limited
+ALLSHR,2,81502,DSML,Dar-es-Salaam Textile Mills Limited
+ALLSHR,2,81503,DATM,Data Textiles Limited
+ALLSHR,2,81504,DFSM,Dewan Farooque Spinning Mills Limited
+ALLSHR,2,81505,DKTM,Dewan Khalid Textile Mills Limited
+ALLSHR,2,81510,DMTM,Dewan Mushtaq Textile Mills Limited
+ALLSHR,2,81520,DWTM,Dewan Textile Mills Limited
+ALLSHR,2,81530,DINT,Din Textile Mills Limited
+ALLSHR,2,81560,DMTX,D.M. Textile Mills Limited
+ALLSHR,2,81565,DSIL,D.S. Industries Limited
+ALLSHR,2,81580,ELCM,Elahi Cotton Mills Limited
+ALLSHR,2,81600,ELSM,Ellcot Spinning Mills Limited
+ALLSHR,2,81630,FAEL,Fatima Enterprises Limited
+ALLSHR,2,81680,FZCM,Fazal Cloth Mills Limited
+ALLSHR,2,81725,GADT,Gadoon Textile Mills Limited
+ALLSHR,2,81740,GLOT,Globe Textile Mills Limited
+ALLSHR,2,81790,GUSM,Gulistan Spinning Mills Limited
+ALLSHR,2,81800,GUTM,Gulistan Textile Mills Limited
+ALLSHR,2,81820,GSPM,Gulshan Spinning Mills Limited
+ALLSHR,2,81825,HMIM,Haji Mohammad Ismail Mills Limited
+ALLSHR,2,81840,HAJT,Hajra Textile Mills Limited
+ALLSHR,2,81910,IDSM,Ideal Spinning Mills Limited
+ALLSHR,2,81913,IDRT,Idrees Textile Mills Limited
+ALLSHR,2,81920,IDYM,Indus Dyeing & Manufacturing Co. Limited
+ALLSHR,2,81990,JATM,J.A. Textile Mills Limited
+ALLSHR,2,81995,JKSM,J.K. Spinning Mills Limited
+ALLSHR,2,82000,JDMT,Janana De Malucho Textile Mills Limited
+ALLSHR,2,82080,AAL,Agro Allianz Limited
+ALLSHR,2,82120,KSTM,Khalid Siraj Textile Mills Limited
+ALLSHR,2,82140,ARCTM,Arctic Textile Mills Limited
+ALLSHR,2,82160,KOHTM,Kohat Textile Mills Limited
+ALLSHR,2,82200,KOSM,Kohinoor Spinning Mills Limited
+ALLSHR,2,82230,LMSM,Landmark Spinning Industries Limited
+ALLSHR,2,82240,MQTM,Maqbool Textile Mills Limited
+ALLSHR,2,82325,NATM,Nadeem Textile Mills Limited
+ALLSHR,2,82340,NAGC,Nagina Cotton Mills Limited
+ALLSHR,2,82365,NCML,Nazir Cotton Mills Limited
+ALLSHR,2,82440,OML,Olympia Mills Limited
+ALLSHR,2,82460,PRET,Premium Textile Mills Limited
+ALLSHR,2,82500,BECO,Beco Steel Limited
+ALLSHR,2,82545,RCML,Reliance Cotton Spinning Mills Limited
+ALLSHR,2,82550,RUBY,Ruby Textile Mills Limited
+ALLSHR,2,82570,SAIF,Saif Textile Mills Limited
+ALLSHR,2,82640,SLYT,Sally Textile Mills Limited
+ALLSHR,2,82650,SANE,Salman Noman Enterprises Limited
+ALLSHR,2,82660,SNAI,Sana Industries Limited
+ALLSHR,2,82720,SSML,Saritow Spinning Mills Limited
+ALLSHR,2,82740,SERT,Service Industries Textiles Limited
+ALLSHR,2,82780,SHDT,Shadab Textile Mills Limited
+ALLSHR,2,82800,SHCM,Shadman Cotton Mills Limited
+ALLSHR,2,82860,SZTM,Shahzad Textile Mills Limited
+ALLSHR,2,82950,SUTM,Sunrays Textile Mills Limited
+ALLSHR,2,82985,UNITY,Unity Foods Limited
+ALLSHR,2,82990,TATM,Tata Textile Mills Limited
+ALLSHR,2,91010,ASHT,Ashfaq Textile Mills Limited
+ALLSHR,2,91060,HKKT,Hakkim Textile Mills Limited
+ALLSHR,2,91070,ICCI,ICC Industries Limited
+ALLSHR,2,91130,MOHE,Mohib Exports Limited
+ALLSHR,2,91160,FML,Feroze1888 Mills Limited
+ALLSHR,2,91183,PRWM,Prosperity Weaving Mills Limited
+ALLSHR,2,91190,SDOT,Sadoon Textile Industries Limited
+ALLSHR,2,91198,WAVESAPP,Waves Home Appliances Limited
+ALLSHR,2,91205,STJT,Shahtaj Textile Limited
+ALLSHR,2,91220,YOUW,Yousaf Weaving Mills Limited
+ALLSHR,2,91240,ZTL,Zephyr Textiles Limited
+ALLSHR,2,101010,AHTM,Ahmad Hassan Textile Mills Limited
+ALLSHR,2,101025,ADMM,Artistic Denim Mills Limited
+ALLSHR,2,101030,ARUJ,Aruj Industries Limited
+ALLSHR,2,101070,BHAT,Bhanero Textile Mills Limited
+ALLSHR,2,101092,CHBL,Chenab Limited
+ALLSHR,2,101095,CLCPS,Chenab Limited (Pref)
+ALLSHR,2,101160,CRTM,The Crescent Textile Mills Limited
+ALLSHR,2,101165,NCL,Nishat Chunian Limited
+ALLSHR,2,101180,DLL,Dawood Lawrencepur Limited
+ALLSHR,2,101185,REWM,Reliance Weaving Mills Limited
+ALLSHR,2,101190,FSWL,Fateh Sports Wear Limited
+ALLSHR,2,101195,FTHM,Fateh Textile Mills Limited
+ALLSHR,2,101198,GFIL,Ghazi Fabrics International Limited
+ALLSHR,2,101200,GATM,Gul Ahmed Textile Mills Limited
+ALLSHR,2,101220,HAFL,Hafiz Limited
+ALLSHR,2,101230,HAEL,Hala Enterprises Limited
+ALLSHR,2,101240,HATM,Hamid Textile Mills Limited
+ALLSHR,2,101260,HUSI,Husein Industries Limited
+ALLSHR,2,101270,INKL,International Knitwear Limited
+ALLSHR,2,101274,ILP,Interloop Limited
+ALLSHR,2,101280,ANTM,AN Textile Mills Limited
+ALLSHR,2,101300,JUBS,Jubilee Spinning & Weaving Mills Ltd.
+ALLSHR,2,101310,KAKL,Kaiser Arts & Krafts Limited
+ALLSHR,2,101320,KHYT,Khyber Textile Mills Limited
+ALLSHR,2,101330,KML,Kohinoor Mills Limited
+ALLSHR,2,101340,KOIL,Kohinoor Industries Limited
+ALLSHR,2,101350,BTL,Blessed Textiles Limited
+ALLSHR,2,101360,KTML,Kohinoor Textile Mills Limited
+ALLSHR,2,101362,ANL,Azgard Nine Limited
+ALLSHR,2,101365,MEHT,Mehmood Textile Mills Limited
+ALLSHR,2,101367,ANLPS,Azgard Nine 8.95%(Pref)
+ALLSHR,2,101369,ANLNV,Azgard Nine Non-Voting Ordinary Shares
+ALLSHR,2,101375,CLVL,Cordoba Logistics & Ventures Limited
+ALLSHR,2,101400,MFTM,Mohammad Farooq Textile Mills Limited
+ALLSHR,2,101410,MUBT,Mubarak Textile Mills Limited
+ALLSHR,2,101425,NINA,Nina Industries Limited
+ALLSHR,2,101440,NML,Nishat Mills Limited
+ALLSHR,2,101465,REDCO,Redco Textiles Limited
+ALLSHR,2,101468,SFAT,Safa Textiles Limited
+ALLSHR,2,101469,SFL,Sapphire Fibres Limited
+ALLSHR,2,101470,SCHT,Schon Textiles Limited
+ALLSHR,2,101480,STML,Shams Textile Mills Limited
+ALLSHR,2,101510,SURC,Suraj Cotton Mills Limited
+ALLSHR,2,101515,TAJT,Taj Textile Mills Limited
+ALLSHR,2,101522,TOWL,Towellers Limited
+ALLSHR,2,101525,USMT,Usman Textile Mills Limited
+ALLSHR,2,101527,ZAHID,Zahidjee Textile Mills Limited
+ALLSHR,2,101530,ZHCM,Zahur Cotton Mills Limited
+ALLSHR,2,101625,FASM,Faisal Spinning Mills Limited
+ALLSHR,2,102260,MSOT,Masood Textile Mills Limited
+ALLSHR,2,102265,MSOTPS,Masood Textile (Pref)
+ALLSHR,2,102450,PASM,Paramount Spinning Mills Limited
+ALLSHR,2,102480,QUET,Quetta Textile Mills Limited
+ALLSHR,2,102700,SAPT,Sapphire Textile Mills Limited
+ALLSHR,2,110980,BNWM,Bannu Woollen Mills Limited
+ALLSHR,2,111080,BNL,Bunnys Limited
+ALLSHR,2,120960,AGL,Agritech Limited
+ALLSHR,2,120965,AGLNCPS,Agritech Non-Voting (Pref) Class A
+ALLSHR,2,121000,AASM,Al-Abid Silk Mills Limited
+ALLSHR,2,121040,DSFL,Dewan Salman Fibre Limited
+ALLSHR,2,121070,GATI,Gatron (Industries) Limited
+ALLSHR,2,121071,GATIR,Gatron Industries Limited(R)
+ALLSHR,2,121072,TCORPR1,Tariq Corporation Limited
+ALLSHR,2,121074,IBFL,Ibrahim Fibres Limited
+ALLSHR,2,121110,NAFL,National Fibres Limited
+ALLSHR,2,121120,NSRM,The National Silk & Rayon Mills Limited
+ALLSHR,2,121180,PSYL,Pakistan Synthetics Limited
+ALLSHR,2,121240,RUPL,Rupali Polyester Limited
+ALLSHR,2,121242,SGABL,SG.Allied Businsses Limited
+ALLSHR,2,121251,IMAGE,Image Pakistan Limited
+ALLSHR,2,121254,IMAGER2,Image Pak Ltd ( R )
+ALLSHR,2,131020,CJPL,Crescent Jute Products Limited
+ALLSHR,2,131140,SUHJ,Suhail Jute Mills Limited
+ALLSHR,2,131160,THALL,Thal Limited
+ALLSHR,2,131161,TBL,Treet Battery Limited
+ALLSHR,2,141000,ADAMS,Adam Sugar Mills Limited
+ALLSHR,2,141010,AABS,Al-Abbas Sugar Mills Limited
+ALLSHR,2,141020,AGSML,Abdullah Shah Ghazi Sugar Mills Limited
+ALLSHR,2,141040,ALNRS,Al-Noor Sugar Mills Limited
+ALLSHR,2,141060,ANSM,Ansari Sugar Mills Limited
+ALLSHR,2,141080,BAFS,Baba Farid Sugar Mills Limited
+ALLSHR,2,141170,CHAS,Chashma Sugar Mills Limited
+ALLSHR,2,141175,IML,Imperial  Limited
+ALLSHR,2,141180,CCM,Crescent Cotton Mills Limited
+ALLSHR,2,141200,DWSM,Dewan Sugar Mills Limited
+ALLSHR,2,141210,FCEPL,Frieslandcampina Engro Pakistan Limited
+ALLSHR,2,141220,FRSM,Faran Sugar Mills Limited
+ALLSHR,2,141320,HABSM,Habib Sugar Mills Limited
+ALLSHR,2,141340,HRPL,Habib Rice Product Limited.
+ALLSHR,2,141350,HWQS,Haseeb Waqas Sugar Mills Limited
+ALLSHR,2,141360,TCORP,Tariq Corporation Limited
+ALLSHR,2,141366,TCORPCPS,Tariq Corporation Limited(Pref)
+ALLSHR,2,141390,JDWS,JDW Sugar Mills Limited
+ALLSHR,2,141395,KPUS,Khairpur Sugar Mills Limited
+ALLSHR,2,141400,JSML,Jauharabad Sugar Mills Limited
+ALLSHR,2,141420,MRNS,Mehran Sugar Mills Limited
+ALLSHR,2,141440,MIRKS,Mirpurkhas Sugar Mills Limited
+ALLSHR,2,141441,MIRKSR,Mirpurkhas Sugar Mills Limited ( R )
+ALLSHR,2,141460,NONS,Noon Sugar Mills Limited
+ALLSHR,2,141500,PMRS,The Premier Sugar Mills
+ALLSHR,2,141520,SKRS,Sakrand Sugar Mills Limited
+ALLSHR,2,141540,SANSM,Sanghar Sugar Mills Limited
+ALLSHR,2,141560,SHJS,Shahtaj Sugar Mills Limited
+ALLSHR,2,141580,SHSML,Shahmurad Sugar Mills Limited
+ALLSHR,2,141600,SML,Shakarganj Limited
+ALLSHR,2,141620,SASML,Sindh Abadgars Sugar Mills Limited
+ALLSHR,2,141630,TSML,Tandlianwala Sugar Mills Limited
+ALLSHR,2,141640,TICL,The Thal Industries Corporation Limited
+ALLSHR,2,150940,ACPL,Attock Cement Pakistan Limited
+ALLSHR,2,150960,BWCL,Bestway Cement Limited
+ALLSHR,2,151000,CHCC,Cherat Cement Company Limited
+ALLSHR,2,151010,DBCI,Dadabhoy Cement Industries Limited
+ALLSHR,2,151040,DNCC,Dandot Cement Company Limited
+ALLSHR,2,151050,DGKC,D.G. Khan Cement Company Limited
+ALLSHR,2,151060,POWER,Power Cement Limited
+ALLSHR,2,151064,POWERPS,Power Cement (Pref)
+ALLSHR,2,151065,FCCL,Fauji Cement Company Limited
+ALLSHR,2,151070,FECTC,Fecto Cement Limited
+ALLSHR,2,151075,FLYNG,Flying Cement Company Limited
+ALLSHR,2,151080,GWLC,Gharibwal Cement Limited
+ALLSHR,2,151100,JVDC,Javedan Corporation Limited
+ALLSHR,2,151102,JVDCPS,Javedan Corporation (Pref)
+ALLSHR,2,151103,KOHC,Kohat Cement Company Limited
+ALLSHR,2,151105,LUCK,Lucky Cement Limited
+ALLSHR,2,151110,MLCF,Maple Leaf Cement Factory Limited
+ALLSHR,2,151140,DCL,Dewan Cement Limited
+ALLSHR,2,151150,PIOC,Pioneer Cement Limited
+ALLSHR,2,151155,SMCPL,Safe Mix Concrete Limited
+ALLSHR,2,151160,THCCL,Thatta Cement Company Limited
+ALLSHR,2,151180,ZELP,Zeal Pak Cement Factory Limited
+ALLSHR,2,161000,KHTC,Khyber Tobacco Company Limited
+ALLSHR,2,161020,PMPK,Philip Morris (Pakistan) Limited
+ALLSHR,2,161040,PAKT,Pakistan Tobacco Company Limited
+ALLSHR,2,171000,ATRL,Attock Refinery Limited
+ALLSHR,2,171010,CNERGY,Cnergyico PK Limited
+ALLSHR,2,171080,NRL,National Refinery Limited
+ALLSHR,2,171140,PRL,Pakistan Refinery Limited
+ALLSHR,2,180100,GEMMEL,Mughal Energy Limited(GEM)
+ALLSHR,2,180980,ALTN,Altern Energy Limited
+ALLSHR,2,180990,EPQL,Engro Powergen Qadirpur Limited
+ALLSHR,2,181035,AEL,AEL Textile Limited
+ALLSHR,2,181050,HUBC,The Hub Power Company Limited
+ALLSHR,2,181060,KEL,K-Electric Limited
+ALLSHR,2,181062,KOHE,Kohinoor Energy Limited
+ALLSHR,2,181070,KOHP,Kohinoor Power Company Limited
+ALLSHR,2,181075,LPL,Lalpir Power Limited
+ALLSHR,2,181080,KAPCO,Kot Addu Power Company Limited
+ALLSHR,2,181085,NCPL,Nishat Chunian Power Limited
+ALLSHR,2,181090,NPL,Nishat Power Limited
+ALLSHR,2,181095,PKGP,Pakgen Power Limited
+ALLSHR,2,181100,SPWL,Saif Power Limited
+ALLSHR,2,181165,SGPL,S.G. Power Limited
+ALLSHR,2,181175,SEL,Sitara Energy Limited
+ALLSHR,2,181220,TSPL,Tri-Star Power Limited
+ALLSHR,2,191000,APL,Attock Petroleum Limited
+ALLSHR,2,191160,PSO,Pakistan State Oil Company Limited
+ALLSHR,2,191168,BPL,Burshane LPG (Pakistan) Limited
+ALLSHR,2,191170,SHEL,Shell Pakistan Limited
+ALLSHR,2,191180,SSGC,Sui Southern Gas Company Limited
+ALLSHR,2,191200,SNGP,Sui Northern Gas Pipelines Limited
+ALLSHR,2,201040,HASCOL,Hascol Petroleum Limited
+ALLSHR,2,201050,HTL,Hi-Tech Lubricants Limited
+ALLSHR,2,201075,MARI,Mari Petroleum Company Limited
+ALLSHR,2,201080,OGDC,Oil & Gas Development Company Limited
+ALLSHR,2,201120,POL,Pakistan Oilfields Limited
+ALLSHR,2,201130,PPL,Pakistan Petroleum Limited
+ALLSHR,2,210990,AGHA,Agha Steel Ind.Ltd
+ALLSHR,2,211010,ASL,Aisha Steel Mills Limited
+ALLSHR,2,211011,ASLPS,Aisha Steel Convertible (Pref)
+ALLSHR,2,211013,ASLCPS,Aisha Steel Convt (Pref) Right
+ALLSHR,2,211014,ASTL,Amreli Steels Limited
+ALLSHR,2,211020,BCL,Bolan Castings Limited
+ALLSHR,2,211030,DADX,Dadex Eternit Limited
+ALLSHR,2,211035,DSL,Dost Steels Limited
+ALLSHR,2,211040,CSAP,Crescent Steel & Allied Products Limited
+ALLSHR,2,211050,OBOY,Oilboy Energy Limited
+ALLSHR,2,211080,HSPI,Huffaz Seamless Pipe Industries Limited
+ALLSHR,2,211100,INIL,International Industries Limited
+ALLSHR,2,211110,ISL,International Steels Limited
+ALLSHR,2,211115,ITTEFAQ,Ittefaq Iron Industries Limited
+ALLSHR,2,211140,KSBP,KSB Pumps Company Limited
+ALLSHR,2,211141,KSBPR,KSB Pumps Company Limited R
+ALLSHR,2,211145,MUGHAL,Mughal Iron & Steel Industries Limited
+ALLSHR,2,211160,MSCL,Metropolitan Steel Corporation Limited
+ALLSHR,2,211200,PECO,Pakistan Engineering Company Limited
+ALLSHR,2,221020,AGTL,Al-Ghazi Tractors Limited
+ALLSHR,2,221100,ATLH,Atlas Honda Limited
+ALLSHR,2,221150,DFML,Dewan Farooque Motors Limited
+ALLSHR,2,221175,GHNI,Ghandhara Industries Limited
+ALLSHR,2,221190,GAL,Ghandhara Automobiles Limited
+ALLSHR,2,221200,HINO,Hinopak Motors Limited
+ALLSHR,2,221205,HCAR,Honda Atlas Cars (Pakistan) Limited
+ALLSHR,2,221210,INDU,Indus Motor Company Limited
+ALLSHR,2,221220,MTL,Millat Tractors Limited
+ALLSHR,2,221260,PSMC,Pak Suzuki Motor Company Limited
+ALLSHR,2,221270,SAZEW,Sazgar Engineering Works Limited
+ALLSHR,2,231000,AGIL,Agriauto Industries Limited
+ALLSHR,2,231040,DWAE,Dewan Automotive Engineering Limited
+ALLSHR,2,231080,ATBA,Atlas Battery Limited
+ALLSHR,2,231130,BWHL,Baluchistan Wheels Limited
+ALLSHR,2,231135,BELA,Bela Automotives Limited
+ALLSHR,2,231160,EXIDE,Exide Pakistan Limited
+ALLSHR,2,231170,GTYR,Ghandhara Tyre & Rubber Company Limited
+ALLSHR,2,231175,LOADS,Loads Limited
+ALLSHR,2,231180,PTL,Panther Tyres Ltd.
+ALLSHR,2,241080,JOPP,Johnson & Phillips (Pakistan) Limited
+ALLSHR,2,241100,PCAL,Pakistan Cables Limited
+ALLSHR,2,241120,PAEL,Pak Elektron Limited
+ALLSHR,2,241125,PELPS,Pak Elektron (Pref)
+ALLSHR,2,241130,FCL,Fast Cables Limited
+ALLSHR,2,241150,TPL,TPL Corp Limited
+ALLSHR,2,241155,TPLT,TPL Trakker Limited
+ALLSHR,2,241169,AIRLINK,Air Link Communication Limited
+ALLSHR,2,241170,AVN,Avanceon Limited
+ALLSHR,2,241220,WAVES,Waves Corporation Limited
+ALLSHR,2,241240,SIEM,Siemens (Pakistan) Engineering
+ALLSHR,2,241250,SPEL,Synthetic Products Enterprises Limited
+ALLSHR,2,251000,PNSC,Pakistan National Shipping Corporation
+ALLSHR,2,251005,GEMBLUEX, Blue-Ex Limited (GEM)
+ALLSHR,2,251010,PIBTL,Pakistan International Bulk Terminal
+ALLSHR,2,251020,PICT,Pakistan International Container
+ALLSHR,2,251040,PIAA,Pakistan International Airlines Corp
+ALLSHR,2,251041,PIAHCLA,PIA Holding Company Limited
+ALLSHR,2,251060,PIAB,Pakistan International Airlines Corporation Limited
+ALLSHR,2,251061,PIAHCLB,PIA Holding Company Limited B
+ALLSHR,2,251070,SLGL,Secure Logistics Group Limited
+ALLSHR,2,261008,HUMNL,Hum Network Limited
+ALLSHR,2,261009,NETSOL,NetSol Technologies Limited
+ALLSHR,2,261010,PAKD,Pak Datacom Limited
+ALLSHR,2,261011,OCTOPUS,Octopus Digital Limited
+ALLSHR,2,261012,LSEPL,LSE Propetech Limited
+ALLSHR,2,261013,LSECL,LSE Capital Limited
+ALLSHR,2,261015,MDTL,Media Times Limited
+ALLSHR,2,261020,SYS,Systems Limited
+ALLSHR,2,261070,PTC,Pakistan Telecommunication Company Ltd
+ALLSHR,2,261073,TRG,TRG Pakistan Limited
+ALLSHR,2,261075,TELE,Telecard Limited
+ALLSHR,2,261088,WTL,Worldcall Telecom Limited
+ALLSHR,2,261089,GEMSPNL,Supernet Limited
+ALLSHR,2,261090,SYM,Symmetry Group Limited
+ALLSHR,2,271160,DAWH,Dawood Hercules Corporation Limited
+ALLSHR,2,271200,ENGRO,Engro Corporation Limited
+ALLSHR,2,271202,EFERT,Engro Fertilizers Limited
+ALLSHR,2,271205,FFBL,Fauji Fertilizer Bin Qasim Limited
+ALLSHR,2,271210,FFC,Fauji Fertilizer Company Limited
+ALLSHR,2,281000,ABOT,Abbott Laboratories (Pakistan) Limited
+ALLSHR,2,281010,AGP,AGP Limited
+ALLSHR,2,281015,CPHL,Citi Pharma Ltd.
+ALLSHR,2,281220,FEROZ,Ferozsons Laboratories Limited
+ALLSHR,2,281240,GLAXO,GlaxoSmithKline Pakistan Limited
+ALLSHR,2,281245,HALEON,Haleon Pakistan Limited
+ALLSHR,2,281250,HINOON,Highnoon Laboratories Limited
+ALLSHR,2,281260,HPL,Hoechst Pakistan Limited (Formerly Sanofi-Aventis)
+ALLSHR,2,281360,OTSU,Otsuka Pakistan Limited
+ALLSHR,2,281530,SEARL,The Searle Company Limited
+ALLSHR,2,291020,BAPL,Bawany Air Products Limited
+ALLSHR,2,291030,BIFO,Biafo Industries Limited
+ALLSHR,2,291040,BERG,Berger Paints Pakistan Limited
+ALLSHR,2,291080,BUXL,Buxly Paints Limited
+ALLSHR,2,291110,ARPL,Archroma Pakistan Limited
+ALLSHR,2,291120,COLG,Colgate-Palmolive (Pakistan) Limited
+ALLSHR,2,291130,CTM,Colony Textile Mills Limited
+ALLSHR,2,291140,DOL,Descon Oxychem Limited
+ALLSHR,2,291150,DAAG,Data Agro Limited
+ALLSHR,2,291175,DYNO,Dynea Pakistan Limited
+ALLSHR,2,291200,EPCL,Engro Polymer & Chemicals Limited
+ALLSHR,2,291203,EPCLPS,Engro Poly(Pref)
+ALLSHR,2,291204,GCIL,Ghani Chemical Industries Limited
+ALLSHR,2,291205,GCILB,Ghani Chemical Industries Limited (B)
+ALLSHR,2,291210,FATIMA,Fatima Fertilizer Company Limited
+ALLSHR,2,291250,GGL,Ghani Global Holdings Limited
+ALLSHR,2,291300,LCI,Lucky Core Industries Limited
+ALLSHR,2,291305,ICL,Ittehad Chemicals Limted
+ALLSHR,2,291340,LPGL,Leiner Pak Gelatine Limited
+ALLSHR,2,291390,LOTCHEM,Lotte Chemical Pakistan Limited
+ALLSHR,2,291400,PPVC,Pakistan PVC Limited
+ALLSHR,2,291450,NICL,Nimir Industrial Chemicals Limited
+ALLSHR,2,291460,PAKOXY,Pakistan Oxygen Limited
+ALLSHR,2,291461,PAKOXYR,Pakistan Oxygen Limited (R)
+ALLSHR,2,291470,NRSL,Nimir Resins Limited
+ALLSHR,2,291525,SARC,Sardar Chemical Industries Limited
+ALLSHR,2,291535,SHCI,Shaffi Chemical Industries Limited
+ALLSHR,2,291560,SITC,Sitara Chemical Industries Limited
+ALLSHR,2,291565,SPL,Sitara Peroxide Limited
+ALLSHR,2,291600,WAHN,Wah Noble Chemicals Limited
+ALLSHR,2,300980,ABSON,Abson Industries Limited
+ALLSHR,2,301060,CEPB,Century Paper & Board Mills Limited
+ALLSHR,2,301070,CPPL,Cherat Packaging Limited
+ALLSHR,2,301110,DBSL,Dadabhoy Sack Limited
+ALLSHR,2,301120,MERIT,Merit Packaging Limited
+ALLSHR,2,301160,PKGS,Packages Limited
+ALLSHR,2,301170,GEMPAPL,Pak Agro Packaging Limited(GEM)
+ALLSHR,2,301180,PPP,Pakistan Paper Products Limited
+ALLSHR,2,301182,RPL,Roshan Packages Limited
+ALLSHR,2,301220,SEPL,Security Papers Limited
+ALLSHR,2,301221,IPAK, International Packaging Films Limited
+ALLSHR,2,311200,POML,Punjab Oil Mills Limited
+ALLSHR,2,311210,SSOM,S.S.Oil Mills Limited
+ALLSHR,2,311260,SURAJ,Suraj Ghee Industries Limited
+ALLSHR,2,321000,BATA,Bata Pakistan Limited
+ALLSHR,2,321010,FIL,Fateh Industries Limited
+ALLSHR,2,321030,LEUL,Leather Up Limited
+ALLSHR,2,321035,SGF,Service GlobalFootwear Limited
+ALLSHR,2,321060,PAKL,Pak Leather Crafts Limited
+ALLSHR,2,321085,SRVI,Service Industries Limited
+ALLSHR,2,331050,ASC,Al Shaheer Corporation Limited
+ALLSHR,2,331055,PREMA,At-Tahur Limited
+ALLSHR,2,331060,CLOV,Clover Pakistan Limited
+ALLSHR,2,331070,GLPL,Gillette Pakistan Limited
+ALLSHR,2,331080,GIL,Good Luck Industries Ltd.
+ALLSHR,2,331090,IBLHL,IBL HealthCare Limited
+ALLSHR,2,331092,MACTER,Macter International Limited
+ALLSHR,2,331120,ISIL,Ismail Industries Limited
+ALLSHR,2,331125,MFL,Matco Foods Limited
+ALLSHR,2,331160,NESTLE,Nestle Pakistan Limited
+ALLSHR,2,331170,MFFL,Mitchells Fruit Farms Limited
+ALLSHR,2,331200,MUREB,Murree Brewery Company Limited
+ALLSHR,2,331220,NATF,National Foods Limited
+ALLSHR,2,331240,FFL,Fauji Foods Limited
+ALLSHR,2,331290,QUICE,Quice Food Industries Limited
+ALLSHR,2,331295,UPFL,Unilever Pakistan Foods Limited
+ALLSHR,2,331300,RMPL,Rafhan Maize Products Company Limited
+ALLSHR,2,331310,NMFL,Nirala MSR Foods Limited
+ALLSHR,2,331320,SHEZ,Shezan International Limited
+ALLSHR,2,331325,TOMCL,The Organic Meat Company Limited
+ALLSHR,2,331420,SCL,Shield Corporation Limited
+ALLSHR,2,331440,TREET,Treet Corporation Limited
+ALLSHR,2,331523,ZIL,ZIL Limited
+ALLSHR,2,331524,TREETR2,Treet Corporation Limited ( R )
+ALLSHR,2,341000,BGL,Balochistan Glass Limited
+ALLSHR,2,341040,EMCO,Emco Industries Limited
+ALLSHR,2,341060,FRCL,Frontier Ceramics Limited
+ALLSHR,2,341065,GHGL,Ghani Glass Limited
+ALLSHR,2,341066,GGGL,Ghani Global Glass Limited
+ALLSHR,2,341067,GVGL,Ghani Value Glass Limited
+ALLSHR,2,341070,KCL,Karam Ceramics Limited
+ALLSHR,2,341100,TGL,Tariq Glass Industries Limited
+ALLSHR,2,341140,REGAL,Regal Ceramics Limited
+ALLSHR,2,341160,STCL,Shabbir Tiles & Ceramics Limited
+ALLSHR,2,351000,GAMON,Gammon Pakistan Limited
+ALLSHR,2,351010,AKGL,Al-Khair Gadoon Limited
+ALLSHR,2,351020,HADC,Haydari Construction Company Limited
+ALLSHR,2,351021,ARPAK,Arpak International Investments Ltd.
+ALLSHR,2,351022,MACFL,MACPAC Films Limited
+ALLSHR,2,351025,DIIL,Diamond Industries Limited
+ALLSHR,2,351050,ECOP,Ecopack Limited
+ALLSHR,2,351060,DCTL,Dadabhoy Construction Technology Limited
+ALLSHR,2,351080,GOC,GOC (Pak) Limited.
+ALLSHR,2,351120,BBFL,Big Bird Foods Limited
+ALLSHR,2,351180,PABC,Pakistan Aluminium Beverage Cans Limited
+ALLSHR,2,351185,MWMP,Mandviwala Mauser Plastic Industries
+ALLSHR,2,351187,PACE,Pace (Pakistan) Limited
+ALLSHR,2,351188,BRRG,B.R.R. Guardian Limited
+ALLSHR,2,351189,SEARLR2,The Searle Company Limited (Right)
+ALLSHR,2,351210,PHDL,Pakistan Hotels Developers Limited
+ALLSHR,2,351240,PSEL,Pakistan Services Limited
+ALLSHR,2,351260,AKDHL,AKD Hospitality Limited
+ALLSHR,2,351270,SHFA,Shifa International Hospitals Limited
+ALLSHR,2,351275,STPL,Siddiqsons Tin Plate Limited
+ALLSHR,2,351276,TPLP,TPL Properties Limited
+ALLSHR,2,351450,TRIPF,Tri-Pack Films Limited
+ALLSHR,2,351480,UBDL,United Brands Limited
+ALLSHR,2,351500,UDPL,United Distributors Pakistan Limited
+ALLSHR,2,351510,UDLI,UDL International Limited
+ALLSHR,2,421343,AWWAL,Awwal Modaraba
+ALLSHR,2,460000,DCR,Dolmen City REIT
+ALLSHR,2,460010,GRR,Globe Residency Reit
+ALLSHR,2,460020,TPLRF1,TPL REIT Fund I
+ALLSHR,2,470052,JSGBETF,JS Global Banking Sector(ETF)
+ALLSHR,2,9860001,STYLERS,Stylers International Limited
+ALLSHR,2,9860002,STYLERSR,Stylers International Limited
+KSE30,3,61000,BAFL,Bank Alfalah Limited
+KSE30,3,61010,BAHL,Bank AL Habib Limited
+KSE30,3,61050,HBL,Habib Bank Limited
+KSE30,3,61094,MEBL,Meezan Bank Limited
+KSE30,3,61098,MCB,MCB Bank Limited
+KSE30,3,61180,UBL,United Bank Limited
+KSE30,3,151050,DGKC,D.G. Khan Cement Company Limited
+KSE30,3,151065,FCCL,Fauji Cement Company Limited
+KSE30,3,151105,LUCK,Lucky Cement Limited
+KSE30,3,151110,MLCF,Maple Leaf Cement Factory Limited
+KSE30,3,151150,PIOC,Pioneer Cement Limited
+KSE30,3,171000,ATRL,Attock Refinery Limited
+KSE30,3,171080,NRL,National Refinery Limited
+KSE30,3,171140,PRL,Pakistan Refinery Limited
+KSE30,3,181050,HUBC,The Hub Power Company Limited
+KSE30,3,191160,PSO,Pakistan State Oil Company Limited
+KSE30,3,191200,SNGP,Sui Northern Gas Pipelines Limited
+KSE30,3,201075,MARI,Mari Petroleum Company Limited
+KSE30,3,201080,OGDC,Oil & Gas Development Company Limited
+KSE30,3,201120,POL,Pakistan Oilfields Limited
+KSE30,3,201130,PPL,Pakistan Petroleum Limited
+KSE30,3,221220,MTL,Millat Tractors Limited
+KSE30,3,221270,SAZEW,Sazgar Engineering Works Limited
+KSE30,3,241120,PAEL,Pak Elektron Limited
+KSE30,3,261020,SYS,Systems Limited
+KSE30,3,271200,ENGRO,Engro Corporation Limited
+KSE30,3,271202,EFERT,Engro Fertilizers Limited
+KSE30,3,271205,FFBL,Fauji Fertilizer Bin Qasim Limited
+KSE30,3,271210,FFC,Fauji Fertilizer Company Limited
+KSE30,3,281530,SEARL,The Searle Company Limited
+KMI30,4,61045,FABL,Faysal Bank Limited
+KMI30,4,61094,MEBL,Meezan Bank Limited
+KMI30,4,82985,UNITY,Unity Foods Limited
+KMI30,4,101274,ILP,Interloop Limited
+KMI30,4,101440,NML,Nishat Mills Limited
+KMI30,4,151000,CHCC,Cherat Cement Company Limited
+KMI30,4,151050,DGKC,D.G. Khan Cement Company Limited
+KMI30,4,151065,FCCL,Fauji Cement Company Limited
+KMI30,4,151105,LUCK,Lucky Cement Limited
+KMI30,4,151110,MLCF,Maple Leaf Cement Factory Limited
+KMI30,4,151150,PIOC,Pioneer Cement Limited
+KMI30,4,171000,ATRL,Attock Refinery Limited
+KMI30,4,171080,NRL,National Refinery Limited
+KMI30,4,171140,PRL,Pakistan Refinery Limited
+KMI30,4,181050,HUBC,The Hub Power Company Limited
+KMI30,4,191160,PSO,Pakistan State Oil Company Limited
+KMI30,4,191170,SHEL,Shell Pakistan Limited
+KMI30,4,191200,SNGP,Sui Northern Gas Pipelines Limited
+KMI30,4,201075,MARI,Mari Petroleum Company Limited
+KMI30,4,201130,PPL,Pakistan Petroleum Limited
+KMI30,4,221220,MTL,Millat Tractors Limited
+KMI30,4,241169,AIRLINK,Air Link Communication Limited
+KMI30,4,261009,NETSOL,NetSol Technologies Limited
+KMI30,4,261020,SYS,Systems Limited
+KMI30,4,271200,ENGRO,Engro Corporation Limited
+KMI30,4,271202,EFERT,Engro Fertilizers Limited
+KMI30,4,281530,SEARL,The Searle Company Limited
+KMI30,4,291200,EPCL,Engro Polymer & Chemicals Limited
+KMI30,4,351276,TPLP,TPL Properties Limited
+KMI30,4,460000,DCR,Dolmen City REIT
+KMIALLSHR,5,21913,SINDM,Sindh Modaraba
+KMIALLSHR,5,30980,FANM,First Al-Noor Modaraba
+KMIALLSHR,5,31010,ARM,Allied Rental Modaraba
+KMIALLSHR,5,31040,BFMOD,B.F. Modaraba
+KMIALLSHR,5,31180,FECM,First Elite Capital Modaraba
+KMIALLSHR,5,31220,FEM,First Equity Modaraba
+KMIALLSHR,5,31235,FFLM,First Fidelity Leasing Modaraba
+KMIALLSHR,5,31260,OLPM,OLP Modaraba
+KMIALLSHR,5,31300,FHAM,First Habib Modaraba
+KMIALLSHR,5,31310,FTMM,First Treet Manufacturing Modaraba
+KMIALLSHR,5,31330,FIBLM,First IBL Modaraba
+KMIALLSHR,5,31350,FIMM,First Imrooz Modaraba
+KMIALLSHR,5,31355,PIM,Popular Islamic Modaraba
+KMIALLSHR,5,31435,ORM,Orient Rental Mod
+KMIALLSHR,5,31510,FPRM,First Paramount Modaraba
+KMIALLSHR,5,31580,PMI,First Prudential Modaraba
+KMIALLSHR,5,31640,FPJM,First Punjab Modaraba
+KMIALLSHR,5,31720,FTSM,First Tri-Star Modaraba
+KMIALLSHR,5,31760,TRSM,Trust Modaraba
+KMIALLSHR,5,31780,FUDLM,First UDL Modaraba
+KMIALLSHR,5,31800,UCAPM,Unicap Modaraba
+KMIALLSHR,5,60970,BML,Bank Makramah Limited
+KMIALLSHR,5,61004,BIPL,BankIslami Pakistan Limited
+KMIALLSHR,5,61045,FABL,Faysal Bank Limited
+KMIALLSHR,5,61094,MEBL,Meezan Bank Limited
+KMIALLSHR,5,81100,AWTX,Allawasaya Tex. & Finishing Mills Ltd
+KMIALLSHR,5,81225,ASTM,Asim Textile Mills Limited
+KMIALLSHR,5,81504,DFSM,Dewan Farooque Spinning Mills Limited
+KMIALLSHR,5,81530,DINT,Din Textile Mills Limited
+KMIALLSHR,5,81580,ELCM,Elahi Cotton Mills Limited
+KMIALLSHR,5,81910,IDSM,Ideal Spinning Mills Limited
+KMIALLSHR,5,81990,JATM,J.A. Textile Mills Limited
+KMIALLSHR,5,82000,JDMT,Janana De Malucho Textile Mills Limited
+KMIALLSHR,5,82140,ARCTM,Arctic Textile Mills Limited
+KMIALLSHR,5,82160,KOHTM,Kohat Textile Mills Limited
+KMIALLSHR,5,82325,NATM,Nadeem Textile Mills Limited
+KMIALLSHR,5,82440,OML,Olympia Mills Limited
+KMIALLSHR,5,82545,RCML,Reliance Cotton Spinning Mills Limited
+KMIALLSHR,5,82660,SNAI,Sana Industries Limited
+KMIALLSHR,5,82720,SSML,Saritow Spinning Mills Limited
+KMIALLSHR,5,82740,SERT,Service Industries Textiles Limited
+KMIALLSHR,5,82780,SHDT,Shadab Textile Mills Limited
+KMIALLSHR,5,82800,SHCM,Shadman Cotton Mills Limited
+KMIALLSHR,5,82860,SZTM,Shahzad Textile Mills Limited
+KMIALLSHR,5,82985,UNITY,Unity Foods Limited
+KMIALLSHR,5,91010,ASHT,Ashfaq Textile Mills Limited
+KMIALLSHR,5,91160,FML,Feroze1888 Mills Limited
+KMIALLSHR,5,91198,WAVESAPP,Waves Home Appliances Limited
+KMIALLSHR,5,91205,STJT,Shahtaj Textile Limited
+KMIALLSHR,5,91240,ZTL,Zephyr Textiles Limited
+KMIALLSHR,5,101010,AHTM,Ahmad Hassan Textile Mills Limited
+KMIALLSHR,5,101160,CRTM,The Crescent Textile Mills Limited
+KMIALLSHR,5,101198,GFIL,Ghazi Fabrics International Limited
+KMIALLSHR,5,101220,HAFL,Hafiz Limited
+KMIALLSHR,5,101270,INKL,International Knitwear Limited
+KMIALLSHR,5,101274,ILP,Interloop Limited
+KMIALLSHR,5,101280,ANTM,AN Textile Mills Limited
+KMIALLSHR,5,101320,KHYT,Khyber Textile Mills Limited
+KMIALLSHR,5,101350,BTL,Blessed Textiles Limited
+KMIALLSHR,5,101360,KTML,Kohinoor Textile Mills Limited
+KMIALLSHR,5,101362,ANL,Azgard Nine Limited
+KMIALLSHR,5,101440,NML,Nishat Mills Limited
+KMIALLSHR,5,101465,REDCO,Redco Textiles Limited
+KMIALLSHR,5,101480,STML,Shams Textile Mills Limited
+KMIALLSHR,5,101510,SURC,Suraj Cotton Mills Limited
+KMIALLSHR,5,101522,TOWL,Towellers Limited
+KMIALLSHR,5,101527,ZAHID,Zahidjee Textile Mills Limited
+KMIALLSHR,5,101625,FASM,Faisal Spinning Mills Limited
+KMIALLSHR,5,110980,BNWM,Bannu Woollen Mills Limited
+KMIALLSHR,5,111080,BNL,Bunnys Limited
+KMIALLSHR,5,121070,GATI,Gatron (Industries) Limited
+KMIALLSHR,5,121074,IBFL,Ibrahim Fibres Limited
+KMIALLSHR,5,121120,NSRM,The National Silk & Rayon Mills Limited
+KMIALLSHR,5,121180,PSYL,Pakistan Synthetics Limited
+KMIALLSHR,5,121240,RUPL,Rupali Polyester Limited
+KMIALLSHR,5,121251,IMAGE,Image Pakistan Limited
+KMIALLSHR,5,141010,AABS,Al-Abbas Sugar Mills Limited
+KMIALLSHR,5,141020,AGSML,Abdullah Shah Ghazi Sugar Mills Limited
+KMIALLSHR,5,141040,ALNRS,Al-Noor Sugar Mills Limited
+KMIALLSHR,5,141080,BAFS,Baba Farid Sugar Mills Limited
+KMIALLSHR,5,141170,CHAS,Chashma Sugar Mills Limited
+KMIALLSHR,5,141180,CCM,Crescent Cotton Mills Limited
+KMIALLSHR,5,141210,FCEPL,Frieslandcampina Engro Pakistan Limited
+KMIALLSHR,5,141220,FRSM,Faran Sugar Mills Limited
+KMIALLSHR,5,141340,HRPL,Habib Rice Product Limited.
+KMIALLSHR,5,141360,TCORP,Tariq Corporation Limited
+KMIALLSHR,5,141390,JDWS,JDW Sugar Mills Limited
+KMIALLSHR,5,141395,KPUS,Khairpur Sugar Mills Limited
+KMIALLSHR,5,141400,JSML,Jauharabad Sugar Mills Limited
+KMIALLSHR,5,141420,MRNS,Mehran Sugar Mills Limited
+KMIALLSHR,5,141440,MIRKS,Mirpurkhas Sugar Mills Limited
+KMIALLSHR,5,141460,NONS,Noon Sugar Mills Limited
+KMIALLSHR,5,141500,PMRS,The Premier Sugar Mills
+KMIALLSHR,5,141540,SANSM,Sanghar Sugar Mills Limited
+KMIALLSHR,5,141560,SHJS,Shahtaj Sugar Mills Limited
+KMIALLSHR,5,141580,SHSML,Shahmurad Sugar Mills Limited
+KMIALLSHR,5,141620,SASML,Sindh Abadgars Sugar Mills Limited
+KMIALLSHR,5,141640,TICL,The Thal Industries Corporation Limited
+KMIALLSHR,5,150940,ACPL,Attock Cement Pakistan Limited
+KMIALLSHR,5,150960,BWCL,Bestway Cement Limited
+KMIALLSHR,5,151000,CHCC,Cherat Cement Company Limited
+KMIALLSHR,5,151050,DGKC,D.G. Khan Cement Company Limited
+KMIALLSHR,5,151060,POWER,Power Cement Limited
+KMIALLSHR,5,151065,FCCL,Fauji Cement Company Limited
+KMIALLSHR,5,151070,FECTC,Fecto Cement Limited
+KMIALLSHR,5,151075,FLYNG,Flying Cement Company Limited
+KMIALLSHR,5,151080,GWLC,Gharibwal Cement Limited
+KMIALLSHR,5,151100,JVDC,Javedan Corporation Limited
+KMIALLSHR,5,151103,KOHC,Kohat Cement Company Limited
+KMIALLSHR,5,151105,LUCK,Lucky Cement Limited
+KMIALLSHR,5,151110,MLCF,Maple Leaf Cement Factory Limited
+KMIALLSHR,5,151140,DCL,Dewan Cement Limited
+KMIALLSHR,5,151150,PIOC,Pioneer Cement Limited
+KMIALLSHR,5,151155,SMCPL,Safe Mix Concrete Limited
+KMIALLSHR,5,151160,THCCL,Thatta Cement Company Limited
+KMIALLSHR,5,171000,ATRL,Attock Refinery Limited
+KMIALLSHR,5,171010,CNERGY,Cnergyico PK Limited
+KMIALLSHR,5,171080,NRL,National Refinery Limited
+KMIALLSHR,5,171140,PRL,Pakistan Refinery Limited
+KMIALLSHR,5,181050,HUBC,The Hub Power Company Limited
+KMIALLSHR,5,181060,KEL,K-Electric Limited
+KMIALLSHR,5,181062,KOHE,Kohinoor Energy Limited
+KMIALLSHR,5,181165,SGPL,S.G. Power Limited
+KMIALLSHR,5,191000,APL,Attock Petroleum Limited
+KMIALLSHR,5,191160,PSO,Pakistan State Oil Company Limited
+KMIALLSHR,5,191168,BPL,Burshane LPG (Pakistan) Limited
+KMIALLSHR,5,191170,SHEL,Shell Pakistan Limited
+KMIALLSHR,5,191180,SSGC,Sui Southern Gas Company Limited
+KMIALLSHR,5,191200,SNGP,Sui Northern Gas Pipelines Limited
+KMIALLSHR,5,201050,HTL,Hi-Tech Lubricants Limited
+KMIALLSHR,5,201075,MARI,Mari Petroleum Company Limited
+KMIALLSHR,5,201130,PPL,Pakistan Petroleum Limited
+KMIALLSHR,5,211020,BCL,Bolan Castings Limited
+KMIALLSHR,5,211030,DADX,Dadex Eternit Limited
+KMIALLSHR,5,211050,OBOY,Oilboy Energy Limited
+KMIALLSHR,5,211100,INIL,International Industries Limited
+KMIALLSHR,5,211110,ISL,International Steels Limited
+KMIALLSHR,5,211115,ITTEFAQ,Ittefaq Iron Industries Limited
+KMIALLSHR,5,211140,KSBP,KSB Pumps Company Limited
+KMIALLSHR,5,211145,MUGHAL,Mughal Iron & Steel Industries Limited
+KMIALLSHR,5,211160,MSCL,Metropolitan Steel Corporation Limited
+KMIALLSHR,5,221020,AGTL,Al-Ghazi Tractors Limited
+KMIALLSHR,5,221100,ATLH,Atlas Honda Limited
+KMIALLSHR,5,221175,GHNI,Ghandhara Industries Limited
+KMIALLSHR,5,221190,GAL,Ghandhara Automobiles Limited
+KMIALLSHR,5,221200,HINO,Hinopak Motors Limited
+KMIALLSHR,5,221220,MTL,Millat Tractors Limited
+KMIALLSHR,5,221270,SAZEW,Sazgar Engineering Works Limited
+KMIALLSHR,5,231000,AGIL,Agriauto Industries Limited
+KMIALLSHR,5,231080,ATBA,Atlas Battery Limited
+KMIALLSHR,5,231130,BWHL,Baluchistan Wheels Limited
+KMIALLSHR,5,231160,EXIDE,Exide Pakistan Limited
+KMIALLSHR,5,231170,GTYR,Ghandhara Tyre & Rubber Company Limited
+KMIALLSHR,5,231180,PTL,Panther Tyres Ltd.
+KMIALLSHR,5,241120,PAEL,Pak Elektron Limited
+KMIALLSHR,5,241130,FCL,Fast Cables Limited
+KMIALLSHR,5,241155,TPLT,TPL Trakker Limited
+KMIALLSHR,5,241169,AIRLINK,Air Link Communication Limited
+KMIALLSHR,5,241170,AVN,Avanceon Limited
+KMIALLSHR,5,241220,WAVES,Waves Corporation Limited
+KMIALLSHR,5,241250,SPEL,Synthetic Products Enterprises Limited
+KMIALLSHR,5,251010,PIBTL,Pakistan International Bulk Terminal
+KMIALLSHR,5,251070,SLGL,Secure Logistics Group Limited
+KMIALLSHR,5,261009,NETSOL,NetSol Technologies Limited
+KMIALLSHR,5,261010,PAKD,Pak Datacom Limited
+KMIALLSHR,5,261011,OCTOPUS,Octopus Digital Limited
+KMIALLSHR,5,261020,SYS,Systems Limited
+KMIALLSHR,5,261075,TELE,Telecard Limited
+KMIALLSHR,5,261089,GEMSPNL,Supernet Limited
+KMIALLSHR,5,261090,SYM,Symmetry Group Limited
+KMIALLSHR,5,271200,ENGRO,Engro Corporation Limited
+KMIALLSHR,5,271202,EFERT,Engro Fertilizers Limited
+KMIALLSHR,5,271205,FFBL,Fauji Fertilizer Bin Qasim Limited
+KMIALLSHR,5,281000,ABOT,Abbott Laboratories (Pakistan) Limited
+KMIALLSHR,5,281010,AGP,AGP Limited
+KMIALLSHR,5,281015,CPHL,Citi Pharma Ltd.
+KMIALLSHR,5,281220,FEROZ,Ferozsons Laboratories Limited
+KMIALLSHR,5,281240,GLAXO,GlaxoSmithKline Pakistan Limited
+KMIALLSHR,5,281245,HALEON,Haleon Pakistan Limited
+KMIALLSHR,5,281250,HINOON,Highnoon Laboratories Limited
+KMIALLSHR,5,281260,HPL,Hoechst Pakistan Limited (Formerly Sanofi-Aventis)
+KMIALLSHR,5,281530,SEARL,The Searle Company Limited
+KMIALLSHR,5,291030,BIFO,Biafo Industries Limited
+KMIALLSHR,5,291040,BERG,Berger Paints Pakistan Limited
+KMIALLSHR,5,291080,BUXL,Buxly Paints Limited
+KMIALLSHR,5,291110,ARPL,Archroma Pakistan Limited
+KMIALLSHR,5,291130,CTM,Colony Textile Mills Limited
+KMIALLSHR,5,291140,DOL,Descon Oxychem Limited
+KMIALLSHR,5,291150,DAAG,Data Agro Limited
+KMIALLSHR,5,291175,DYNO,Dynea Pakistan Limited
+KMIALLSHR,5,291200,EPCL,Engro Polymer & Chemicals Limited
+KMIALLSHR,5,291210,FATIMA,Fatima Fertilizer Company Limited
+KMIALLSHR,5,291250,GGL,Ghani Global Holdings Limited
+KMIALLSHR,5,291300,LCI,Lucky Core Industries Limited
+KMIALLSHR,5,291305,ICL,Ittehad Chemicals Limted
+KMIALLSHR,5,291340,LPGL,Leiner Pak Gelatine Limited
+KMIALLSHR,5,291390,LOTCHEM,Lotte Chemical Pakistan Limited
+KMIALLSHR,5,291460,PAKOXY,Pakistan Oxygen Limited
+KMIALLSHR,5,291470,NRSL,Nimir Resins Limited
+KMIALLSHR,5,291525,SARC,Sardar Chemical Industries Limited
+KMIALLSHR,5,291560,SITC,Sitara Chemical Industries Limited
+KMIALLSHR,5,291600,WAHN,Wah Noble Chemicals Limited
+KMIALLSHR,5,301060,CEPB,Century Paper & Board Mills Limited
+KMIALLSHR,5,301070,CPPL,Cherat Packaging Limited
+KMIALLSHR,5,301120,MERIT,Merit Packaging Limited
+KMIALLSHR,5,301160,PKGS,Packages Limited
+KMIALLSHR,5,301170,GEMPAPL,Pak Agro Packaging Limited(GEM)
+KMIALLSHR,5,301180,PPP,Pakistan Paper Products Limited
+KMIALLSHR,5,301182,RPL,Roshan Packages Limited
+KMIALLSHR,5,301221,IPAK, International Packaging Films Limited
+KMIALLSHR,5,311200,POML,Punjab Oil Mills Limited
+KMIALLSHR,5,311210,SSOM,S.S.Oil Mills Limited
+KMIALLSHR,5,321000,BATA,Bata Pakistan Limited
+KMIALLSHR,5,321030,LEUL,Leather Up Limited
+KMIALLSHR,5,321035,SGF,Service GlobalFootwear Limited
+KMIALLSHR,5,331050,ASC,Al Shaheer Corporation Limited
+KMIALLSHR,5,331055,PREMA,At-Tahur Limited
+KMIALLSHR,5,331060,CLOV,Clover Pakistan Limited
+KMIALLSHR,5,331080,GIL,Good Luck Industries Ltd.
+KMIALLSHR,5,331090,IBLHL,IBL HealthCare Limited
+KMIALLSHR,5,331092,MACTER,Macter International Limited
+KMIALLSHR,5,331160,NESTLE,Nestle Pakistan Limited
+KMIALLSHR,5,331170,MFFL,Mitchells Fruit Farms Limited
+KMIALLSHR,5,331240,FFL,Fauji Foods Limited
+KMIALLSHR,5,331290,QUICE,Quice Food Industries Limited
+KMIALLSHR,5,331295,UPFL,Unilever Pakistan Foods Limited
+KMIALLSHR,5,331300,RMPL,Rafhan Maize Products Company Limited
+KMIALLSHR,5,331320,SHEZ,Shezan International Limited
+KMIALLSHR,5,331325,TOMCL,The Organic Meat Company Limited
+KMIALLSHR,5,331420,SCL,Shield Corporation Limited
+KMIALLSHR,5,331440,TREET,Treet Corporation Limited
+KMIALLSHR,5,331523,ZIL,ZIL Limited
+KMIALLSHR,5,341000,BGL,Balochistan Glass Limited
+KMIALLSHR,5,341040,EMCO,Emco Industries Limited
+KMIALLSHR,5,341060,FRCL,Frontier Ceramics Limited
+KMIALLSHR,5,341065,GHGL,Ghani Glass Limited
+KMIALLSHR,5,341066,GGGL,Ghani Global Glass Limited
+KMIALLSHR,5,341067,GVGL,Ghani Value Glass Limited
+KMIALLSHR,5,341070,KCL,Karam Ceramics Limited
+KMIALLSHR,5,341100,TGL,Tariq Glass Industries Limited
+KMIALLSHR,5,341160,STCL,Shabbir Tiles & Ceramics Limited
+KMIALLSHR,5,351000,GAMON,Gammon Pakistan Limited
+KMIALLSHR,5,351010,AKGL,Al-Khair Gadoon Limited
+KMIALLSHR,5,351022,MACFL,MACPAC Films Limited
+KMIALLSHR,5,351025,DIIL,Diamond Industries Limited
+KMIALLSHR,5,351080,GOC,GOC (Pak) Limited.
+KMIALLSHR,5,351180,PABC,Pakistan Aluminium Beverage Cans Limited
+KMIALLSHR,5,351188,BRRG,B.R.R. Guardian Limited
+KMIALLSHR,5,351240,PSEL,Pakistan Services Limited
+KMIALLSHR,5,351270,SHFA,Shifa International Hospitals Limited
+KMIALLSHR,5,351276,TPLP,TPL Properties Limited
+KMIALLSHR,5,351480,UBDL,United Brands Limited
+KMIALLSHR,5,460000,DCR,Dolmen City REIT
+KMIALLSHR,5,460020,TPLRF1,TPL REIT Fund I
+KMIALLSHR,5,9860001,STYLERS,Stylers International Limited
+BKTi,6,61000,BAFL,Bank Alfalah Limited
+BKTi,6,61010,BAHL,Bank AL Habib Limited
+BKTi,6,61050,HBL,Habib Bank Limited
+BKTi,6,61094,MEBL,Meezan Bank Limited
+BKTi,6,61095,NBP,National Bank of Pakistan
+BKTi,6,61098,MCB,MCB Bank Limited
+BKTi,6,61180,UBL,United Bank Limited
+OGTi,7,201075,MARI,Mari Petroleum Company Limited
+OGTi,7,201080,OGDC,Oil & Gas Development Company Limited
+OGTi,7,201120,POL,Pakistan Oilfields Limited
+OGTi,7,201130,PPL,Pakistan Petroleum Limited

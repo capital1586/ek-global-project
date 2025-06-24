@@ -1,0 +1,818 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load tz %}
+{% load custom_filters %}
+
+{% block title %}
+<title>Risk Management</title>
+{% endblock title %}
+
+{% block stylesheets %}
+<link href="https://unpkg.com/tabulator-tables@6.2.5/dist/css/tabulator_semanticui.min.css" rel="stylesheet" rel="preload">
+<link href="{% static 'core/styles/form_card.css' %}" rel="stylesheet" rel="preload">
+<link href="{% static 'core/styles/tabs.css' %}" rel="stylesheet" rel="preload">
+<link href="{% static 'risk_management/styles/functions_modal.css' %}" rel="stylesheet" rel="preload">
+
+<link href="https://unpkg.com/tabulator-tables@6.2.5/dist/css/tabulator_semanticui.min.css" rel="stylesheet">
+<link href="{% static 'core/styles/form_card.css' %}" rel="stylesheet">
+<link href="{% static 'core/styles/tabs.css' %}" rel="stylesheet">
+<link href="{% static 'risk_management/styles/functions_modal.css' %}" rel="stylesheet">
+<link href="{% static 'risk_management/styles/risk_management.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<!-- Profile Create Modal -->
+<div class="modal fade" id="profileCreateModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 2px;">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Risk Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form 
+                    action="{% url 'risk_management:risk_profile_create' %}" 
+                    method="post" 
+                    id="profile-create-form"
+                    class="profile-form"
+                >
+                    {% csrf_token %}
+    
+                    <div class="form-fields">
+                        <div class="form-field">
+                            <label for="name">Name</label>
+                            <input 
+                                type="text" 
+                                class="form-input form-control input-rounded" 
+                                placeholder="Profile name" 
+                                id="name"
+                                name="name"
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="description">Description</label>
+                            <input 
+                                type="text" 
+                                class="form-input form-control input-rounded" 
+                                placeholder="Profile description"
+                                id="description"
+                                name="description"
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="period_return_start">Period Return Start</label>
+                            <input 
+                                type="date" 
+                                class="form-input form-control input-rounded" 
+                                id="period_return_start"
+                                name="period_return_start"
+                                max="{% now 'Y-m-d' %}"
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="period_return_end">Period Return End</label>
+                            <input 
+                                type="date" 
+                                class="form-input form-control input-rounded" 
+                                id="period_return_end"
+                                name="period_return_end"
+                                max="{% now 'Y-m-d' %}"
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="criteria">Criteria</label>
+                            <input 
+                                type="text" 
+                                class="form-input form-control input-rounded" 
+                                id="criteria"
+                                name="criteria"
+                                hidden
+                                style="display: none; pointer-events: none;"
+                                disabled
+                            >
+                            <small class="field-message"></small>
+
+                            <div class="criteria-selected">
+                                <!-- Selected criteria a displayed here -->
+                            </div>
+
+                            <button class="criterion-creation-section-toggle" type="button">Add Criterion +</button>
+
+                            {% with operators_schema=criterion_schema.operators_schema functions_schema=criterion_schema.functions_schema %}
+                            <div class="criterion-creation-section">
+                                <div class="criterion-creation-fields">
+                                    <div class="form-fields">
+                                        <div class="form-field">
+                                            <label for="func1">Function One</label>
+                                            <input 
+                                                type="text" 
+                                                class="form-input form-control input-rounded function-input" 
+                                                id="func1"
+                                                name="func1"
+                                                data-options=""
+                                                placeholder="Function 1"
+                                            >
+
+                                            <!-- Funtions Modal -->
+                                            <div class="functions-modal">
+                                                <div class="modal-head">
+                                                    <div class="head-text">
+                                                        <h5>Select a function</h5>
+
+                                                        <button type="button" class="btn-close">
+                                                        </button>
+                                                    </div>
+                                        
+                                                    <div class="options-search-wp">
+                                                        <i class="fas fa-search"></i>
+                                                        <input type="search" class="options-search-input">
+                                                    </div>
+                                                </div>
+                                        
+                                                <div class="function-options options">
+                                                    {% for function_group, function_group_data in functions_schema.items %}
+                                                    <div class="option">
+                                                        <div class="option-label">
+                                                            <span>{{ function_group }}</span>
+                                                            <span class="arrow">&rarr;</span>
+                                                        </div>
+                                                        
+                                                        <div class="sub-options">
+                                                            <div class="sub-options-head">
+                                                                <span class="arrow">&larr;</span>
+                                                                <p>{{ function_group }}</p>
+                                                            </div>
+                                        
+                                                            <div class="options">
+                                                                {% for function, function_data in function_group_data.items %}
+                                                                <div class="option" data-function="{{ function }}">
+                                                                    <div class="option-label" title="{{ function_data.description }}">
+                                                                        <span>{{ function }}</span>
+
+                                                                        {% if function_data.kwargs %}
+                                                                        <span class="arrow">&rarr;</span>
+                                                                        {% endif %}
+                                                                    </div>
+
+                                                                    {% if function_data.kwargs %}
+                                                                    <div class="sub-options">
+                                                                        <div class="sub-options-head">
+                                                                            <span class="arrow">&larr;</span>
+                                                                            <p>{{ function_data.name }}</p>
+                                                                        </div>
+
+                                                                        <div class="options">
+                                                                            <div class="form-fields" data-function="{{ function }}">
+                                                                                {% for argument, argument_data in function_data.kwargs.arguments.items %}
+                                                                                <div class="form-field">
+                                                                                    <label for="{{ argument }}">{{ argument | title }}</label>
+                                                                                    <input 
+                                                                                        type="{{ argument_data.html_input_type }}" 
+                                                                                        class="form-input form-control input-rounded function-input" 
+                                                                                        id="{{ argument }}"
+                                                                                        name="{{ argument }}"
+
+                                                                                        placeholder="{{ argument | title }}"
+                                                                                        title="{{ argument_data.description|default:'Provide a valid value for this option' }}"
+
+                                                                                        {% if argument_data.default is not None %}
+                                                                                            value="{{ argument_data.default }}"
+                                                                                        {% endif %}
+
+                                                                                        {% if argument_data.default is not None %}
+                                                                                            data-default="{{ argument_data.default }}"
+                                                                                        {% endif %}
+                                                                                    >
+                                                                                </div>
+                                                                                {% endfor %}
+                                                                                
+                                                                                <button 
+                                                                                    type="button" 
+                                                                                    class="btn light btn-success btn-sm done-btn" 
+                                                                                >
+                                                                                    Done
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label for="op">Operator</label>
+                                            <select name="op" id="op" class="form-input form-select">
+                                                {% for operator_name, operator_value in operators_schema.items %}
+                                                <option value="{{ operator_value }}">{{ operator_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label for="func2">Function Two</label>
+                                            <input 
+                                                type="text" 
+                                                class="form-input form-control input-rounded function-input" 
+                                                id="func2"
+                                                name="func2"
+                                                data-options=""
+                                                placeholder="Function 2"
+                                            >
+
+                                            <!-- Funtions Modal -->
+                                            <div class="functions-modal">
+                                                <div class="modal-head">
+                                                    <div class="head-text">
+                                                        <h5>Select a function</h5>
+
+                                                        <button type="button" class="btn-close">
+                                                        </button>
+                                                    </div>
+                                        
+                                                    <div class="options-search-wp">
+                                                        <i class="fas fa-search"></i>
+                                                        <input type="search" class="options-search-input">
+                                                    </div>
+                                                </div>
+                                        
+                                                <div class="function-options options">
+                                                    {% for function_group, function_group_data in functions_schema.items %}
+                                                    <div class="option">
+                                                        <div class="option-label">
+                                                            <span>{{ function_group }}</span>
+                                                            <span class="arrow">&rarr;</span>
+                                                        </div>
+                                                        
+                                                        <div class="sub-options">
+                                                            <div class="sub-options-head">
+                                                                <span class="arrow">&larr;</span>
+                                                                <p>{{ function_group }}</p>
+                                                            </div>
+                                        
+                                                            <div class="options">
+                                                                {% for function, function_data in function_group_data.items %}
+                                                                <div class="option" data-function="{{ function }}">
+                                                                    <div class="option-label" title="{{ function_data.description }}">
+                                                                        <span>{{ function }}</span>
+
+                                                                        {% if function_data.kwargs %}
+                                                                        <span class="arrow">&rarr;</span>
+                                                                        {% endif %}
+                                                                    </div>
+
+                                                                    {% if function_data.kwargs %}
+                                                                    <div class="sub-options">
+                                                                        <div class="sub-options-head">
+                                                                            <span class="arrow">&larr;</span>
+                                                                            <p>{{ function_data.name }}</p>
+                                                                        </div>
+
+                                                                        <div class="options">
+                                                                            <div class="form-fields" data-function="{{ function }}">
+                                                                                {% for argument, argument_data in function_data.kwargs.arguments.items %}
+                                                                                <div class="form-field">
+                                                                                    <label for="{{ argument }}">{{ argument | title }}</label>
+                                                                                    <input 
+                                                                                        type="{{ argument_data.html_input_type }}"
+                                                                                        class="form-input form-control input-rounded function-input" 
+                                                                                        id="{{ argument }}"
+                                                                                        name="{{ argument }}"
+
+                                                                                        placeholder="{{ argument | title }}"
+                                                                                        title="{{ argument_data.description|default:'Provide a valid value for this option' }}"
+                                                                                        
+                                                                                        {% if argument_data.default is not None %}
+                                                                                            value="{{ argument_data.default }}"
+                                                                                        {% endif %}
+
+                                                                                        {% if argument_data.default is not None %}
+                                                                                            data-default="{{ argument_data.default }}"
+                                                                                        {% endif %}
+                                                                                    >
+                                                                                </div>
+                                                                                {% endfor %}
+                                                                                
+                                                                                <button 
+                                                                                    type="button" 
+                                                                                    class="btn light btn-success btn-sm done-btn" 
+                                                                                >
+                                                                                    Done
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button disabled type="button" class="btn light btn-success btn-sm add-btn">Add</button>
+                                </div>
+                            </div>
+                            {% endwith %}
+
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn light btn-success btn-sm submit-btn">Create</button>
+                        <button type="button" class="btn btn-danger light btn-sm" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>       
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="">
+            <div class="card-header">
+                <h4 class="card-title">Risk Profiles</h4>
+
+                <button 
+                    type="button" 
+                    class="btn btn-light btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#profileCreateModal"
+                    style="border-radius: 2px;"
+                >
+                    New Profile
+                </button>
+            </div>
+            
+            <section class="tabs-section p-4" id="risk-profile-tabs-section" data-urlparam="profile">
+                <nav class="tab-toggles-wp">
+                    <ul class="pagination pagination-lg pagination-gutter pagination-info tab-toggles-wp-inner">
+                        {% for risk_profile in risk_profiles %}
+                        <li 
+                            {% if forloop.first %}
+                            class="page-item active tab-toggle" 
+                            {% else %}
+                            class="page-item tab-toggle" 
+                            {% endif %}
+                            data-tabtarget="{{ risk_profile.name }}"
+                            style="flex-shrink: 0;"
+                        >
+                            <button class="page-link" style="border-radius: 2px !important; padding: 5px 10px !important; font-size: 0.95rem;">{{ risk_profile.name }}</button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </nav> 
+                
+                <div class="tabs">
+                    {% for risk_profile in risk_profiles %}
+
+                    <!-- Profile Edit Modal -->
+                    <div class="modal fade" id="profile{{ risk_profile.id.hex }}EditModal" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content" style="border-radius: 2px;">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Risk Profile</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                    </button>
+                                </div>
+                                
+                                <div class="modal-body">
+                                    <form 
+                                        action="{% url 'risk_management:risk_profile_update' risk_profile.id %}" 
+                                        method="put" 
+                                        class="profile-form profile-edit-form"
+                                        id="profile{{ risk_profile.id.hex }}"
+                                    >
+                                        {% csrf_token %}
+                        
+                                        <div class="form-fields">
+                                            <div class="form-field">
+                                                <label for="name">Name</label>
+                                                <input 
+                                                    type="text" 
+                                                    class="form-input form-control input-rounded" 
+                                                    placeholder="Profile name" 
+                                                    id="name"
+                                                    name="name"
+                                                    value="{{ risk_profile.name }}"
+                                                    required
+                                                >
+                                                <small class="field-message"></small>
+                                            </div>
+
+                                            <div class="form-field">
+                                                <label for="description">Description</label>
+                                                <input 
+                                                    type="text" 
+                                                    class="form-input form-control input-rounded" 
+                                                    placeholder="Profile description"
+                                                    id="description"
+                                                    name="description"
+                                                    value="{{ risk_profile.description }}"
+                                                >
+                                                <small class="field-message"></small>
+                                            </div>
+
+                                            <div class="form-field">
+                                                <label for="period_return_start">Period Return Start</label>
+                                                <input 
+                                                    type="date" 
+                                                    class="form-input form-control input-rounded" 
+                                                    id="period_return_start"
+                                                    name="period_return_start"
+                                                    value="{{ risk_profile.period_return_start|date:'Y-m-d' }}"
+                                                    max="{% now 'Y-m-d' %}"
+                                                >
+                                                <small class="field-message"></small>
+                                            </div>
+                    
+                                            <div class="form-field">
+                                                <label for="period_return_end">Period Return End</label>
+                                                <input 
+                                                    type="date" 
+                                                    class="form-input form-control input-rounded" 
+                                                    id="period_return_end"
+                                                    name="period_return_end"
+                                                    value="{{ risk_profile.period_return_end|date:'Y-m-d' }}"
+                                                    max="{% now 'Y-m-d' %}"
+                                                >
+                                                <small class="field-message"></small>
+                                            </div>
+
+                                            <div class="form-field">
+                                                <label for="criteria">Criteria</label>
+                                                <input 
+                                                    type="text" 
+                                                    class="form-input form-control input-rounded" 
+                                                    id="criteria"
+                                                    name="criteria"
+                                                    hidden
+                                                    style="display: none; pointer-events: none;"
+                                                    disabled
+                                                >
+                                                <small class="field-message"></small>
+
+                                                <div class="criteria-selected">
+                                                    <!-- Selected criteria a displayed here -->
+                                                    {% for criterion in risk_profile.criteria %}
+                                                    <button 
+                                                        type="button" 
+                                                        class="btn btn-outline-primary btn-xs criterion"
+                                                        data-data="{{ criterion | json_dumps }}"
+                                                    >   
+                                                        {{ criterion.func1.name }} {{ criterion.op }} {{ criterion.func2.name }}
+                                                        <i class="fas fa-times fa-xs"></i>
+                                                    </button>
+                                                    {% endfor %}
+                                                </div>
+
+                                                <button class="criterion-creation-section-toggle" type="button">Add Criterion +</button>
+
+                                                {% with operators_schema=criterion_schema.operators_schema functions_schema=criterion_schema.functions_schema %}
+                                                <div class="criterion-creation-section">
+                                                    <div class="criterion-creation-fields">
+                                                        <div class="form-fields">
+                                                            <div class="form-field">
+                                                                <label for="func1">Function One</label>
+                                                                <input 
+                                                                    type="text" 
+                                                                    class="form-input form-control input-rounded function-input" 
+                                                                    id="func1"
+                                                                    name="func1"
+                                                                    data-options=""
+                                                                    placeholder="Function 1"
+                                                                >
+
+                                                                <!-- Functions Modal -->
+                                                                <div class="functions-modal">
+                                                                    <div class="modal-head">
+                                                                        <div class="head-text">
+                                                                            <h5>Select a function</h5>
+
+                                                                            <button type="button" class="btn-close">
+                                                                            </button>
+                                                                        </div>
+                                                            
+                                                                        <div class="options-search-wp">
+                                                                            <i class="fas fa-search"></i>
+                                                                            <input type="search" class="options-search-input">
+                                                                        </div>
+                                                                    </div>
+                                                            
+                                                                    <div class="function-options options">
+                                                                        {% for function_group, function_group_data in functions_schema.items %}
+                                                                        <div class="option">
+                                                                            <div class="option-label">
+                                                                                <span>{{ function_group }}</span>
+                                                                                <span class="arrow">&rarr;</span>
+                                                                            </div>
+                                                                            
+                                                                            <div class="sub-options">
+                                                                                <div class="sub-options-head">
+                                                                                    <span class="arrow">&larr;</span>
+                                                                                    <p>{{ function_group }}</p>
+                                                                                </div>
+                                                            
+                                                                                <div class="options">
+                                                                                    {% for function, function_data in function_group_data.items %}
+                                                                                    <div class="option" data-function="{{ function }}">
+                                                                                        <div class="option-label" title="{{ function_data.description }}">
+                                                                                            <span>{{ function }}</span>
+
+                                                                                            {% if function_data.kwargs %}
+                                                                                            <span class="arrow">&rarr;</span>
+                                                                                            {% endif %}
+                                                                                        </div>
+
+                                                                                        {% if function_data.kwargs %}
+                                                                                        <div class="sub-options">
+                                                                                            <div class="sub-options-head">
+                                                                                                <span class="arrow">&larr;</span>
+                                                                                                <p>{{ function_data.name }}</p>
+                                                                                            </div>
+
+                                                                                            <div class="options">
+                                                                                                <div class="form-fields" data-function="{{ function }}">
+                                                                                                    {% for argument, argument_data in function_data.kwargs.arguments.items %}
+                                                                                                    <div class="form-field">
+                                                                                                        <label for="{{ argument }}">{{ argument | title }}</label>
+                                                                                                        <input 
+                                                                                                            type="{{ argument_data.html_input_type }}" 
+                                                                                                            class="form-input form-control input-rounded function-input" 
+                                                                                                            id="{{ argument }}"
+                                                                                                            name="{{ argument }}"
+                                                                                                            placeholder="{{ argument | title }}"
+                                                                                                            title="{{ argument_data.description|default:'Provide a valid value for this option' }}"
+
+                                                                                                            {% if argument_data.default is not None %}
+                                                                                                                value="{{ argument_data.default }}"
+                                                                                                            {% endif %}
+
+                                                                                                            {% if argument_data.default is not None %}
+                                                                                                                data-default="{{ argument_data.default }}"
+                                                                                                            {% endif %}
+                                                                                                        >
+                                                                                                    </div>
+                                                                                                    {% endfor %}
+                                                                                                    
+                                                                                                    <button 
+                                                                                                        type="button" 
+                                                                                                        class="btn light btn-success btn-sm done-btn" 
+                                                                                                    >
+                                                                                                        Done
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        {% endif %}
+                                                                                    </div>
+                                                                                    {% endfor %}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-field">
+                                                                <label for="op">Operator</label>
+                                                                <select name="op" id="op" class="form-input form-select">
+                                                                    {% for operator_name, operator_value in operators_schema.items %}
+                                                                    <option value="{{ operator_value }}">{{ operator_name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="form-field">
+                                                                <label for="func2">Function Two</label>
+                                                                <input 
+                                                                    type="text" 
+                                                                    class="form-input form-control input-rounded function-input" 
+                                                                    id="func2"
+                                                                    name="func2"
+                                                                    data-options=""
+                                                                    placeholder="Function 2"
+                                                                >
+
+                                                                <!-- Funtions Modal -->
+                                                                <div class="functions-modal">
+                                                                    <div class="modal-head">
+                                                                        <div class="head-text">
+                                                                            <h5>Select a function</h5>
+
+                                                                            <button type="button" class="btn-close">
+                                                                            </button>
+                                                                        </div>
+                                                            
+                                                                        <div class="options-search-wp">
+                                                                            <i class="fas fa-search"></i>
+                                                                            <input type="search" class="options-search-input">
+                                                                        </div>
+                                                                    </div>
+                                                            
+                                                                    <div class="function-options options">
+                                                                        {% for function_group, function_group_data in functions_schema.items %}
+                                                                        <div class="option">
+                                                                            <div class="option-label">
+                                                                                <span>{{ function_group }}</span>
+                                                                                <span class="arrow">&rarr;</span>
+                                                                            </div>
+                                                                            
+                                                                            <div class="sub-options">
+                                                                                <div class="sub-options-head">
+                                                                                    <span class="arrow">&larr;</span>
+                                                                                    <p>{{ function_group }}</p>
+                                                                                </div>
+                                                            
+                                                                                <div class="options">
+                                                                                    {% for function, function_data in function_group_data.items %}
+                                                                                    <div class="option" data-function="{{ function }}">
+                                                                                        <div class="option-label" title="{{ function_data.description }}">
+                                                                                            <span>{{ function }}</span>
+
+                                                                                            {% if function_data.kwargs %}
+                                                                                            <span class="arrow">&rarr;</span>
+                                                                                            {% endif %}
+                                                                                        </div>
+
+                                                                                        {% if function_data.kwargs %}
+                                                                                        <div class="sub-options">`
+                                                                                            <div class="sub-options-head">
+                                                                                                <span class="arrow">&larr;</span>
+                                                                                                <p>{{ function_data.name }}</p>
+                                                                                            </div>
+
+                                                                                            <div class="options">
+                                                                                                <div class="form-fields" data-function="{{ function }}">
+                                                                                                    {% for argument, argument_data in function_data.kwargs.arguments.items %}
+                                                                                                    <div class="form-field">
+                                                                                                        <label for="{{ argument }}">{{ argument | title }}</label>
+                                                                                                        <input 
+                                                                                                            type="{{ argument_data.html_input_type }}" 
+
+                                                                                                            class="form-input form-control input-rounded function-input" 
+                                                                                                            id="{{ argument }}"
+                                                                                                            name="{{ argument }}"
+                                                                                                            placeholder="{{ argument | title }}"
+                                                                                                            title="{{ argument_data.description|default:'Provide a valid value for this option' }}"
+                                                                                                            value="{{ argument_data.default }}"
+
+                                                                                                            {% if argument_data.default is not None %}
+                                                                                                                value="{{ argument_data.default }}"
+                                                                                                            {% endif %}
+
+                                                                                                            {% if argument_data.default is not None %}
+                                                                                                                value="{{ argument_data.default }}"
+                                                                                                            {% endif %}
+                                                                                                        >
+                                                                                                    </div>
+                                                                                                    {% endfor %}
+                                                                                                    
+                                                                                                    <button 
+                                                                                                        type="button" 
+                                                                                                        class="btn light btn-success btn-sm done-btn" 
+                                                                                                    >
+                                                                                                        Done
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        {% endif %}
+                                                                                    </div>
+                                                                                    {% endfor %}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <button disabled type="button" class="btn light btn-success btn-sm add-btn">Add</button>
+                                                    </div>
+                                                </div>
+                                                {% endwith %}
+
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn light btn-success btn-sm submit-btn">Done</button>
+                                            <button type="button" class="btn btn-danger light btn-sm" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>       
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div 
+                        {% if forloop.first %}
+                        class="col-12 tab show-flex" 
+                        {% else %}
+                        class="col-12 tab" 
+                        {% endif %}
+                        id="{{ risk_profile.name }}"
+                    >   
+                        <form class="stockset-form">
+                            <label for="stockset">Stock Set</label>
+                            <select name="stockset">
+                                {% for stockset in available_stocksets %}
+                                <option value="{{ stockset.value }}">{{ stockset.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+
+                        <div class="card" style="border-radius: 0;">
+                            <div class="card-header">
+                                <h4 class="card-title" style="display: flex; gap: 8px; align-items: center;">
+                                    {{ risk_profile.name }}
+
+                                    <i 
+                                        class="fas fa-sync fa-xs tab-data-reloader"
+                                        data-tab-data-url="{% url 'risk_management:stocks_risk_profile_generation' risk_profile.id %}"
+                                        title="Fetch/reload table data"
+                                    ></i>
+                                </h4>
+                                
+                                <div style="display: flex; align-items: center; gap: 0 8px;">
+                                    <button 
+                                        type="button" 
+                                        class="btn light btn-sm btn-dark"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#profile{{ risk_profile.id.hex }}EditModal"
+                                        style="padding: 6px 12px; border-radius: 2px;"
+                                    >
+                                        Edit
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+
+                                    <a href="{% url 'risk_management:risk_profile_delete' risk_profile.id %}">
+                                        <button 
+                                            type="button" 
+                                            class="btn light btn-sm btn-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target=""
+                                            style="padding: 6px 12px; border-radius: 2px;"
+                                        >
+                                            <!-- Delete -->
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body" style="padding: 10px; margin: 0;">
+                                <div class="risk-profile-table">
+                                    <!-- Risk Profile Table -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.2.5/dist/js/tabulator.min.js"></script>
+
+<script src="{% static 'core//scripts//formCard.js' %}"></script>
+<!-- riskProfileTable.js should come before tabs.js so that when tabs.js clicks the previously active tab on page load, -->
+<!-- a profile data fetch and render for the corresponding risk profile table is triggered -->
+<script src="{% static 'risk_management//scripts//riskProfileTable.js' %}"></script> 
+<script src="{% static 'core//scripts//tabs.js' %}"></script>
+<script src="{% static 'risk_management//scripts//functionsModal.js' %}"></script>
+<script src="{% static 'risk_management//scripts//profileForm.js' %}"></script>
+<script src="{% static 'risk_management//scripts//riskProfileCreate.js' %}"></script>
+<script src="{% static 'risk_management//scripts//riskProfileEdit.js' %}"></script>
+{% endblock %}

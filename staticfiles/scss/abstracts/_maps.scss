@@ -1,0 +1,43 @@
+$borders: (
+    "right", "left", "top", "bottom", ""
+);
+
+
+$theme_backgrounds: (
+    "color_1": $color_pallate_1, 
+    "color_2": $color_pallate_2, 
+    "color_3": $color_pallate_3, 
+    "color_4": $color_pallate_4, 
+    "color_5": $color_pallate_5, 
+    "color_6": $color_pallate_6, 
+    "color_7": $color_pallate_7, 
+    "color_8": $color_pallate_8, 
+    "color_9": $color_pallate_9, 
+    "color_10": $color_pallate_10,
+    "color_11": $color_pallate_11,
+    "color_12": $color_pallate_12,
+    "color_13": $color_pallate_13,
+    "color_14": $color_pallate_14,
+    "color_15": $color_pallate_15
+);
+
+
+$theme_color: (
+    "theme_1": $theme_plate_1, 
+    "theme_2": $theme_plate_2, 
+    "theme_3": $theme_plate_3, 
+    "theme_4": $theme_plate_4,
+    "theme_5 ": $theme_plate_5,
+    "theme_6 ": $theme_plate_6,
+    "theme_7 ": $theme_plate_7
+);
+
+$theme_color_bg: (
+    "theme_1": $theme_plate_bg_1, 
+    "theme_2": $theme_plate_bg_2, 
+    "theme_3": $theme_plate_bg_3, 
+    "theme_4": $theme_plate_bg_4,
+    "theme_5": $theme_plate_bg_5,
+    "theme_6": $theme_plate_bg_6,
+    "theme_7": $theme_plate_bg_7
+);

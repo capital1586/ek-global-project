@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.id %}Edit Alert{% else %}Create Alert{% endif %}{% endblock %}
+
+{% block styles %}
+<style>
+    .form-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    
+    .card-header {
+        border-radius: 10px 10px 0 0;
+    }
+    
+    .form-label {
+        font-weight: 500;
+    }
+    
+    .help-text {
+        color: #6c757d;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    
+    .custom-condition-field {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Page Title -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">
+                    <i class="fas fa-bell me-2 text-primary"></i> 
+                    {% if form.instance.id %}Edit Alert{% else %}Create New Alert{% endif %}
+                </h1>
+                <a href="{% url 'Alerts:alert_list' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Alerts
+                </a>
+            </div>
+            
+            <!-- Alert Form -->
+            <div class="card form-card">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-{% if form.instance.id %}edit{% else %}plus-circle{% endif %} me-2"></i>
+                        {% if form.instance.id %}Update Alert Details{% else %}Alert Details{% endif %}
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-2 mb-3">Basic Information</h5>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">Alert Title *</label>
+                                {{ form.title.errors }}
+                                <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" 
+                                       class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.title.value|default:'' }}" required>
+                                {% if form.title.help_text %}
+                                <div class="help-text">{{ form.title.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                                {{ form.description.errors }}
+                                <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" 
+                                          class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                                          rows="3">{{ form.description.value|default:'' }}</textarea>
+                                {% if form.description.help_text %}
+                                <div class="help-text">{{ form.description.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-2 mb-3">Alert Configuration</h5>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.symbol.id_for_label }}" class="form-label">Stock Symbol *</label>
+                                {{ form.symbol.errors }}
+                                <input type="text" name="{{ form.symbol.name }}" id="{{ form.symbol.id_for_label }}" 
+                                       class="form-control {% if form.symbol.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.symbol.value|default:'' }}" required>
+                                {% if form.symbol.help_text %}
+                                <div class="help-text">{{ form.symbol.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.condition_type.id_for_label }}" class="form-label">Alert Condition *</label>
+                                {{ form.condition_type.errors }}
+                                <select name="{{ form.condition_type.name }}" id="{{ form.condition_type.id_for_label }}" 
+                                        class="form-select {% if form.condition_type.errors %}is-invalid{% endif %}" required>
+                                    <option value="" {% if not form.condition_type.value %}selected{% endif %}>Select a condition</option>
+                                    {% for value, text in form.condition_type.field.choices %}
+                                    <option value="{{ value }}" {% if form.condition_type.value == value %}selected{% endif %}>{{ text }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.condition_type.help_text %}
+                                <div class="help-text">{{ form.condition_type.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3 threshold-field">
+                                <label for="{{ form.threshold_value.id_for_label }}" class="form-label">Threshold Value</label>
+                                {{ form.threshold_value.errors }}
+                                <input type="number" step="0.01" name="{{ form.threshold_value.name }}" id="{{ form.threshold_value.id_for_label }}" 
+                                       class="form-control {% if form.threshold_value.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.threshold_value.value|default:'' }}">
+                                {% if form.threshold_value.help_text %}
+                                <div class="help-text">{{ form.threshold_value.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3 custom-condition-field">
+                                <label for="{{ form.custom_condition.id_for_label }}" class="form-label">Custom Condition</label>
+                                {{ form.custom_condition.errors }}
+                                <input type="text" name="{{ form.custom_condition.name }}" id="{{ form.custom_condition.id_for_label }}" 
+                                       class="form-control {% if form.custom_condition.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.custom_condition.value|default:'' }}" 
+                                       placeholder="e.g. Price > 150 USD">
+                                {% if form.custom_condition.help_text %}
+                                <div class="help-text">{{ form.custom_condition.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.frequency.id_for_label }}" class="form-label">Alert Frequency</label>
+                                {{ form.frequency.errors }}
+                                <div class="mt-2">
+                                    {% for value, text in form.frequency.field.choices %}
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="{{ form.frequency.name }}" 
+                                               id="{{ form.frequency.id_for_label }}_{{ value }}" value="{{ value }}"
+                                               {% if form.frequency.value == value %}checked{% elif not form.frequency.value and value == 'one_time' %}checked{% endif %}>
+                                        <label class="form-check-label" for="{{ form.frequency.id_for_label }}_{{ value }}">{{ text }}</label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% if form.frequency.help_text %}
+                                <div class="help-text">{{ form.frequency.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if form.instance.id %}
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.status.id_for_label }}" class="form-label">Alert Status</label>
+                                {{ form.status.errors }}
+                                <select name="{{ form.status.name }}" id="{{ form.status.id_for_label }}" 
+                                        class="form-select {% if form.status.errors %}is-invalid{% endif %}">
+                                    {% for value, text in form.status.field.choices %}
+                                    <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ text }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.status.help_text %}
+                                <div class="help-text">{{ form.status.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-2 mb-3">Notification Settings</h5>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="{{ form.email_notification.name }}" 
+                                           id="{{ form.email_notification.id_for_label }}" 
+                                           {% if form.email_notification.value %}checked{% elif form.email_notification.value == None %}checked{% endif %}>
+                                    <label class="form-check-label" for="{{ form.email_notification.id_for_label }}">
+                                        <i class="fas fa-envelope me-1"></i> Email Notifications
+                                    </label>
+                                </div>
+                                {% if form.email_notification.help_text %}
+                                <div class="help-text">{{ form.email_notification.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="{{ form.sound_notification.name }}" 
+                                           id="{{ form.sound_notification.id_for_label }}" 
+                                           {% if form.sound_notification.value %}checked{% elif form.sound_notification.value == None %}checked{% endif %}>
+                                    <label class="form-check-label" for="{{ form.sound_notification.id_for_label }}">
+                                        <i class="fas fa-volume-up me-1"></i> Sound Notifications
+                                    </label>
+                                </div>
+                                {% if form.sound_notification.help_text %}
+                                <div class="help-text">{{ form.sound_notification.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'Alerts:alert_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>
+                                {% if form.instance.id %}Update Alert{% else %}Create Alert{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle condition type changes to show/hide fields
+        const conditionTypeSelect = document.getElementById('{{ form.condition_type.id_for_label }}');
+        const thresholdField = document.querySelector('.threshold-field');
+        const customConditionField = document.querySelector('.custom-condition-field');
+        
+        function updateFieldVisibility() {
+            if (conditionTypeSelect.value === 'custom') {
+                thresholdField.style.display = 'none';
+                customConditionField.style.display = 'block';
+            } else {
+                thresholdField.style.display = 'block';
+                customConditionField.style.display = 'none';
+            }
+        }
+        
+        // Initial visibility
+        updateFieldVisibility();
+        
+        // Update on change
+        conditionTypeSelect.addEventListener('change', updateFieldVisibility);
+    });
+</script>
+{% endblock %} 

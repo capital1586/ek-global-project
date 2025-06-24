@@ -1,0 +1,1081 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block stylesheets %}
+<link href="{% static 'vendor/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css' %}" rel="stylesheet">
+<style>
+    :root {
+        /* Dark theme variables (matching portfolio_list.html) */
+        --card-bg: #1a1d3a;
+        --card-hover: #232647;
+        --text-primary: #e9ecef;
+        --text-secondary: #adb5bd;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --chart-success: #28a745;
+        --chart-danger: #dc3545;
+        
+        /* Light theme variables (for theme switching) */
+        --light-bg: #f0f2f5;
+        --light-card: #ffffff;
+        --light-card-hover: #f8f9fa;
+        --light-text-primary: #333333;
+        --light-text-secondary: #6c757d;
+        --light-border: rgba(0, 0, 0, 0.1);
+        --light-chart-success: #28a745;
+        --light-chart-danger: #dc3545;
+    }
+    
+    /* Base styling for dark theme */
+    body.dark-theme {
+        background-color: #151933;
+        color: var(--text-primary);
+    }
+    
+    /* Base styling for light theme */
+    body.light-theme {
+        background-color: var(--light-bg);
+        color: var(--light-text-primary);
+    }
+    
+    /* Trading container with improved styling */
+    .trading-container {
+        display: flex;
+        height: calc(100vh - 150px);
+        background: var(--card-bg);
+        border-radius: 1.5rem;
+        overflow: hidden;
+        margin: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    /* Light theme overrides */
+    body.light-theme .trading-container {
+        background: var(--light-card);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Sidebar styling */
+    .trading-sidebar {
+        width: 320px;
+        background: var(--card-bg);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    body.light-theme .trading-sidebar {
+        background: var(--light-card);
+        border-right: 1px solid var(--light-border);
+    }
+    
+    /* Gradient accent for sidebar */
+    .trading-sidebar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(to right, #28a745, #007bff);
+        background-size: 200% 100%;
+        animation: gradientShift 8s infinite alternate;
+    }
+    
+    /* Main content area */
+    .trading-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--card-bg);
+    }
+    
+    body.light-theme .trading-main {
+        background: var(--light-card);
+    }
+    
+    /* Header styling */
+    .trading-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        background: var(--card-bg);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    body.light-theme .trading-header {
+        background: var(--light-card);
+        border-bottom: 1px solid var(--light-border);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Symbol search styling */
+    .symbol-search {
+        position: relative;
+        flex: 1;
+        max-width: 400px;
+        margin-right: 1.5rem;
+    }
+    
+    .symbol-search input {
+        width: 100%;
+        padding: 0.75rem 1.25rem;
+        border: 2px solid var(--border-color);
+        border-radius: 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-theme .symbol-search input {
+        border: 2px solid var(--light-border);
+        background: rgba(0, 0, 0, 0.02);
+        color: var(--light-text-primary);
+    }
+    
+    .symbol-search input:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.2);
+        outline: none;
+    }
+    
+    /* Button styling */
+    .trading-actions .btn {
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.75rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+    }
+    
+    body.light-theme .trading-actions .btn {
+        background: rgba(0, 0, 0, 0.02);
+        color: var(--light-text-primary);
+        border: 1px solid var(--light-border);
+    }
+    
+    .trading-actions .btn:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    body.light-theme .trading-actions .btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .trading-actions .btn-primary {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        color: white;
+    }
+    
+    .trading-actions .btn-secondary {
+        background: linear-gradient(135deg, #6610f2, #6f42c1);
+        border: none;
+        color: white;
+    }
+    
+    /* Chart container */
+    .trading-chart {
+        flex: 1;
+        background: var(--card-bg);
+        border-radius: 1rem;
+        margin: 1.25rem;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    body.light-theme .trading-chart {
+        background: var(--light-card);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Order form styling */
+    .trading-form {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    body.light-theme .trading-form {
+        border-bottom: 1px solid var(--light-border);
+    }
+    
+    .order-types {
+        display: flex;
+        margin-bottom: 1.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 0.75rem;
+        padding: 0.25rem;
+    }
+    
+    body.light-theme .order-types {
+        background: rgba(0, 0, 0, 0.02);
+    }
+    
+    .order-type {
+        flex: 1;
+        padding: 0.75rem;
+        text-align: center;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--text-secondary);
+    }
+    
+    body.light-theme .order-type {
+        color: var(--light-text-secondary);
+    }
+    
+    .order-type.active {
+        background: rgba(40, 167, 69, 0.2);
+        color: var(--text-primary);
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    body.light-theme .order-type.active {
+        background: rgba(40, 167, 69, 0.1);
+        color: var(--light-text-primary);
+    }
+    
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    
+    body.light-theme .form-group label {
+        color: var(--light-text-secondary);
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+    
+    body.light-theme .form-control {
+        border: 1px solid var(--light-border);
+        background: rgba(0, 0, 0, 0.02);
+        color: var(--light-text-primary);
+    }
+    
+    /* Market data styling */
+    .market-data {
+        padding: 1.5rem;
+        flex: 1;
+        overflow-y: auto;
+    }
+    
+    .market-data h4 {
+        color: var(--text-secondary);
+        margin-bottom: 1.25rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    body.light-theme .market-data h4 {
+        color: var(--light-text-secondary);
+    }
+    
+    .market-data-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+    
+    .market-data-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-theme .market-data-item {
+        background: rgba(0, 0, 0, 0.02);
+    }
+    
+    .market-data-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+    }
+    
+    body.light-theme .market-data-item:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+    
+    .market-data-item h4 {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+    }
+    
+    body.light-theme .market-data-item h4 {
+        color: var(--light-text-secondary);
+    }
+    
+    .market-data-item p {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    
+    body.light-theme .market-data-item p {
+        color: var(--light-text-primary);
+    }
+    
+    /* Company info section */
+    .company-info-section {
+        background: var(--card-bg);
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    body.light-theme .company-info-section {
+        background: var(--light-card);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+    
+    .company-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .company-name {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+    
+    body.light-theme .company-name {
+        color: var(--light-text-primary);
+    }
+    
+    .company-sector {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+    
+    body.light-theme .company-sector {
+        color: var(--light-text-secondary);
+    }
+    
+    .price-info {
+        text-align: right;
+    }
+    
+    .current-price {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: block;
+    }
+    
+    body.light-theme .current-price {
+        color: var(--light-text-primary);
+    }
+    
+    .price-change {
+        font-size: 1rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+    }
+    
+    .price-change.positive {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+    
+    body.light-theme .price-change.positive {
+        background: rgba(40, 167, 69, 0.1);
+    }
+    
+    .price-change.negative {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+    }
+    
+    body.light-theme .price-change.negative {
+        background: rgba(220, 53, 69, 0.1);
+    }
+    
+    .market-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-theme .stat-card {
+        background: rgba(0, 0, 0, 0.02);
+    }
+    
+    .stat-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+    }
+    
+    body.light-theme .stat-card:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+    
+    body.light-theme .stat-label {
+        color: var(--light-text-secondary);
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    
+    body.light-theme .stat-value {
+        color: var(--light-text-primary);
+    }
+    
+    /* Animations */
+    @keyframes gradientShift {
+        0% {
+            background-position: 0% 50%;
+        }
+        100% {
+            background-position: 100% 50%;
+        }
+    }
+    
+    /* Theme toggle */
+    .theme-toggle {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #28a745, #007bff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transition: all 0.3s ease;
+    }
+    
+    .theme-toggle:hover {
+        transform: translateY(-2px) rotate(45deg);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .theme-toggle i {
+        color: white;
+        font-size: 1.25rem;
+    }
+    .trade-button {
+        width: 100%;
+        padding: 0.875rem;
+        border: none;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .buy-button {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+    
+    .sell-button {
+        background: linear-gradient(135deg, #dc3545, #e74c3c);
+        color: white;
+    }
+    
+    body.light-theme .trade-button {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+    
+    body.light-theme .sell-button {
+        background: linear-gradient(135deg, #dc3545, #e74c3c);
+        color: white;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 992px) {
+        .trading-container {
+            flex-direction: column;
+            height: auto;
+        }
+        
+        .trading-sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .trading-main {
+            min-height: 500px;
+        }
+        
+        .market-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .company-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .price-info {
+            text-align: left;
+            margin-top: 1rem;
+        }
+        
+        .market-stats {
+            grid-template-columns: 1fr;
+        }
+        
+        .trading-header {
+            flex-direction: column;
+        }
+        
+        .symbol-search {
+            margin-right: 0;
+            margin-bottom: 1rem;
+            max-width: 100%;
+        }
+        
+        .trading-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Company Info Section -->
+        <div class="col-lg-12">
+            <div class="company-info-section">
+                <div class="company-header">
+                    <div>
+                        <h2 class="company-name">{{ company_info.name }}</h2>
+                        <span class="company-sector">{{ company_info.sector }} | {{ company_info.industry }}</span>
+                    </div>
+                    <div class="symbol-search">
+                        <form method="get" action="{% url 'copilot:tradingview' %}" class="search-form">
+                            <div class="search-input-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" placeholder="Search for symbol (e.g., MSFT)" name="symbol" value="{{ current_symbol }}" class="search-input">
+                            </div>
+                            <button type="submit" class="search-button">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <style>
+                        .symbol-search {
+                            position: relative;
+                            max-width: 400px;
+                            margin: 0 auto;
+                        }
+                    
+                        .search-form {
+                            display: flex;
+                            align-items: center;
+                            background: var(--bg-white);
+                            border: 2px solid var(--border-color);
+                            border-radius: 2rem;
+                            padding: 0.5rem;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+                            transition: all 0.3s ease;
+                        }
+                    
+                        .search-form:focus-within {
+                            border-color: var(--primary);
+                            box-shadow: 0 0 0 4px var(--rgba-primary-1);
+                        }
+                    
+                        .search-input-wrapper {
+                            flex: 1;
+                            display: flex;
+                            align-items: center;
+                            padding: 0 0.5rem;
+                        }
+                    
+                        .search-icon {
+                            color: var(--secondary);
+                            margin-right: 0.5rem;
+                            font-size: 1rem;
+                        }
+                    
+                        .search-input {
+                            flex: 1;
+                            border: none;
+                            outline: none;
+                            background: transparent;
+                            font-size: 1rem;
+                            color: var(--primary);
+                            padding: 0.5rem 0;
+                        }
+                    
+                        .search-input::placeholder {
+                            color: var(--secondary);
+                            opacity: 0.7;
+                        }
+                    
+                        .search-button {
+                            background: var(--primary);
+                            border: none;
+                            border-radius: 50%;
+                            width: 40px;
+                            height: 40px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            color: white;
+                            box-shadow: 0 4px 8px rgba(94, 62, 208, 0.2);
+                        }
+                    
+                        .search-button:hover {
+                            background: var(--primary-dark);
+                            transform: translateY(-2px);
+                            box-shadow: 0 6px 12px rgba(94, 62, 208, 0.3);
+                        }
+                    
+                        .search-button:active {
+                            transform: translateY(0);
+                            box-shadow: 0 4px 8px rgba(94, 62, 208, 0.2);
+                        }
+                    
+                        .search-button i {
+                            font-size: 1rem;
+                        }
+                    </style>
+                    <div class="price-info">
+                        <span class="current-price">${{ financial_data.current_price|floatformat:2 }}</span>
+                        <div class="price-change {% if price_change >= 0 %}positive{% else %}negative{% endif %}">
+                            <i class="fas fa-{% if price_change >= 0 %}caret-up{% else %}caret-down{% endif %}"></i>
+                            ${{ price_change|floatformat:2 }} ({{ price_change_percent|floatformat:2 }}%)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="market-stats">
+                    <div class="stat-card">
+                        <div class="stat-label">Previous Close</div>
+                        <div class="stat-value">${{ financial_data.previous_close|floatformat:2 }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Open</div>
+                        <div class="stat-value">${{ financial_data.open|floatformat:2 }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Day's Range</div>
+                        <div class="stat-value">${{ financial_data.day_low|floatformat:2 }} - ${{ financial_data.day_high|floatformat:2 }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">52 Week Range</div>
+                        <div class="stat-value">${{ financial_data.fifty_two_week_low|floatformat:2 }} - ${{ financial_data.fifty_two_week_high|floatformat:2 }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Volume</div>
+                        <div class="stat-value">{{ financial_data.volume|intcomma }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg. Volume</div>
+                        <div class="stat-value">{{ financial_data.avg_volume|intcomma }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Market Cap</div>
+                        <div class="stat-value">${{ company_info.market_cap|intcomma }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">P/E Ratio</div>
+                        <div class="stat-value">{{ company_info.pe_ratio|floatformat:2 }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Beta</div>
+                        <div class="stat-value">{{ company_info.beta|floatformat:2 }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Dividend Yield</div>
+                        <div class="stat-value">{{ company_info.dividend_yield|floatformat:2 }}%</div>
+                    </div>
+                </div>
+
+                <div class="company-description">
+                    <h3 class="description-title">About the Company</h3>
+                    <div class="description-content">
+                        {{ company_info.description }}
+                    </div>
+                </div>
+                <style>
+                    .company-description {
+                        background: var(--bg-white);
+                        border-radius: 1rem;
+                        padding: 1.5rem;
+                        margin-top: 1.5rem;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                        border: 1px solid var(--border-color);
+                        transition: all 0.3s ease;
+                    }
+                
+                    .company-description:hover {
+                        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+                        transform: translateY(-2px);
+                    }
+                
+                    .description-title {
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        color: var(--primary);
+                        margin-bottom: 1rem;
+                        display: flex;
+                        align-items: center;
+                    }
+                
+                    .description-title::before {
+                        content: '';
+                        display: inline-block;
+                        width: 8px;
+                        height: 8px;
+                        background: var(--primary);
+                        border-radius: 50%;
+                        margin-right: 0.75rem;
+                    }
+                
+                    .description-content {
+                        font-size: 0.95rem;
+                        line-height: 1.8;
+                        color: var(--secondary);
+                        text-align: justify;
+                    }
+                
+                    .description-content::first-letter {
+                        font-size: 1.5rem;
+                        font-weight: 600;
+                        color: var(--primary);
+                        margin-right: 0.5rem;
+                        float: left;
+                        line-height: 1;
+                    }
+                
+                    @media (max-width: 768px) {
+                        .company-description {
+                            padding: 1rem;
+                        }
+                
+                        .description-title {
+                            font-size: 1.1rem;
+                        }
+                
+                        .description-content {
+                            font-size: 0.9rem;
+                        }
+                    }
+                </style>
+            </div>
+        </div>
+    </div>
+
+    <!-- Existing Trading View Chart -->
+    <div class="trading-container">
+        <div class="trading-sidebar">
+            <div class="trading-form">
+                <div class="order-types">
+                    <div class="order-type active" data-type="market">
+                        <i class="fas fa-shopping-cart me-2"></i>Market
+                    </div>
+                    <div class="order-type" data-type="limit">
+                        <i class="fas fa-layer-group me-2"></i>Limit
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-sort-amount-up-alt me-2"></i>Quantity
+                    </label>
+                    <input type="number" class="form-control" id="quantity" min="1" placeholder="Enter quantity">
+                </div>
+                
+                <div class="form-group limit-price" style="display: none;">
+                    <label>
+                        <i class="fas fa-tag me-2"></i>Limit Price
+                    </label>
+                    <input type="number" class="form-control" id="limitPrice" step="0.01" placeholder="Enter limit price">
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-calculator me-2"></i>Total Amount
+                    </label>
+                    <input type="text" class="form-control" id="totalAmount" readonly>
+                </div>
+                
+                <button class="trade-button buy-button mb-3">
+                    <i class="fas fa-arrow-up me-2"></i>Buy
+                </button>
+                <button class="trade-button sell-button">
+                    <i class="fas fa-arrow-down me-2"></i>Sell
+                </button>
+            </div>
+            
+            <div class="market-data">
+                <h4>Market Data</h4>
+                <div class="market-data-grid">
+                    <div class="market-data-item">
+                        <h4>
+                            <i class="fas fa-door-open me-2"></i>Open
+                        </h4>
+                        <p id="openPrice">-</p>
+                    </div>
+                    <div class="market-data-item">
+                        <h4>
+                            <i class="fas fa-arrow-up me-2"></i>High
+                        </h4>
+                        <p id="highPrice">-</p>
+                    </div>
+                    <div class="market-data-item">
+                        <h4>
+                            <i class="fas fa-arrow-down me-2"></i>Low
+                        </h4>
+                        <p id="lowPrice">-</p>
+                    </div>
+                    <div class="market-data-item">
+                        <h4>
+                            <i class="fas fa-chart-bar me-2"></i>Volume
+                        </h4>
+                        <p id="volume">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="trading-main">
+            <div class="trading-header">
+                <div class="symbol-search">
+                    <input type="text" placeholder="Search for symbol (e.g., PIBTL)" id="symbolSearch" value="{{ current_symbol }}">
+                </div>
+                <div class="trading-actions">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Indicators
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-expand-arrows-alt me-2"></i>
+                        Full Screen
+                    </button>
+                </div>
+            </div>
+            
+            <div class="trading-chart" id="tradingview_chart"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<script>
+    let widget;
+
+    function initTradingView(symbol = "{{ current_symbol }}") {
+        // Clear previous chart
+        document.getElementById('tradingview_chart').innerHTML = '';
+        
+        widget = new TradingView.widget({
+            "width": "100%",
+            "height": "100%",
+            "symbol": symbol,
+            "interval": "D",
+            "timezone": "Asia/Karachi",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#27293d",
+            "enable_publishing": false,
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true,
+            "container_id": "tradingview_chart",
+            "studies": [
+                "RSI@tv-basicstudies",
+                "MASimple@tv-basicstudies",
+                "MACD@tv-basicstudies",
+                "StochasticRSI@tv-basicstudies"
+            ],
+            "show_popup_button": true,
+            "popup_width": "1000",
+            "popup_height": "650",
+            "withdateranges": true,
+            "save_image": true,
+            "details": true,
+            "hotlist": true,
+            "calendar": true,
+            "studies_overrides": {
+                "volume.volume.color.0": "#e74c3c",
+                "volume.volume.color.1": "#2ecc71"
+            },
+            "overrides": {
+                "paneProperties.background": "#27293d",
+                "paneProperties.vertGridProperties.color": "#363c4e",
+                "paneProperties.horzGridProperties.color": "#363c4e",
+                "symbolWatermarkProperties.transparency": 90,
+                "scalesProperties.textColor": "#AAA"
+            }
+        });
+    }
+
+    // Initialize with default symbol
+    initTradingView();
+
+    // Symbol Search Handler
+    const symbolSearch = document.getElementById('symbolSearch');
+    
+    // Handle Enter key press
+    symbolSearch.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const symbol = this.value.toUpperCase();
+            if (symbol) {
+                initTradingView(symbol);
+            }
+        }
+    });
+
+    // Handle input changes with debounce
+    let searchTimeout;
+    symbolSearch.addEventListener('input', function() {
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        const symbol = this.value.toUpperCase();
+        if (symbol) {
+            searchTimeout = setTimeout(() => {
+                initTradingView(symbol);
+            }, 1000); // Wait for 1 second after typing stops
+        }
+    });
+
+    symbolSearch.addEventListener('focus', function() {
+        this.style.boxShadow = '0 0 0 4px var(--rgba-primary-1)';
+    });
+    
+    symbolSearch.addEventListener('blur', function() {
+        this.style.boxShadow = 'none';
+    });
+
+    // Indicators Button Handler
+    document.querySelector('.btn-primary').addEventListener('click', function() {
+        if (widget) {
+            widget.chart().executeActionById('insertIndicator');
+        }
+    });
+
+    // Order Type Toggle
+    document.querySelectorAll('.order-type').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.order-type').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.transform = 'scale(1)';
+            });
+            this.classList.add('active');
+            this.style.transform = 'scale(1.05)';
+            
+            const limitPriceField = document.querySelector('.limit-price');
+            if (this.dataset.type === 'limit') {
+                limitPriceField.style.display = 'block';
+                limitPriceField.style.animation = 'fadeIn 0.3s ease';
+            } else {
+                limitPriceField.style.display = 'none';
+            }
+        });
+    });
+
+    function calculateTotal() {
+        const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+        const price = parseFloat(document.getElementById('limitPrice').value) || 0;
+        const total = quantity * price;
+        const totalElement = document.getElementById('totalAmount');
+        
+        totalElement.value = total.toFixed(2);
+        totalElement.style.animation = 'pulse 0.3s ease';
+        setTimeout(() => totalElement.style.animation = '', 300);
+    }
+
+    document.getElementById('quantity').addEventListener('input', calculateTotal);
+    document.getElementById('limitPrice').addEventListener('input', calculateTotal);
+
+    document.querySelector('.btn-secondary').addEventListener('click', function() {
+        const tradingContainer = document.querySelector('.trading-container');
+        if (!document.fullscreenElement) {
+            tradingContainer.requestFullscreen();
+            this.innerHTML = '<i class="fas fa-compress-arrows-alt me-2"></i>Exit Full Screen';
+        } else {
+            document.exitFullscreen();
+            this.innerHTML = '<i class="fas fa-expand-arrows-alt me-2"></i>Full Screen';
+        }
+    });
+
+    window.addEventListener('load', function() {
+        const chart = document.getElementById('tradingview_chart');
+        chart.style.opacity = '0';
+        setTimeout(() => {
+            chart.style.transition = 'opacity 0.5s ease';
+            chart.style.opacity = '1';
+        }, 500);
+    });
+</script>
+{% endblock %}

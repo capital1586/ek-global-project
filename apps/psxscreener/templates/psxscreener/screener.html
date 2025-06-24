@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSX Stock Screener</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --primary-light: #34495e;
+            --secondary: #3498db;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f1c40f;
+            --info: #1abc9c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+            --border-color: #bdc3c7;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--dark);
+        }
+
+        .navbar {
+            background-color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: white !important;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background-color: var(--light);
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 12px;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+
+        .form-control {
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .positive {
+            color: var(--success);
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .page-link {
+            color: var(--primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-spinner i {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .table-responsive {
+                margin-bottom: 20px;
+            }
+            
+            .card {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-graph-up"></i> PSX Stock Screener
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-info-circle"></i> About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Market Overview</h5>
+                        <div>
+                            <span class="badge bg-primary me-2">KSE-100: {{ kse100_price|floatformat:2 }} ({{ kse100_change|floatformat:2 }}%)</span>
+                            <span class="badge bg-primary me-2">KSE-30: {{ kse30_price|floatformat:2 }} ({{ kse30_change|floatformat:2 }}%)</span>
+                            <span class="badge bg-primary">KMI-30: {{ kmi30_price|floatformat:2 }} ({{ kmi30_change|floatformat:2 }}%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Stock Screener</h5>
+                        <div>
+                            <button class="btn btn-primary btn-sm" id="filter-toggle">
+                                <i class="bi bi-funnel"></i> Filters
+                            </button>
+                            <span class="badge bg-primary ms-2">{{ active_filters_count }} Active</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Symbol</th>
+                                        <th>Company</th>
+                                        <th>Price</th>
+                                        <th>Change</th>
+                                        <th>Volume</th>
+                                        <th>Sector</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stock in stocks %}
+                                    <tr>
+                                        <td>{{ stock.Symbol }}</td>
+                                        <td>{{ stock.CompanyName }}</td>
+                                        <td>{{ stock.CurrentPrice|floatformat:2 }}</td>
+                                        <td class="{% if stock.ChangePercentage >= 0 %}positive{% else %}negative{% endif %}">
+                                            {{ stock.ChangePercentage|floatformat:2 }}%
+                                        </td>
+                                        <td>{{ stock.Volume|intcomma }}</td>
+                                        <td>{{ stock.Sector }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-graph-up"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if stocks.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ stocks.previous_page_number }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in stocks.paginator.page_range %}
+                        <li class="page-item {% if stocks.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+                        
+                        {% if stocks.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ stocks.next_page_number }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-spinner">
+        <i class="bi bi-arrow-repeat"></i>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter toggle functionality
+            const filterToggle = document.getElementById('filter-toggle');
+            const filterSection = document.querySelector('.filter-section');
+            
+            if (filterSection) {
+                filterToggle.addEventListener('click', function() {
+                    filterSection.style.display = filterSection.style.display === 'none' ? 'block' : 'none';
+                    this.innerHTML = filterSection.style.display === 'none' ? 
+                        '<i class="bi bi-funnel"></i> Show Filters' : 
+                        '<i class="bi bi-funnel"></i> Hide Filters';
+                });
+            }
+
+            // Loading spinner
+            const loadingSpinner = document.querySelector('.loading-spinner');
+            
+            // Show spinner during AJAX requests
+            document.addEventListener('ajaxStart', function() {
+                loadingSpinner.style.display = 'block';
+            });
+            
+            document.addEventListener('ajaxComplete', function() {
+                loadingSpinner.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

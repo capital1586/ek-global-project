@@ -1,0 +1,137 @@
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head>
+     <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="keywords" content="">
+	<meta name="author" content="">
+	<meta name="robots" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Dolab : Dolab Personal Banking Admin Bootstrap 5 Template">
+	<meta property="og:title" content="Dolab : Dolab Personal Banking Admin Bootstrap 5 Template">
+	<meta property="og:description" content="Dolab : Dolab Personal Banking Admin Bootstrap 5 Template">
+	<meta property="og:image" content="https://dolab. DexignZone.com/xhtml/social-image.png">
+	<meta name="format-detection" content="telephone=no">
+	
+	<!-- PAGE TITLE HERE -->
+	<title>{{ app_name }}</title>
+
+	<!-- Preloads -->
+	
+	<!-- FAVICONS ICON -->
+	<link rel="shortcut icon" type="image/png" href="images/favicon.png">
+	<link href="{% static 'vendor/jquery-nice-select/css/nice-select.css' %}" rel="stylesheet">
+	<link href="{% static 'vendor/jquery-autocomplete/jquery-ui.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+
+<body class="body  h-100">
+	<div class="container h-100">
+		<div class="row h-100 align-items-center justify-contain-center">
+			<div class="col-xl-12">
+				<div class="card">
+					<div class="card-body ">
+						<div class="row m-0">
+							<div class="col-xl-6 col-md-6 sign text-center" style="display: flex; justify-content: center; align-items: center;">
+								<div>
+									<div class="text-center my-5">
+										<div class="logo">
+											<img width="90%" src="{% static 'accounts/images/signin.svg' %}"></img>
+										</div>
+									</div>
+								</div>	
+							</div>
+							<div class="col-xl-6 col-md-6">
+								<div class="sign-in-your">
+									<h3>Sign in your account</h3>
+									<span class="text-white">Welcome back! Login with your data that you entered<br> during registration</span>
+
+                                    {% if messages %}
+										{% for msg in messages %}
+											{% if msg.tags == 'error' %}
+												<div class="mt-2 alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+												<div>
+													{{ msg }}
+												</div>
+												<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+												</div>
+
+											{% else %}
+											<div class="mt-2 alert alert-{{ msg.tags }} alert-dismissible fade show d-flex align-items-center" role="alert">
+												<div>
+													{{ msg }}
+												</div>
+												<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+											</div>
+											
+											{% endif %}
+										{% endfor %}
+                                	{% endif %}
+
+									<form class="mt-2" method="post" action="{% url 'accounts:signin' %}">
+                                        {% csrf_token %}
+										<div class="mb-3">
+											<label class="mb-1"><strong>Email</strong></label>
+											<input type="email" name="email" class="form-control">
+										</div>
+										<div class="mb-3">
+											<label class="mb-1"><strong>Password</strong></label>
+											<input type="password" name="password" class="form-control"">
+										</div>
+										<div class="mb-3">
+                                            <label class="mb-1" hidden><strong>Timezone</strong></label>
+                                            <input id="timezone" type="text" class="form-control" name="timezone" hidden>
+                                        </div>
+										<div class="row d-flex justify-content-between mt-4 mb-2">
+											<div class="mb-3">
+											   <div class="form-check custom-checkbox ms-1">
+													<input type="checkbox" class="form-check-input" id="basic_checkbox_1">
+													<label class="form-check-label" for="basic_checkbox_1">Remember my preference</label>
+												</div>
+											</div>
+											<div class="mb-3">
+												<a href="page-forgot-password.html">Forgot Password?</a>
+											</div>
+										</div>
+										<div class="text-center">
+											<button type="submit" class="btn btn-primary btn-block">Sign Me In</button>
+										</div>
+                                        
+                                        <p class="m-2 text-center">or</p>
+
+                                        <div class="text-center">
+											<a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-block">Sign Up</a>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+    <script src="{% static 'vendor/global/global.min.js' %}"></script>
+	<script src="{% static 'vendor/jquery-autocomplete/jquery-ui.js' %}"></script> 
+    <script src="{% static 'js/custom.min.js' %}"></script>
+    <script src="{% static 'js/dlabnav-init.js' %}"></script>
+	
+	<script src="{% static 'core/scripts/utils.js' %}"></script>
+	<script>
+		document.getElementById("timezone").value = getClientTimezone();
+	</script>
+</body>
+</html>
+
+{% endblock %}
+

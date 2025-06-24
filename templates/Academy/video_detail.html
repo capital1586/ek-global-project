@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>{{ video.title }} | Academy | EK Global Capital</title>
+{% endblock title %}
+
+{% block stylesheets %}
+<style>
+    .video-container {
+        background: var(--card-bg);
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+    
+    .video-embed {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+    }
+    
+    .video-embed iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    
+    .video-info {
+        padding: 20px;
+    }
+    
+    .video-meta {
+        display: flex;
+        align-items: center;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+    }
+    
+    .video-meta-item {
+        margin-right: 20px;
+    }
+    
+    .related-video {
+        display: flex;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+    }
+    
+    .related-video:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .related-thumbnail {
+        width: 120px;
+        height: 68px;
+        flex-shrink: 0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-right: 15px;
+    }
+    
+    .related-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .related-info {
+        flex-grow: 1;
+    }
+    
+    .related-info h5 {
+        margin: 0 0 5px 0;
+        font-size: 1rem;
+    }
+    
+    .related-info p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--text-muted);
+    }
+    
+    .section-title {
+        position: relative;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+    }
+    
+    .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+    }
+    
+    .course-info {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        margin-top: 20px;
+    }
+    
+    .action-buttons .btn {
+        margin-right: 10px;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Video Player -->
+            <div class="video-container">
+                <div class="video-embed">
+                    <iframe src="{{ video.embed_url }}" allowfullscreen></iframe>
+                </div>
+                <div class="video-info">
+                    <h2>{{ video.title }}</h2>
+                    
+                    <div class="video-meta">
+                        <div class="video-meta-item">
+                            <i class="far fa-calendar-alt me-2"></i>
+                            {{ video.published_date|date:"F d, Y" }}
+                        </div>
+                        {% if video.course %}
+                        <div class="video-meta-item">
+                            <i class="fas fa-book me-2"></i>
+                            Part of: <a href="{% url 'academy:course_detail' video.course.id %}">{{ video.course.title }}</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="video-description">
+                        {{ video.description|linebreaks }}
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a href="{{ video.youtube_url }}" target="_blank" class="btn btn-primary">
+                            <i class="fab fa-youtube me-2"></i> Watch on YouTube
+                        </a>
+                        {% if video.course %}
+                        <a href="{% url 'academy:course_detail' video.course.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Course
+                        </a>
+                        {% else %}
+                        <a href="{% url 'academy:index' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Academy
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Related Videos -->
+            <div class="section-title">
+                <h3>Related Videos</h3>
+            </div>
+            
+            {% if related_videos %}
+                {% for related in related_videos %}
+                <a href="{% url 'academy:video_detail' related.id %}" class="text-decoration-none">
+                    <div class="related-video">
+                        <div class="related-thumbnail">
+                            <img src="https://img.youtube.com/vi/{{ related.youtube_id }}/mqdefault.jpg" alt="{{ related.title }}">
+                        </div>
+                        <div class="related-info">
+                            <h5>{{ related.title|truncatechars:60 }}</h5>
+                            <p>{{ related.published_date|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="course-info">
+                    <p>No related videos available.</p>
+                </div>
+            {% endif %}
+            
+            {% if video.course %}
+            <!-- Course Information -->
+            <div class="course-info mt-4">
+                <h4>About This Course</h4>
+                <p>{{ video.course.description|truncatechars:150 }}</p>
+                
+                {% if video.course.learning_outcomes.all %}
+                <h5 class="mt-3">Learning Outcomes</h5>
+                <ul>
+                    {% for outcome in video.course.learning_outcomes.all|slice:":3" %}
+                    <li>{{ outcome.outcome }}</li>
+                    {% endfor %}
+                    {% if video.course.learning_outcomes.count > 3 %}
+                    <li class="text-primary">+ {{ video.course.learning_outcomes.count|add:"-3" }} more outcomes</li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+                
+                <a href="{% url 'academy:course_detail' video.course.id %}" class="btn btn-primary w-100 mt-3">
+                    View Full Course
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

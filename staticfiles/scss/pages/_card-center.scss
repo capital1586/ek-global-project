@@ -1,0 +1,134 @@
+.wallet.blue{
+    &::before{
+        content: '';
+        display: block;
+        background-color: $primary;
+        position: absolute;
+        top: 0;
+        left: 60%;
+        width: 9.5rem;
+        height: 100%;
+        z-index: -1;
+        border-radius: 130px;
+        opacity: 0.6;
+        filter: blur(75px);
+        transform: rotate(-12deg);
+    }
+    // &::after{
+    //     content: '';
+    //     display: none;
+    //     background-color: $primary;
+    //     position: absolute;
+    //     top: 0;
+    //     left: 0%;
+    //     width: 5.25rem;
+    //     height: 100%;
+    //     z-index: -1;
+    //     border-radius: 130px;
+    //     filter: blur(65px);
+    // }
+}
+.wallet.org{
+    &::before{
+        content: '';
+        display: block;
+        background-color: $warning;
+        position: absolute;
+        top: 0;
+        left: 60%;
+        width: 9.5rem;
+        height: 100%;
+        z-index: -1;
+        border-radius: 130px;
+        opacity: 0.5;
+        filter: blur(75px);
+        transform: rotate(-12deg);
+    }
+    // &::after{
+    //     content: '';
+    //     display: none;
+    //     background-color: $primary;
+    //     position: absolute;
+    //     top: 0;
+    //     left: 0%;
+    //     width: 5.25rem;
+    //     height: 100%;
+    //     z-index: -1;
+    //     border-radius: 130px;
+    //     filter: blur(65px);
+    // }
+}
+.value-data{
+	margin-top:25px;
+}
+.card-type{
+    span{
+        color: $white;
+    }
+}
+
+// --------card-list-----
+
+.dashboard-select{
+    background-color: var(--bs-card-bg);
+    border: none;
+    padding-right: 2rem;
+    height: unset;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+	text-transform: capitalize;
+    .list {
+        background-color: var(--bs-card-bg);
+    }
+    @include respond ('phone') {
+        margin-right: 1rem;
+    }  
+}
+.nice-select .option.focus, .nice-select .option.selected.focus {
+    background-color: var(--bs-card-bg);
+}
+.nice-select .option:hover, .nice-select .option.focus, .nice-select .option.selected.focus {
+    background-color:var(--bs-body-bg);
+    color: $white;
+}
+.nice-select:after {
+    top: 48%;
+    right: 4px;
+    height: 9px;
+    width: 9px;
+    margin-top: -4px;
+    border-width: 2px;
+}
+.card-type{
+    border-bottom: 1px solid $bg-light;
+    .dropdown{
+        @include respond('tab-port'){
+            margin:  0.825rem 0;
+        }
+    } 
+}
+.add-btn{
+    display: inline-block;
+   button{
+    padding: 0.538rem 1.5rem;
+    border-radius: $border-radius;
+    font-size: 0.875rem;
+    @include respond('phone') {
+        padding: 0.538rem 0.875rem;
+       font-size: 0.825rem;
+    }
+   }
+}
+
+.card-list-img {
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+}
+.wallet-info{
+	span{
+		font-size:1rem;
+		color:$white;
+	}	
+}
+.dataTables_wrapper .dataTables_info{
+	color:#B9A8FF;
+}

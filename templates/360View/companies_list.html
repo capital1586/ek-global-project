@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+<title>AlphAIQ - Companies | EK Global</title>
+{% endblock title %}
+
+{% block stylesheets %}
+<style>
+    .company-card {
+        background: var(--card-bg);
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+    
+    .company-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px var(--shadow-color);
+    }
+    
+    .company-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary);
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    
+    .company-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--text-color);
+    }
+    
+    .company-symbol {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+    }
+    
+    .stock-price {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .change-up {
+        color: var(--success);
+    }
+    
+    .change-down {
+        color: var(--danger);
+    }
+    
+    .page-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--text-color);
+    }
+    
+    .page-subtitle {
+        font-size: 16px;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+    }
+    
+    .search-container {
+        margin-bottom: 30px;
+    }
+    
+    #companySearch {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        border-radius: 30px;
+        padding: 10px 20px;
+    }
+    
+    #companySearch:focus {
+        box-shadow: 0 0 0 0.25rem rgba(30, 136, 229, 0.25);
+        border-color: var(--primary);
+    }
+    
+    .companies-section {
+        margin-top: 20px;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row page-titles">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">AlphAIQ</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Companies</a></li>
+        </ol>
+    </div>
+    
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="page-title">All Companies</div>
+            <div class="page-subtitle">Select a company to view detailed 360° analysis</div>
+            
+            <div class="search-container">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0">
+                        <i class="fa fa-search"></i>
+                    </span>
+                    <input type="text" class="form-control" id="companySearch" placeholder="Search for companies...">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row companies-section">
+        {% if companies %}
+            {% for company in companies %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4 company-item">
+                    <a href="{% url 'Fullview:stock_360_view' company.Symbol %}" class="text-decoration-none">
+                        <div class="card company-card">
+                            <div class="card-body">
+                                <div class="d-flex flex-column align-items-center text-center">
+                                    <div class="company-logo">
+                                        {{ company.Symbol|slice:":1" }}
+                                    </div>
+                                    <div class="company-name">{{ company.CompanyName }}</div>
+                                    <div class="company-symbol">{{ company.Symbol }}</div>
+                                    <div class="stock-price">
+                                        {{ company.Last|floatformat:2 }} PKR
+                                    </div>
+                                    <div class="{% if company.PctChange > 0 %}change-up{% else %}change-down{% endif %}">
+                                        {% if company.PctChange > 0 %}
+                                            <i class="fa fa-caret-up"></i>
+                                        {% else %}
+                                            <i class="fa fa-caret-down"></i>
+                                        {% endif %}
+                                        {{ company.Change|floatformat:2 }} ({{ company.PctChange }}%)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">No companies available at the moment. Please try again later.</div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('companySearch');
+        const companyItems = document.querySelectorAll('.company-item');
+        
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            companyItems.forEach(item => {
+                const companyName = item.querySelector('.company-name').textContent.toLowerCase();
+                const companySymbol = item.querySelector('.company-symbol').textContent.toLowerCase();
+                
+                if (companyName.includes(searchTerm) || companySymbol.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock content %}
+
+{% block scripts %}
+{% endblock scripts %} 

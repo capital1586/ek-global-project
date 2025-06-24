@@ -1,0 +1,214 @@
+.modal-dialog{
+    max-height: 90dvh;
+    overflow-y: auto;
+    /* position: relative; */
+}
+
+.modal-dialog *{
+    border-radius: 0;
+}
+
+.modal-dialog .modal-footer{
+    position: sticky;
+    inset: 0;
+    width: 100%;
+    bottom: 0;
+}
+
+.modal-dialog::-webkit-scrollbar{
+    display: none;
+}
+
+#transaction-add-form .form-fields{
+    width: 100%; 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+    column-gap: 16px;
+}
+
+.form-sub-head{
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+
+/* Statistics Section */
+
+#portfolio-stats-wp{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-block: 16px;
+}
+
+#portfolio-stats{
+    width: 100%; 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+    column-gap: 16px;
+}
+
+#portfolio-stats .widget-stat{
+    align-content: center;
+}
+
+#portfolio-stats .widget-stat .media-body p{
+    white-space: nowrap !important;
+}
+
+
+/* Charts */
+
+#charts-section{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-block: 14px;
+    flex-wrap: wrap;
+}
+
+.chart-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+#portfolio-performance{
+    flex: 1;
+    min-width: max-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10px 0;
+    margin: 0;
+}
+
+#portfolio-performance #portfolio-performance-chart{
+    padding: 8px;
+    width: 100%;
+    height: 400px;
+}
+
+.section-head{
+    margin: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 4px;
+    align-items: end;
+}
+
+.section-head > div{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: fit-content;
+}
+
+#portfolio-allocation{
+    flex: 1;
+    max-width: max-content;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px 0;
+    margin: 0;
+    height: max-content;
+}
+
+#portfolio-allocation #portfolio-allocation-chart{
+    width: 100%;
+    margin: 5px;
+    min-width: 180px;
+    max-width: 350px;
+}
+
+table td{
+    white-space: nowrap;
+}
+
+
+/* Stock comparison */
+
+#stock-comparison{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+}
+
+#selected-stocks-section{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#selected-stocks{
+    position: relative;
+    width: 100%;
+    min-height: 50px;
+    border: 1px dotted #888;
+    padding: 8px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: transparent;
+    isolation: isolate;
+}
+
+#selected-stocks:empty::before{
+    content: "No Selection Yet";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#stock-choices-section{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#stock-choices{
+    width: 100%;
+    min-height: 70px;
+    border: 1px dotted #888;
+    padding: 8px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.stock-choice{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+#stock-comparison-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+#stock-comparison-counter{
+    display: none;
+}

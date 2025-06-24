@@ -1,0 +1,2597 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+{{ block.super }}
+<meta name="market-api-url" content="{% url 'dashboard:market_overview' %}">
+<style>
+/* Enhanced Dashboard Styling */
+.gradient-card {
+    background: linear-gradient(135deg, rgba(30, 41, 80, 0.9) 0%, rgba(20, 25, 45, 0.9) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Bubble Chart Styling */
+.bubble-chart-card {
+    background: linear-gradient(135deg, rgba(30, 41, 80, 0.9) 0%, rgba(20, 25, 45, 0.9) 100%);
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.bubble-chart-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.bubble-chart-container {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bubble-filters select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.bubble-filters select:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+}
+
+.bubble-chart-description {
+    font-size: 13px;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.bubble-chart-legend {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.legend-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.market-highlight-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.time-period-filters .btn {
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 11px;
+    padding: 0.25rem 0.5rem;
+}
+
+.time-period-filters .btn.active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.index-value-container {
+    position: relative;
+}
+
+.index-change {
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.volume-badge {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 8px;
+    border-radius: 15px;
+    margin-left: 5px;
+}
+
+.chart-container {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.index-selector {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 5px;
+    padding: 2px 10px;
+}
+
+/* Secondary Index Card */
+.secondary-index-card {
+    background: var(--rgba-primary-1);
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.secondary-index-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.index-stats {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Market Stat Cards */
+.market-stat-card {
+    background: var(--rgba-primary-1);
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.market-stat-card.secondary {
+    background: var(--rgba-secondary-1);
+}
+
+.market-stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.counter-value {
+    font-weight: 700;
+    font-size: 1.75rem;
+}
+
+.change-value {
+    font-weight: 600;
+}
+
+/* Signals Card */
+.signals-card {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: none;
+    background: #fff;
+}
+
+.signal-item {
+    transition: all 0.3s ease;
+}
+
+.signal-item:hover {
+    background: rgba(var(--primary-rgb), 0.05);
+}
+
+.signal-date {
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.signal-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Board Meetings */
+.meetings-card {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: none;
+}
+
+.meetings-table tr {
+    transition: all 0.2s ease;
+}
+
+.meetings-table tr:hover {
+    background: rgba(var(--primary-rgb), 0.05);
+}
+
+.meeting-title {
+    font-weight: 500;
+    color: var(--bs-body-color);
+}
+
+/* News Card */
+.news-card {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: none;
+}
+
+.news-timeline li {
+    margin-bottom: 10px;
+}
+
+.news-item {
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.news-item:hover {
+    background: rgba(var(--primary-rgb), 0.05);
+}
+
+.news-image {
+    border-radius: 8px;
+    overflow: hidden;
+    height: 50px;
+    width: 50px;
+}
+
+.news-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    border-radius: 8px;
+}
+
+.news-headline {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.news-date {
+    color: var(--primary);
+    font-size: 11px;
+}
+
+/* Performance Card */
+.performance-card {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: none;
+}
+
+.period-filters .btn {
+    font-size: 11px;
+    padding: 0.25rem 0.5rem;
+    font-weight: 500;
+}
+
+.performance-tabs .nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 5px 5px 0 0;
+}
+
+.performance-tabs .nav-link.active {
+    background-color: var(--bs-light);
+    color: var(--primary);
+    border-color: var(--bs-light);
+}
+
+.performance-table thead th {
+    background: var(--bs-light);
+    color: var(--bs-body-color);
+    font-weight: 600;
+}
+
+.performance-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.performance-table tbody tr:hover {
+    background: rgba(var(--primary-rgb), 0.05);
+}
+
+/* World Markets Card */
+.world-markets-card {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: none;
+}
+
+.world-map-container {
+    background: var(--bs-light);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.market-list {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.market-item {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.market-item:hover {
+    background: rgba(var(--primary-rgb), 0.05);
+}
+
+.market-item strong {
+    display: flex;
+    align-items: center;
+}
+
+.market-item .flag-icon {
+    width: 20px;
+    height: 15px;
+    border-radius: 2px;
+}
+
+/* Portfolio Card */
+.portfolio-card {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: none;
+    background: linear-gradient(135deg, rgba(35, 80, 160, 0.05) 0%, rgba(35, 80, 160, 0.1) 100%);
+}
+
+.portfolio-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.portfolio-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    color: var(--primary);
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.portfolio-change {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.portfolio-table {
+    margin-top: 1rem;
+}
+
+.portfolio-table th {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    border-top: none;
+    padding: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.portfolio-table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-top: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.portfolio-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.portfolio-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.stock-logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(var(--primary-rgb), 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    margin-right: 10px;
+}
+
+.stock-name {
+    display: flex;
+    align-items: center;
+}
+
+.stock-symbol {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.stock-fullname {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.portfolio-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* PSX Notices Card */
+.psx-notices-card {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(245, 247, 250, 0.05) 0%, rgba(245, 247, 250, 0.1) 100%);
+    margin-bottom: 25px;
+}
+
+.psx-notices-card .card-header {
+    border-bottom: none;
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.psx-notices-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.psx-notices-card .icon-square {
+    width: 42px;
+    height: 42px;
+    font-size: 1.2rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+    margin-right: 15px;
+}
+
+.psx-notices-card .table-enhanced thead th {
+    background: rgba(var(--primary-rgb), 0.08);
+    color: var(--primary);
+    font-weight: 600;
+    border: none;
+    padding: 15px;
+}
+
+.psx-notices-card .table-enhanced tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    border-top: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.psx-notices-card .value-badge {
+    font-size: 12px;
+    padding: 5px 10px;
+    font-weight: 600;
+}
+
+.psx-notices-card .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 12px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+.dark-theme .psx-notices-card {
+    background: rgba(30, 30, 45, 0.7);
+}
+
+.dark-theme .psx-notices-card .icon-square {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Financial Results Card */
+.financial-results-card {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(240, 245, 255, 0.05) 0%, rgba(240, 245, 255, 0.1) 100%);
+    margin-bottom: 25px;
+}
+
+.financial-results-card .card-header {
+    border-bottom: none;
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.financial-results-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.financial-results-card .table-enhanced {
+    margin-bottom: 0;
+}
+
+.financial-results-card .table-enhanced thead th {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 12px;
+    border: none;
+    padding: 12px 10px;
+    white-space: nowrap;
+}
+
+.financial-results-card .table-enhanced tbody td {
+    padding: 12px 10px;
+    vertical-align: middle;
+    border-top: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 13px;
+}
+
+.financial-results-card .company-name {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.financial-results-card .period {
+    font-size: 12px;
+    color: var(--bs-gray-600);
+}
+
+.financial-results-card .dividend-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.financial-results-card .profit {
+    color: #198754;
+    font-weight: 600;
+}
+
+.financial-results-card .loss {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.financial-results-card .eps-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.financial-results-card .eps-badge.positive {
+    background: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.financial-results-card .eps-badge.negative {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.dark-theme .financial-results-card {
+    background: rgba(30, 30, 45, 0.7);
+}
+
+.dark-theme .financial-results-card .table-enhanced thead th {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dark-theme .financial-results-card .company-name {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dark-theme .financial-results-card .period {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Screener Card */
+.screener-card {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: none;
+    background: linear-gradient(135deg, rgba(60, 80, 120, 0.05) 0%, rgba(60, 80, 120, 0.1) 100%);
+}
+
+.screener-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.screener-filter {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.screener-filter:hover {
+    background: rgba(var(--primary-rgb), 0.2);
+}
+
+.screener-filter i {
+    margin-right: 5px;
+}
+
+.screener-results {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.screener-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 0;
+}
+
+.screener-table thead th {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 8px;
+    font-size: 12px;
+}
+
+.screener-table tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.screener-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.screener-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.fundamental-data {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.technical-badge {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.screener-footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 15px;
+}
+
+/* Advanced Charts Card */
+.advanced-charts-card {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: none;
+    background: linear-gradient(135deg, rgba(40, 60, 100, 0.05) 0%, rgba(40, 60, 100, 0.1) 100%);
+}
+
+.chart-tabs {
+    margin-bottom: 15px;
+}
+
+.chart-tab {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chart-tab.active {
+    background: var(--primary);
+    color: #fff;
+}
+
+.chart-container-advanced {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Right sidebar styling */
+.right-sidebar {
+    background: rgba(20, 30, 50, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(60, 80, 160, 0.15);
+    padding: 10px;
+    height: calc(100vh - 75px);
+    position: fixed;
+    top: 65px;
+    right: 15px;
+    width: 24%;
+    overflow-y: auto;
+    z-index: 10;
+    margin-top: 0 !important;
+    padding-top: 0;
+    scrollbar-width: thin;
+}
+
+.col-xl-9 {
+    width: 75%;
+}
+
+@media (max-width: 1199px) {
+    .right-sidebar {
+        position: static;
+        height: auto;
+        width: 100%;
+        margin-top: 20px !important;
+    }
+    
+    .col-xl-9 {
+        width: 100%;
+    }
+}
+
+.right-sidebar .card {
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, rgba(30, 41, 80, 0.9) 0%, rgba(20, 25, 45, 0.9) 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.right-sidebar .card-header-enhanced {
+    padding: 1rem 1rem 0.5rem;
+}
+
+.right-sidebar .card-body-enhanced {
+    padding: 0.5rem 1rem 0.75rem;
+}
+
+.right-sidebar .portfolio-table th,
+.right-sidebar .portfolio-table td,
+.right-sidebar .screener-table th,
+.right-sidebar .screener-table td {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.right-sidebar .chart-container-advanced {
+    min-height: 220px;
+}
+
+/* Fix alignment */
+.col-xl-3 {
+    padding-top: 0;
+}
+
+/* Custom scrollbar for right sidebar */
+.right-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.right-sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.right-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(76, 110, 245, 0.3);
+    border-radius: 10px;
+}
+
+.right-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(76, 110, 245, 0.5);
+}
+
+.right-sidebar .card:last-child {
+    margin-bottom: 5px;
+}
+
+.right-sidebar .card-header {
+    border-bottom: none;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.right-sidebar .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.right-sidebar .card-body {
+    padding: 0.75rem 1.25rem 1.25rem;
+}
+
+/* Improve scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(var(--primary-rgb), 0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--primary-rgb), 0.5);
+}
+
+/* Animation for counter values */
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+.blink {
+    animation: blink 1s linear;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .portfolio-card, .screener-card, .advanced-charts-card {
+        margin-top: 20px;
+    }
+}
+
+/* Enhanced Table Styling */
+.table-enhanced {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 1rem;
+}
+
+.table-enhanced thead th {
+    background: rgba(var(--primary-rgb), 0.08);
+    color: var(--primary);
+    font-weight: 600;
+    padding: 12px 15px;
+    border: none;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+}
+
+.table-enhanced thead th:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.table-enhanced thead th:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.table-enhanced tbody td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    border-top: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.table-enhanced tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-enhanced tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table-enhanced tbody tr:hover {
+    background-color: rgba(var(--primary-rgb), 0.05);
+    transform: translateX(3px);
+}
+
+/* Value Badges */
+.value-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.value-badge.success {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.value-badge.danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.value-badge.primary {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+}
+
+.value-badge.secondary {
+    background-color: rgba(var(--secondary-rgb), 0.1);
+    color: var(--secondary);
+}
+
+.value-badge.warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+/* Card Headers Enhancement */
+.card-header-enhanced {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: none;
+    padding: 1.25rem 1.25rem 0.75rem;
+    background: transparent;
+}
+
+.card-header-enhanced .card-title {
+    margin-bottom: 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.card-header-enhanced .card-title i {
+    margin-right: 8px;
+    background: rgba(var(--primary-rgb), 0.1);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+
+/* Card Body Enhancement */
+.card-body-enhanced {
+    padding: 1rem 1.25rem 1.25rem;
+}
+
+/* Dark mode tweaks */
+.dark-theme .card {
+    background: rgba(30, 30, 45, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dark-theme .table-enhanced thead th {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dark-theme .table-enhanced tbody td {
+    border-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.dark-theme .table-enhanced tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Glass Morphism Effects */
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+/* Improved Icons */
+.icon-square {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+    margin-right: 10px;
+}
+
+.icon-circle {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+    margin-right: 10px;
+}
+
+/* Dashboard Section Separators */
+.section-divider {
+    position: relative;
+    height: 1px;
+    background: rgba(var(--primary-rgb), 0.1);
+    margin: 1.5rem 0;
+}
+
+.section-divider::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 1px;
+    width: 60px;
+    background: var(--primary);
+}
+
+.section-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+/* TreeMap Chart Styling */
+.treemap-card {
+    background: linear-gradient(135deg, rgba(30, 41, 80, 0.9) 0%, rgba(25, 30, 50, 0.9) 100%);
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.treemap-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.treemap-chart-container {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0;
+    overflow: hidden;
+}
+
+.treemap-description {
+    font-size: 13px;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+/* ApexCharts customization */
+.apexcharts-text tspan {
+    fill: rgba(255, 255, 255, 0.9);
+}
+
+.apexcharts-tooltip {
+    background: rgba(30, 41, 80, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+    border-radius: 8px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.apexcharts-tooltip-title {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    padding: 8px 10px !important;
+}
+
+.apexcharts-tooltip-y-group {
+    padding: 5px 10px !important;
+}
+
+.right-sidebar .advanced-charts-card .chart-container-advanced {
+    min-height: 180px;
+    height: 180px;
+}
+
+.right-sidebar .advanced-charts-card .chart-tabs {
+    margin-bottom: 8px;
+}
+
+.right-sidebar .advanced-charts-card .chart-tab {
+    padding: 4px 10px;
+    font-size: 11px;
+}
+
+.right-sidebar .advanced-charts-card .card-body-enhanced {
+    padding: 0.4rem 0.75rem 0.6rem;
+}
+
+.portfolio-card {
+    background: linear-gradient(135deg, rgba(28, 40, 65, 0.9) 0%, rgba(22, 32, 55, 0.9) 100%) !important;
+    border: 1px solid rgba(76, 110, 245, 0.15) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15) !important;
+    margin-bottom: 12px !important;
+}
+
+.screener-card {
+    background: linear-gradient(135deg, rgba(28, 40, 65, 0.9) 0%, rgba(22, 32, 55, 0.9) 100%) !important;
+    border: 1px solid rgba(76, 110, 245, 0.15) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15) !important;
+    margin-bottom: 12px !important;
+}
+
+.right-sidebar .card-header-enhanced {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.8rem 1rem 0.6rem !important;
+}
+
+.right-sidebar .card-body-enhanced {
+    padding: 0.6rem 1rem !important;
+}
+
+.right-sidebar .card-title {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+}
+
+.screener-compact .card-body-enhanced {
+    padding: 0.3rem 0.75rem !important;
+}
+
+.screener-compact .screener-table th,
+.screener-compact .screener-table td {
+    padding: 0.35rem 0.5rem !important;
+    font-size: 0.75rem !important;
+}
+
+.screener-compact .screener-table th {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+.portfolio-table th, 
+.portfolio-table td,
+.screener-table th,
+.screener-table td {
+    border-bottom-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+.stock-logo {
+    background: rgba(76, 110, 245, 0.2) !important;
+}
+
+.right-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.right-sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.right-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(76, 110, 245, 0.3);
+    border-radius: 10px;
+}
+
+.right-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(76, 110, 245, 0.5);
+}
+
+.screener-compact .btn-view-more {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.75rem;
+    background: rgba(76, 110, 245, 0.8);
+    border-color: rgba(76, 110, 245, 0.2);
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.screener-compact .value-badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+}
+
+.value-badge.success {
+    background-color: rgba(25, 135, 84, 0.15);
+    color: rgb(80, 205, 137);
+}
+
+.value-badge.warning {
+    background-color: rgba(255, 193, 7, 0.15);
+    color: rgb(255, 213, 7);
+}
+
+.value-badge.danger {
+    background-color: rgba(220, 53, 69, 0.15);
+    color: rgb(255, 92, 109);
+}
+
+.card-header-enhanced .text-primary {
+    color: rgb(120, 150, 255) !important;
+    font-size: 0.75rem;
+    text-decoration: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="row">
+
+    <!-- Main Content Area - 75% width -->
+    <div class="col-xl-9">
+     <!-- Market Overview and Market Index Cards -->
+      <div class="row">
+        <div class="col-xl-8">
+            <div class="card balance-data gradient-card">
+                <div class="card-header border-0 flex-wrap">
+                    <h4 class="fs-18 font-w600 mb-2"><i class="fas fa-chart-line me-2"></i>Market Overview</h4>
+                    <div class="">
+                        <div class="btn-group mb-2 time-period-filters">
+                            <button class="btn btn-secondary btn-xs active" type="button">1D</button>
+                            <button class="btn btn-secondary btn-xs" type="button">5D</button>
+                            <button class="btn btn-secondary btn-xs" type="button">1M</button>
+                            <button class="btn btn-secondary btn-xs" type="button">3M</button>
+                            <button class="btn btn-secondary btn-xs" type="button">6M</button>
+                            <button class="btn btn-secondary btn-xs" type="button">YTD</button>
+                            <button class="btn btn-secondary btn-xs" type="button">1Y</button>
+                            <button class="btn btn-secondary btn-xs" type="button">3Y</button>
+                            <button class="btn btn-secondary btn-xs" type="button">ALL</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body py-0 custome-tooltip">
+                    <div class="d-flex align-items-center mb-2 me-3 market-highlight-box">
+                        <div class="me-3">
+                            <svg class="theme-col pulse-animation" width="45" height="45" viewBox="0 0 52 52" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="26" cy="26" r="26" fill="var(--bs-body-bg)" />
+                                <g clip-path="url(#clip0)">
+                                        <path
+                                            d="M34.9293 30.4004C34.9294 30.3966 34.9293 30.3927 34.9293 30.3889L34.9371 18.5152C34.9369 18.4212 34.9264 18.3275 34.906 18.2357L34.8284 17.9716L34.7507 17.8163L34.6653 17.7309C34.5585 17.5759 34.4243 17.4417 34.2693 17.3348L34.1916 17.2572L34.0984 17.164L33.8965 17.1019C33.783 17.0683 33.6654 17.0499 33.547 17.0475L21.6112 17.0708C20.8167 17.0676 20.17 17.7092 20.1668 18.5037C20.1668 18.5075 20.1668 18.5114 20.1668 18.5152C20.1853 19.3009 20.8178 19.9334 21.6035 19.9519L28.6935 19.9596C28.9967 19.9626 29.2402 20.2109 29.2372 20.5141C29.2358 20.6552 29.1802 20.7903 29.0818 20.8915L17.5187 32.4546C16.9568 33.0164 16.9568 33.9273 17.5186 34.4892C18.0804 35.0511 18.9913 35.0511 19.5532 34.4893C19.5533 34.4893 19.5533 34.4892 19.5534 34.4892L31.1164 22.9261C31.3338 22.7147 31.6815 22.7196 31.8929 22.937C31.9912 23.0382 32.0469 23.1733 32.0483 23.3144L32.0405 30.3889C32.0551 31.1805 32.6933 31.8188 33.4849 31.8333C34.2795 31.8365 34.9262 31.195 34.9293 30.4004Z"
+                                            fill="white" />
+                                </g>
+                                <defs>
+                                    <clipPath>
+                                        <rect width="24" height="24" fill="white"
+                                        transform="translate(26 9.02945) rotate(45)" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center index-value-container">
+                            {% if market_indices %}
+                                {% for index in market_indices %}
+                                    {% if index.IndexName == 'KSE100' %}
+                                        <h4 class="fs-4 font-w600 mb-0">{{ index.CurrentIndex|floatformat:2 }}</h4>
+                                        <span class="fs-14 index-change {% if index.NetChange > 0 %}text-success{% else %}text-danger{% endif %}">
+                                            {{ index.NetChange|floatformat:2 }} ({{ index.PNetChange|floatformat:2 }}%)
+                                        </span>
+                                        <span class="fs-14 volume-badge">Vol: {{ index.Volume|floatformat:0 }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <h4 class="fs-4 font-w600 mb-0">93,291.68</h4>
+                                <span class="fs-14 index-change text-success">771.19 (+0.83%)</span>
+                                <span class="fs-14 volume-badge">Vol: 362,829,838</span>
+                            {% endif %}
+                        </div>
+                        <div class="ms-auto">
+                            <select id="indexSelector" class="form-select form-select-sm index-selector">
+                                {% if market_indices %}
+                                    {% for index in market_indices %}
+                                        <option value="{{ index.IndexName }}">{{ index.IndexName }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option>KSE 30</option>
+                                    <option>KSE 100</option>
+                                    <option>KSE ALL</option>
+                                    <option>KMI 30</option>
+                                    <option>KMI ALL</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div id="reservationChart" class="reservationChart chart-container" style="position: relative; min-height: 400px;">
+                        <canvas id="marketIndexChart" height="400" width="800"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+        <!-- Market Indices Cards -->
+        <div class="col-xl-4">
+            <div class="card gradient-card h-100">
+                <div class="card-body p-3">
+                    <h4 class="fs-18 font-w600 mb-2"><i class="fas fa-chart-bar me-2"></i>Market Index</h4>
+                    <div class="d-flex flex-column">
+                        <!-- KSE100 Index -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex flex-column">
+                                <span class="fs-12 text-muted mb-1">KSE100</span>
+                                <h3 class="fs-22 font-w700 mb-0">92,562.11</h3>
+                            </div>
+                            <div class="d-flex flex-column align-items-end">
+                                <span class="fs-12 text-success mb-1 font-w600">+0.7%</span>
+                                <span class="fs-12 text-muted">Daily Change</span>
+                            </div>
+                        </div>
+                        <div class="mb-4" style="height: 80px;">
+                            <canvas id="smallIndexChart" height="80"></canvas>
+                        </div>
+                            
+                        <!-- KMI30 Index -->
+                        <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+                            <div class="d-flex flex-column">
+                                <span class="fs-12 text-muted mb-1">KMI30</span>
+                                <h3 class="fs-22 font-w700 mb-0">18,376.44</h3>
+                            </div>
+                            <div class="d-flex flex-column align-items-end">
+                                <span class="fs-12 text-success mb-1 font-w600">+0.9%</span>
+                                <span class="fs-12 text-muted">Daily Change</span>
+                            </div>
+                        </div>
+                        <div style="height: 80px;">
+                            <canvas id="kmi30Chart" height="80"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row - Board Meetings and News -->
+    <div class="row mt-4">
+        <!-- Board Meetings -->
+        <div class="col-xl-4 col-md-6">
+            <div class="card meetings-card h-100">
+                <div class="card-header">
+                    <h4 class="card-title"><i class="fas fa-calendar-alt me-2"></i>Board Meetings</h4>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="table-responsive">
+                        <table class="table table-responsive-md meetings-table">
+                            <thead>
+                                <tr>
+                                    <th class="fs-14">Symbol</th>
+                                    <th class="fs-14">Title</th>
+                                    <th class="fs-14">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="boardMeetingsTable">
+                                {% if board_meetings %}
+                                    {% for meeting in board_meetings %}
+                                        <tr class="meeting-row">
+                                            <td><span class="badge light badge-success">{{ meeting.Symbol }}</span></td>
+                                            <td class="meeting-title">{{ meeting.Title }}</td>
+                                            <td>{{ meeting.DateTime|date:"d-m-Y" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center">No board meetings available</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+        <!-- News -->
+        <div class="col-xl-4 col-md-6">
+            <div class="card news-card h-100">
+                <div class="card-header border-0 pb-0">
+                    <h4 class="card-title"><i class="fas fa-newspaper me-2"></i>News</h4>
+                </div>
+                <div class="card-body">
+                    <div id="DZ_W_Todo1" class="widget-media dz-scroll height370 ps ps--active-y">
+                        <ul class="timeline news-timeline" id="newsTimeline">
+                            {% if news %}
+                                {% for item in news %}
+                                    <li>
+                                        <div class="timeline-panel news-item">
+                                            {% if item.ImageUrl %}
+                                                <div class="media me-2 news-image">
+                                                <img alt="{{ item.Headline }}" width="50" src="{{ item.ImageUrl }}">
+                                        </div>
+                                        {% else %}
+                                            <div class="media me-2 media-info news-icon">
+                                            <i class="fa fa-newspaper"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div class="media-body">
+                                            <h5 class="mb-1 news-headline">{{ item.Headline }}</h5>
+                                            <small class="d-block news-date">{{ item.NewsDate|date:"d M Y - h:i A" }}</small>
+                                        </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                <li>
+                                    <div class="timeline-panel">
+                                        <div class="media me-2 media-info news-icon">
+                                            <i class="fa fa-newspaper"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="mb-1 news-headline">No news available</h5>
+                                            <small class="d-block news-date">-</small>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+        <!-- International Markets -->
+        <div class="col-xl-4 col-md-12">
+            <div class="card world-markets-card h-100">
+                <div class="card-header card-header-enhanced">
+                    <h4 class="font-w600 fs-18 card-title"><i class="fas fa-globe me-2"></i>International Markets</h4>
+                </div>
+                <div class="card-body card-body-enhanced py-1">
+                    <div class="world-map-container">
+                        <div id="world-map" style="height: 180px;"></div>
+                    </div>
+                <div class="international-markets-list">
+                    <ul class="list-group list-group-flush market-list">
+                        <li class="list-group-item d-flex px-0 justify-content-between market-item">
+                            <strong><i class="flag-icon flag-icon-cn me-1"></i>China</strong>
+                            <span class="mb-0 value-badge danger">-20.16% <i class="fas fa-caret-down"></i></span>
+                        </li>
+                        <li class="list-group-item d-flex px-0 justify-content-between market-item">
+                            <strong><i class="flag-icon flag-icon-ar me-1"></i>Argentina</strong>
+                            <span class="mb-0 value-badge success">+12.48% <i class="fas fa-caret-up"></i></span>
+                        </li>
+                        <li class="list-group-item d-flex px-0 justify-content-between market-item">
+                            <strong><i class="flag-icon flag-icon-in me-1"></i>India</strong>
+                            <span class="mb-0 value-badge success">+8.16% <i class="fas fa-caret-up"></i></span>
+                        </li>
+                        <li class="list-group-item d-flex px-0 justify-content-between market-item">
+                            <strong><i class="flag-icon flag-icon-us me-1"></i>United States</strong>
+                            <span class="mb-0 value-badge danger">-2.36% <i class="fas fa-caret-down"></i></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+            
+        <!-- Market Performance -->
+        <div class="row mt-4">
+            <div class="col-xl-12">
+                <div class="card mb-0 performance-card">
+                    <div class="card-header border-0 pb-0">
+                        <div>
+                            <h4 class="fs-18 font-w600"><i class="fas fa-chart-pie me-2"></i>Market Performance</h4>
+                        </div>
+                        <div class="btn-group mb-2 btn-group-sm period-filters">
+                            <button class="btn btn-primary active" type="button">7D</button>
+                            <button class="btn btn-primary" type="button">1M</button>
+                            <button class="btn btn-primary" type="button">3M</button>
+                            <button class="btn btn-primary" type="button">1Y</button>
+                            <button class="btn btn-primary" type="button">3Y</button>
+                            <button class="btn btn-primary" type="button">5Y</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="custom-tab-1">
+                            <ul class="nav nav-tabs performance-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#home1">
+                                        <i class="fas fa-arrow-up text-success me-1"></i>Top Gainers
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#profile1">
+                                        <i class="fas fa-arrow-down text-danger me-1"></i>Top Losers
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#contact1">
+                                        <i class="fas fa-building text-primary me-1"></i>Top Industries
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#message1">
+                                        <i class="fas fa-building text-danger me-1"></i>Worst Industries
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="home1" role="tabpanel">
+                                    <div class="pt-1">
+                                        <div class="table-responsive">
+                                            <table class="table table-enhanced performance-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="fs-14 text-center" style="width: 15%">Symbol</th>
+                                                        <th class="fs-14" style="width: 40%">Name</th>
+                                                        <th class="fs-14 text-end" style="width: 15%">Price</th>
+                                                        <th class="fs-14 text-end" style="width: 15%">Change</th>
+                                                        <th class="fs-14 text-end" style="width: 15%">Change %</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="topGainersBody">
+                                                    <tr>
+                                                        <td class="text-center"><span class="value-badge primary">OGDC</span></td>
+                                                        <td>Oil & Gas Development Company</td>
+                                                        <td class="text-end fw-bold">98.25</td>
+                                                        <td class="text-end"><span class="value-badge success">+2.35</span></td>
+                                                        <td class="text-end"><span class="value-badge success">+2.42%</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center"><span class="value-badge primary">LUCK</span></td>
+                                                        <td>Lucky Cement</td>
+                                                        <td class="text-end fw-bold">725.80</td>
+                                                        <td class="text-end"><span class="value-badge success">+8.88</span></td>
+                                                        <td class="text-end"><span class="value-badge success">+1.23%</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center"><span class="value-badge primary">ENGRO</span></td>
+                                                        <td>Engro Corporation</td>
+                                                        <td class="text-end fw-bold">320.50</td>
+                                                        <td class="text-end"><span class="value-badge success">+5.75</span></td>
+                                                        <td class="text-end"><span class="value-badge success">+1.82%</span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Other tabs content -->
+                                <!-- ... -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                                       
+
+        <!-- Stock Volume Visualization (Bubble Chart) -->
+        <div class="card advanced-charts-card">
+            <div class="card-header card-header-enhanced py-2">
+                <h4 class="card-title mb-0"><i class="fas fa-chart-area me-2"></i>Advanced Charts</h4>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary py-1 px-2">
+                        <i class="fas fa-expand-alt me-1"></i>Fullscreen
+                    </button>
+                </div>
+            </div>
+            <div class="card-body card-body-enhanced py-2">
+                <div class="chart-tabs d-flex gap-2 mb-2">
+                    <div class="chart-tab active py-1 px-2">KSE100</div>
+                </div>
+                <div class="chart-container-advanced" style="position: relative; min-height: 200px;">
+                    <canvas id="advancedChart" height="200" width="100%"></canvas>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <button class="btn btn-sm btn-light py-1 px-2"><i class="fas fa-save me-1"></i>Save</button>                         </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-xl-12">
+                <div class="card bubble-chart-card glass-card">
+                    <div class="card-header card-header-enhanced">
+                        <h4 class="card-title"><i class="fas fa-chart-bubble"></i>Stock Volume Visualization</h4>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary" id="refreshBubbleChart">
+                                <i class="fas fa-sync-alt me-1"></i>Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body card-body-enhanced">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="bubble-chart-description">
+                                <p class="text-muted mb-0">Bubble size represents trading volume - larger bubbles indicate higher volume. Position shows price vs. market cap.</p>
+                            </div>
+                            <div class="bubble-filters d-flex gap-2">
+                                <select id="bubbleSectorFilter" class="form-select form-select-sm shadow-sm">
+                                    <option value="all">All Sectors</option>
+                                    <option value="banking">Banking</option>
+                                    <option value="energy">Energy</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="consumer">Consumer</option>
+                                    <option value="industrial">Industrial</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="bubble-chart-container" style="position: relative; height: 400px;">
+                            <canvas id="stockBubbleChart"></canvas>
+                        </div>
+                        <div class="bubble-chart-legend mt-3">
+                            <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: rgba(59, 130, 246, 0.7); width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Banking</span>
+                                </div>
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: rgba(16, 185, 129, 0.7); width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Energy</span>
+                                </div>
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: rgba(239, 68, 68, 0.7); width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Technology</span>
+                                </div>
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: rgba(245, 158, 11, 0.7); width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Consumer</span>
+                                </div>
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: rgba(139, 92, 246, 0.7); width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Industrial</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Distribution TreeMap -->
+        <div class="row mt-4">
+            <div class="col-xl-12">
+                <div class="card treemap-card glass-card">
+                    <div class="card-header card-header-enhanced">
+                        <h4 class="card-title"><i class="fas fa-th me-2"></i>PSX Stock Market Capitalization</h4>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary" id="refreshTreeMap">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                        </div>
+                    </div>
+                    <div class="card-body card-body-enhanced p-0">
+                        <div class="treemap-description px-4 pt-3">
+                            <p class="text-muted mb-0">Distributed TreeMap visualization showing market capitalization of individual stocks from Pakistan Stock Exchange. Each cell represents a stock, with size proportional to market cap (in millions).</p>
+                        </div>
+                        <div id="treeMapChart" class="treemap-chart-container" style="min-height: 450px; width: 100%;"></div>
+                        <div class="sector-legend px-4 py-3">
+                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: #3182bd; width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Banking</span>
+                                </div>
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: #fd8d3c; width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Oil & Gas</span>
+                                </div>
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: #31a354; width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Cement</span>
+                                </div>
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: #756bb1; width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Fertilizer</span>
+                                </div>
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: #e6550d; width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Power</span>
+                                </div>
+                                <div class="legend-item d-flex align-items-center">
+                                    <span class="legend-color" style="background-color: #6baed6; width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    <span class="legend-label">Chemical</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Right Sidebar - Fixed at rightmost side -->
+<div class="right-sidebar">
+    <!-- Portfolio Section -->
+    <div class="card portfolio-card mb-3">
+        <div class="card-header card-header-enhanced py-2">
+        <h4 class="card-title mb-0"><i class="fas fa-briefcase me-2"></i>Your Portfolio</h4>
+        <div class="dropdown">
+         <button class="btn btn-link p-0" type="button" id="portfolio-options" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="portfolio-options">
+                <li><a class="dropdown-item" href="#"><i class="fas fa-sync-alt me-2"></i>Refresh</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-plus me-2"></i>Add Stock</a></li>
+            </ul>
+        </div>
+    </div>
+        <div class="card-body card-body-enhanced py-2">
+        <div class="portfolio-header mb-2">
+            <div>
+                <p class="mb-0 text-muted">Total Value</p>
+                <h3 class="portfolio-value mb-0">$24,892.00</h3>
+            </div>
+            <div>
+                <span class="portfolio-change bg-success-transparent text-success">
+                    <i class="fas fa-arrow-up me-1"></i>+3.28%
+                </span>
+            </div>
+        </div>
+        <div class="table-responsive">
+        <table class="table portfolio-table mb-2">
+                <thead>
+                    <tr>
+                        <th style="width: 40%">Stock</th>
+                        <th class="text-end" style="width: 20%">Price</th>
+                        <th class="text-end" style="width: 20%">Change</th>
+                        <th class="text-end" style="width: 20%">Holdings</th>
+                    </tr>
+                </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="stock-name">
+                            <div class="stock-logo">O</div>
+                            <div>
+                                <div class="stock-symbol">OGDC</div>
+                                <div class="stock-fullname">Oil & Gas Dev</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="stock-price text-end">98.25</td>
+                    <td class="text-end"><span class="value-badge success">+2.42%</span></td>
+                    <td class="stock-holdings text-end">$4,912.50</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="stock-name">
+                            <div class="stock-logo">M</div>
+                            <div>
+                                <div class="stock-symbol">MCB</div>
+                                <div class="stock-fullname">MCB Bank</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="stock-price text-end">146.30</td>
+                    <td class="text-end"><span class="value-badge danger">-0.85%</span></td>
+                    <td class="stock-holdings text-end">$7,315.00</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="stock-name">
+                            <div class="stock-logo">L</div>
+                            <div>
+                                <div class="stock-symbol">LUCK</div>
+                                <div class="stock-fullname">Lucky Cement</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="stock-price text-end">725.80</td>
+                    <td class="text-end"><span class="value-badge success">+1.23%</span></td>
+                    <td class="stock-holdings text-end">$3,629.00</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <div class="portfolio-actions">
+            <a href="javascript:void(0);" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>Add Stock</a>
+            <a href="javascript:void(0);" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+    </div>
+</div>
+            
+    <!-- Smart Screener Section -->
+    <div class="card screener-card mb-3">
+        <div class="card-header card-header-enhanced py-2">
+            <h4 class="card-title mb-0"><i class="fas fa-filter me-2"></i>Smart Screener</h4>
+                    <div>
+                <button class="btn btn-sm btn-outline-primary py-1 px-2">
+                            <i class="fas fa-cog me-1"></i>Settings
+                        </button>
+                    </div>
+                </div>
+        <div class="card-body card-body-enhanced py-2">
+            <div class="screener-results p-2">
+                        <div class="table-responsive">
+                    <table class="table screener-table mb-2">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%">Symbol</th>
+                                        <th class="text-end" style="width: 20%">Price</th>
+                                        <th class="text-end" style="width: 15%">P/E</th>
+                                        <th class="text-end" style="width: 15%">ROE</th>
+                                        <th class="text-center" style="width: 30%">Signal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="stock-symbol">ENGRO</td>
+                                        <td class="text-end">320.50</td>
+                                        <td class="fundamental-data text-end">9.2</td>
+                                        <td class="fundamental-data text-end">18.3%</td>
+                                        <td class="text-center"><span class="value-badge success">BUY</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stock-symbol">SNGP</td>
+                                        <td class="text-end">42.75</td>
+                                        <td class="fundamental-data text-end">6.8</td>
+                                        <td class="fundamental-data text-end">12.9%</td>
+                                        <td class="text-center"><span class="value-badge warning">HOLD</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stock-symbol">POL</td>
+                                        <td class="text-end">485.30</td>
+                                        <td class="fundamental-data text-end">7.4</td>
+                                        <td class="fundamental-data text-end">22.6%</td>
+                                        <td class="text-center"><span class="value-badge success">BUY</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+            <div class="screener-footer text-center mt-2">
+                <a href="javascript:void(0);" class="btn btn-sm btn-primary py-1">Run Screener</a>
+                    </div>
+                </div>
+            </div>
+            
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+{{ block.super }}
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+<!-- ApexCharts - Required for TreeMap -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.js"></script>
+
+<!-- Custom Market Charts -->
+<script src="{% static 'js/charts/market_charts.js' %}"></script>
+<!-- Vectormap -->
+<script src="{% static 'vendor/jqvmap/js/jquery.vmap.min.js' %}"></script>
+<script src="{% static 'vendor/jqvmap/js/jquery.vmap.world.js' %}"></script>
+<script src="{% static 'vendor/jqvmap/js/jquery.vmap.usa.js' %}"></script>
+
+<!-- Dashboard 1 -->
+<script src="{% static 'js/dashboard/dashboard-1.js' %}"></script>
+
+<!-- All init script -->
+<script src="{% static 'js/plugins-init/jqvmap-init.js' %}"></script>
+
+<!-- Dashboard API Client -->
+<script src="{% static 'js/dashboard/api-client.js' %}"></script>
+
+<!-- CountUp JS for number animations -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.8/countUp.min.js"></script>
+
+<!-- FontAwesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<!-- Initialize Chart.js -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Custom scripts for the dashboard - these should be minimal as most functionality
+    // is now handled by market_charts.js
+});
+</script>
+
+<!-- Initialize ApexCharts TreeMap -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to initialize TreeMap chart
+    function initializeTreeMap() {
+        console.log('Initializing TreeMap chart');
+        
+        // First check if the container exists
+        const treeMapContainer = document.getElementById('treeMapChart');
+        if (!treeMapContainer) {
+            console.error('TreeMap container not found!');
+            return;
+        }
+        
+        // Add loading indicator to the container
+        treeMapContainer.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 450px; width: 100%;"><i class="fas fa-spinner fa-spin fa-3x" style="color: rgba(255,255,255,0.7);"></i></div>';
+        
+        // Fetch data from API
+        fetchTreeMapData();
+    }
+    
+    // Function to fetch TreeMap data from API
+    function fetchTreeMapData() {
+        console.log('Fetching TreeMap data from API');
+        
+        fetch('{% url "dashboard:treemap_data" %}')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('TreeMap data received:', data);
+                
+                if (!data || data.length === 0) {
+                    throw new Error('No data received from API');
+                }
+                
+                renderTreeMap(data);
+            })
+            .catch(error => {
+                console.error('Error fetching TreeMap data:', error);
+                // Use fallback data if API fails
+                const fallbackData = [
+                    { x: 'New Delhi', y: 218 },
+                    { x: 'Mumbai', y: 149 },
+                    { x: 'Bangalore', y: 114 },
+                    { x: 'Kolkata', y: 106 },
+                    { x: 'Chennai', y: 85 },
+                    { x: 'Hyderabad', y: 60 },
+                    { x: 'Ahmedabad', y: 45 },
+                    { x: 'Surat', y: 30 }
+                ];
+                renderTreeMap(fallbackData);
+            });
+    }
+    
+    // Function to render TreeMap with the provided data
+    function renderTreeMap(data) {
+        console.log('Rendering TreeMap with data:', data);
+        
+        // Clear previous chart if exists
+        document.getElementById('treeMapChart').innerHTML = '';
+        
+        // Organize data by sector for coloring
+        const sectors = {};
+        data.forEach(item => {
+            const sector = item.sector || 'Unknown';
+            if (!sectors[sector]) {
+                sectors[sector] = [];
+            }
+            sectors[sector].push(item);
+        });
+        
+        // Color mapping for different sectors
+        const sectorColors = {
+            'Banking': '#3182bd',
+            'Oil & Gas': '#fd8d3c',
+            'Cement': '#31a354',
+            'Fertilizer': '#756bb1',
+            'Power': '#e6550d',
+            'Chemical': '#6baed6',
+            'Textile': '#ffeda0',
+            'Technology': '#9e9ac8',
+            'Automobile': '#74c476',
+            'Insurance': '#c6dbef',
+            'Unknown': '#969696'
+        };
+        
+        // Color each data point by its sector
+        data.forEach(item => {
+            const sector = item.sector || 'Unknown';
+            item.fillColor = sectorColors[sector] || '#969696';
+        });
+        
+        const options = {
+            series: [{
+                data: data
+            }],
+            chart: {
+                height: 450,
+                type: 'treemap',
+                background: 'transparent',
+                foreColor: '#fff',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800
+                },
+                toolbar: {
+                    show: false
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    colors: ['#fff']
+                },
+                formatter: function(text, op) {
+                    return [text, op.value + 'M'];
+                },
+                offsetY: -4
+            },
+            plotOptions: {
+                treemap: {
+                    distributed: false,
+                    enableShades: false,
+                    useFillColorAsStroke: false,
+                    borderWidth: 2,
+                    borderColor: 'rgba(0, 0, 0, 0.2)',
+                    colorBy: 'data'
+                }
+            },
+            colors: [
+                '#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#e6550d', 
+                '#fd8d3c', '#fdae6b', '#fdd0a2', '#31a354', '#74c476', 
+                '#a1d99b', '#c7e9c0', '#756bb1', '#9e9ac8', '#bcbddc', '#dadaeb'
+            ],
+            legend: {
+                show: false
+            },
+            title: {
+                text: 'Market Value Distribution By Stock (in millions)',
+                align: 'center',
+                style: {
+                    fontSize: '16px',
+                    fontWeight: 500,
+                    fontFamily: 'inherit',
+                    color: '#fff'
+                }
+            },
+            tooltip: {
+                enabled: true,
+                theme: 'dark',
+                style: {
+                    fontSize: '12px',
+                    fontFamily: 'inherit'
+                },
+                custom: function({series, seriesIndex, dataPointIndex, w}) {
+                    const data = w.config.series[seriesIndex].data[dataPointIndex];
+                    return `<div class="apexcharts-tooltip-custom" style="padding: 8px;">
+                        <div style="font-weight: bold; margin-bottom: 5px; font-size: 14px;">${data.x}</div>
+                        <div style="margin-bottom: 3px;">${data.name || 'N/A'}</div>
+                        <div>Market Cap: ${data.y} million</div>
+                        <div>Sector: ${data.sector || 'N/A'}</div>
+                    </div>`;
+                }
+            }
+        };
+        
+        try {
+            const chart = new ApexCharts(document.getElementById('treeMapChart'), options);
+            chart.render();
+            console.log('TreeMap rendered successfully');
+            
+            // Add refresh button event listener
+            const refreshButton = document.getElementById('refreshTreeMap');
+            if (refreshButton) {
+                refreshButton.addEventListener('click', function() {
+                    // Show loading state
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                    this.disabled = true;
+                    
+                    // Show loading in chart area
+                    document.getElementById('treeMapChart').innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 450px; width: 100%;"><i class="fas fa-spinner fa-spin fa-3x" style="color: rgba(255,255,255,0.7);"></i></div>';
+                    
+                    // Fetch new data
+                    fetch('{% url "dashboard:treemap_data" %}?_=' + new Date().getTime())
+            .then(response => response.json())
+                        .then(newData => {
+                            console.log('New TreeMap data received:', newData);
+                            // Render chart with new data
+                            renderTreeMap(newData);
+                            
+                            // Reset button
+                            this.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Refresh';
+                            this.disabled = false;
+            })
+            .catch(error => {
+                            console.error('Error refreshing TreeMap data:', error);
+                            
+                            // Reset button
+                            this.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Refresh';
+                            this.disabled = false;
+                            
+                            // Render with fallback data
+                            renderTreeMap([
+                                { x: 'New Delhi', y: 218 },
+                                { x: 'Mumbai', y: 149 },
+                                { x: 'Bangalore', y: 114 },
+                                { x: 'Kolkata', y: 106 },
+                                { x: 'Chennai', y: 85 },
+                                { x: 'Hyderabad', y: 60 }
+                            ]);
+                        });
+                });
+            }
+        } catch (error) {
+            console.error('Error rendering TreeMap:', error);
+            document.getElementById('treeMapChart').innerHTML = '<div class="alert alert-danger m-3">Error rendering TreeMap chart. Please check browser console for details.</div>';
+        }
+    }
+    
+    // Wait a moment for the page to fully render, then initialize
+    setTimeout(function() {
+        initializeTreeMap();
+                    }, 300);
+});
+</script>
+{% endblock scripts %}
+
+{% block extrajs %}
+<script>
+    $(document).ready(function() {
+        // Load all necessary data on page load
+        loadPSXNotices();
+        loadFinancialResults();
+        loadMarketIndices();
+        loadCompanyAnnouncements();
+        
+        // Retry loading PSX notices
+        $(document).on('click', '#retryPsxNotices', function() {
+            loadPSXNotices(true);
+        });
+        
+        // Retry loading Financial Results
+        $(document).on('click', '#retryFinancialResults', function() {
+            loadFinancialResults(true);
+        });
+        
+        // Update market index when selector changes
+        $('#indexSelector').on('change', function() {
+            const selectedIndex = $(this).val();
+            updateIndexDisplay(selectedIndex);
+        });
+        
+        // Load PSX notices function
+        function loadPSXNotices(isRetry = false) {
+            const $button = isRetry ? $('#retryPsxNotices') : null;
+            
+            if ($button) {
+                const $buttonText = $button.html();
+                $button.html('<i class="fas fa-spinner fa-spin"></i> Loading...');
+                $button.prop('disabled', true);
+            }
+            
+            $.ajax({
+                url: "{% url 'dashboard:psx_notices' %}",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    if (data && data.length > 0) {
+                        let html = '';
+                        
+                        data.forEach(function(notice) {
+                            const date = new Date(notice.DateTime);
+                            const formattedDate = `${date.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getMonth()]} ${date.getFullYear()}`;
+                            
+                            html += `
+                            <tr>
+                                <td>
+                                    <span class="value-badge primary fw-bold">${notice.Symbol}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-square bg-light-primary">
+                                            <i class="fas fa-file-alt text-primary"></i>
+                                        </div>
+                                        <div class="ms-2">
+                                            <h6 class="mb-0 fs-14 fw-semibold text-truncate" style="max-width: 350px;" title="${notice.Title}">${notice.Title}</h6>
+                                            <span class="fs-12 text-muted">${notice.Category || 'Notice'}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-nowrap">${formattedDate}</td>
+                                <td class="text-end">
+                                    <a href="${notice.PDFFile}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill me-1">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                    <a href="${notice.PDFFile}" download class="btn btn-sm btn-outline-secondary rounded-pill">
+                                        <i class="fas fa-download me-1"></i>
+                                    </a>
+                                </td>
+                            </tr>`;
+                        });
+                        
+                        $('#psxNoticesTable').html(html);
+                    } else {
+                        $('#psxNoticesTable').html(`
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                <div class="d-flex flex-column align-items-center">
+                                    <i class="fas fa-info-circle fa-2x text-muted mb-2"></i>
+                                    <p class="mb-0">No notices available at this time</p>
+                                    <button id="retryPsxNotices" class="btn btn-sm btn-outline-primary mt-2 rounded-pill">
+                                        <i class="fas fa-sync-alt me-1"></i>Retry
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`);
+                    }
+                },
+                error: function() {
+                    $('#psxNoticesTable').html(`
+                    <tr>
+                        <td colspan="4" class="text-center py-4">
+                            <div class="d-flex flex-column align-items-center">
+                                <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
+                                <p class="mb-0">Failed to load notices. Please try again.</p>
+                                <button id="retryPsxNotices" class="btn btn-sm btn-outline-primary mt-2 rounded-pill">
+                                    <i class="fas fa-sync-alt me-1"></i>Retry
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`);
+                },
+                complete: function() {
+                    if ($button) {
+                        $button.html('<i class="fas fa-sync-alt me-1"></i>Retry');
+                        $button.prop('disabled', false);
+                    }
+                }
+            });
+        }
+        
+        // Load Financial Results function
+        function loadFinancialResults(isRetry = false) {
+            const $button = isRetry ? $('#retryFinancialResults') : null;
+            
+            if ($button) {
+                const $buttonText = $button.html();
+                $button.html('<i class="fas fa-spinner fa-spin"></i> Loading...');
+                $button.prop('disabled', true);
+            }
+            
+            $.ajax({
+                url: "{% url 'dashboard:financial_results' %}",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    if (data && data.length > 0) {
+                        let html = '';
+                        
+                        data.forEach(function(result) {
+                            const sectorIcon = result.sector === 'Banking' ? 'university' : 
+                                              result.sector === 'Food' ? 'utensils' : 'industry';
+                                              
+                            const profitClass = result.is_profit ? 'profit' : 'loss';
+                            const epsBadgeClass = result.is_profit ? 'positive' : 'negative';
+                            const iconColorClass = result.is_profit ? 'text-success' : 'text-danger';
+                            const bgClass = result.is_profit ? 'bg-light-success' : 'bg-light-danger';
+                            
+                            html += `
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-square ${bgClass}">
+                                            <i class="fas fa-${sectorIcon} ${iconColorClass}"></i>
+                                        </div>
+                                        <div class="ms-2">
+                                            <h6 class="mb-0 fs-14 fw-semibold company-name text-truncate" style="max-width: 180px;" title="${result.company}">${result.company}</h6>
+                                            <span class="fs-12 text-muted">${result.sector} ${result.symbol ? `<span class="value-badge primary">${result.symbol}</span>` : ''}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="period">${result.period}</span></td>
+                                <td>
+                                    ${result.has_dividend ? `<span class="dividend-badge">${result.dividend}</span>` : '<span class="text-muted">-</span>'}
+                                </td>
+                                <td class="text-end"><span class="${profitClass}">${result.pl_before_tax}</span></td>
+                                <td class="text-end"><span class="${profitClass}">${result.pl_after_tax}</span></td>
+                                <td class="text-end"><span class="eps-badge ${epsBadgeClass}">${result.eps}</span></td>
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                        <button class="btn btn-link p-0" type="button" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#"><i class="fas fa-file-alt me-2"></i>Details</a></li>
+                                            <li><a class="dropdown-item" href="#"><i class="fas fa-chart-line me-2"></i>Chart</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        });
+                        
+                        $('#financialResultsTable').html(html);
+                    } else {
+                        $('#financialResultsTable').html(`
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <div class="d-flex flex-column align-items-center">
+                                    <i class="fas fa-info-circle fa-2x text-muted mb-2"></i>
+                                    <p class="mb-0">No financial results available at this time</p>
+                                </div>
+                            </td>
+                        </tr>`);
+                    }
+                },
+                error: function() {
+                    $('#financialResultsTable').html(`
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <div class="d-flex flex-column align-items-center">
+                                <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
+                                <p class="mb-0">Failed to load financial results. Please try again.</p>
+                                <button id="retryFinancialResults" class="btn btn-sm btn-outline-success mt-2 rounded-pill">
+                                    <i class="fas fa-sync-alt me-1"></i>Retry
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`);
+                },
+                complete: function() {
+                    if ($button) {
+                        $button.html('<i class="fas fa-sync-alt me-1"></i>Retry');
+                        $button.prop('disabled', false);
+                    }
+                }
+            });
+        }
+        
+        // Load Market Indices function
+        function loadMarketIndices() {
+            $.ajax({
+                url: "{% url 'dashboard:market_overview' %}",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    if (data && data.length > 0) {
+                        // Create a map of indices data by name
+                        const indicesMap = {};
+                        data.forEach(function(index) {
+                            indicesMap[index.IndexName] = index;
+                        });
+                        
+                        // Update the initial display for the selected index
+                        const selectedIndex = $('#indexSelector').val();
+                        updateIndexDisplay(selectedIndex, indicesMap);
+                        
+                        // Store the indices data for later use
+                        window.indicesData = indicesMap;
+                    }
+                },
+                error: function() {
+                    console.error("Failed to load market indices data");
+                }
+            });
+        }
+        
+        // Update index display based on selector
+        function updateIndexDisplay(indexName, indicesMap = null) {
+            // Use passed indicesMap or stored data
+            const data = indicesMap || window.indicesData || {};
+            
+            // Get the index data or use defaults
+            const indexData = data[indexName] || {
+                IndexName: indexName,
+                CurrentIndex: indexName === 'KSE100' ? 93291.68 :
+                              indexName === 'KSE30' ? 32104.55 :
+                              indexName === 'KSE20' ? 29090.90 : 18376.44,
+                PreviousIndex: indexName === 'KSE100' ? 92520.49 :
+                               indexName === 'KSE30' ? 31865.22 :
+                               indexName === 'KSE20' ? 28865.82 : 18218.65,
+                NetChange: indexName === 'KSE100' ? 771.19 :
+                           indexName === 'KSE30' ? 239.33 :
+                           indexName === 'KSE20' ? 225.08 : 157.79,
+                PNetChange: indexName === 'KSE100' ? 0.83 :
+                            indexName === 'KSE30' ? 0.75 :
+                            indexName === 'KSE20' ? 0.78 : 0.87,
+                Volume: indexName === 'KSE100' ? 362829838 :
+                        indexName === 'KSE30' ? 162345678 :
+                        indexName === 'KSE20' ? 98765432 : 87654321
+            };
+            
+            // Format values for display
+            const currentIndex = Number(indexData.CurrentIndex).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            const netChange = Number(indexData.NetChange).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            const pctChange = Number(indexData.PNetChange).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            const volumeInMillions = (Number(indexData.Volume) / 1000000).toLocaleString('en-US', {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1
+            });
+            
+            // Update the display
+            $('#indexValue').text(currentIndex);
+            $('#indexChange').html(`${indexData.NetChange >= 0 ? '+' : ''}${pctChange}%`);
+            $('#indexChange').removeClass('badge-success badge-danger').addClass(indexData.NetChange >= 0 ? 'badge-success' : 'badge-danger');
+            $('#indexVolume').text(`Vol: ${volumeInMillions}M`);
+            
+            // Update Chart.js charts with the selected index
+            if (typeof fetchMarketData === 'function') {
+                fetchMarketData(indexName, '1D');
+            }
+        }
+
+        // Function to load company announcements
+        function loadCompanyAnnouncements() {
+            $.ajax({
+                url: "{% url 'dashboard:latest_news' %}?type=announcements",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    if (data && data.length > 0) {
+                        let html = '';
+                        
+                        data.forEach(function(item, index) {
+                            const date = new Date(item.DateTime);
+                            const formattedDate = `${date.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getMonth()]} ${date.getFullYear()} - ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+                            
+                            html += `
+                            <li>
+                                <div class="timeline-badge ${index % 2 === 0 ? 'success' : 'danger'}"></div>
+                                <a class="timeline-panel signal-item" href="${item.PDFFile || '#'}" target="_blank">
+                                    <span class="signal-date">${formattedDate}</span>
+                                    <h6 class="mb-0 signal-title">${item.Symbol} - ${item.Title}</h6>
+                                </a>
+                            </li>`;
+                        });
+                        
+                        $('#announcementsTimeline').html(html);
+                    } else {
+                        // Use mock data when API fails
+                        const mockAnnouncements = [
+                            {
+                                Symbol: "PSX",
+                                Title: "Market Timing for Ramadan",
+                                DateTime: new Date().toISOString(),
+                                PDFFile: "#" 
+                            },
+                            {
+                                Symbol: "ENGRO",
+                                Title: "Annual General Meeting",
+                                DateTime: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+                                PDFFile: "#"
+                            },
+                            {
+                                Symbol: "PSO",
+                                Title: "Announcement of Quarterly Results",
+                                DateTime: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
+                                PDFFile: "#"
+                            },
+                            {
+                                Symbol: "OGDC",
+                                Title: "Dividend Announcement",
+                                DateTime: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(),
+                                PDFFile: "#"
+                            },
+                            {
+                                Symbol: "LUCK",
+                                Title: "Credit Rating Update",
+                                DateTime: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(),
+                                PDFFile: "#"
+                            }
+                        ];
+                        
+                        let html = '';
+                        mockAnnouncements.forEach(function(item, index) {
+                            const date = new Date(item.DateTime);
+                            const formattedDate = `${date.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getMonth()]} ${date.getFullYear()} - ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+                            
+                            html += `
+                            <li>
+                                <div class="timeline-badge ${index % 2 === 0 ? 'success' : 'danger'}"></div>
+                                <a class="timeline-panel signal-item" href="${item.PDFFile}" target="_blank">
+                                    <span class="signal-date">${formattedDate}</span>
+                                    <h6 class="mb-0 signal-title">${item.Symbol} - ${item.Title}</h6>
+                                </a>
+                            </li>`;
+                        });
+                        
+                        $('#announcementsTimeline').html(html);
+                    }
+                },
+                error: function() {
+                    // Use mock data on error
+                    const mockAnnouncements = [
+                        {
+                            Symbol: "PSX",
+                            Title: "Market Timing for Ramadan",
+                            DateTime: new Date().toISOString(),
+                            PDFFile: "#" 
+                        },
+                        {
+                            Symbol: "ENGRO",
+                            Title: "Annual General Meeting",
+                            DateTime: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+                            PDFFile: "#"
+                        },
+                        {
+                            Symbol: "PSO",
+                            Title: "Announcement of Quarterly Results",
+                            DateTime: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
+                            PDFFile: "#"
+                        },
+                        {
+                            Symbol: "OGDC",
+                            Title: "Dividend Announcement",
+                            DateTime: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(),
+                            PDFFile: "#"
+                        },
+                        {
+                            Symbol: "LUCK",
+                            Title: "Credit Rating Update",
+                            DateTime: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(),
+                            PDFFile: "#"
+                        }
+                    ];
+                    
+                    let html = '';
+                    mockAnnouncements.forEach(function(item, index) {
+                        const date = new Date(item.DateTime);
+                        const formattedDate = `${date.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getMonth()]} ${date.getFullYear()} - ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+                        
+                        html += `
+                        <li>
+                            <div class="timeline-badge ${index % 2 === 0 ? 'success' : 'danger'}"></div>
+                            <a class="timeline-panel signal-item" href="${item.PDFFile}" target="_blank">
+                                <span class="signal-date">${formattedDate}</span>
+                                <h6 class="mb-0 signal-title">${item.Symbol} - ${item.Title}</h6>
+                            </a>
+                        </li>`;
+                    });
+                    
+                    $('#announcementsTimeline').html(html);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

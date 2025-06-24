@@ -1,0 +1,10 @@
+{% comment %} news/templates/news/partials/market_ticker.html {% endcomment %}
+{% if market_data %}
+<div class="market-ticker-container" aria-label="Market Data Ticker">
+    <div class="market-ticker">
+        {% for item in market_data %}<span class="market-item"><span class="symbol">{{ item.symbol }}</span> <span class="price">{{ item.price }}</span> {% if item.change %}<span class="change {% if item.change|slice:':1' == '+' %}positive{% elif item.change|slice:':1' == '-' %}negative{% endif %}">({{ item.change }} / {{ item.change_percent }})</span>{% endif %}</span>{% endfor %}
+        {# Duplicate items for seamless scroll #}
+        {% for item in market_data %}<span class="market-item"><span class="symbol">{{ item.symbol }}</span> <span class="price">{{ item.price }}</span> {% if item.change %}<span class="change {% if item.change|slice:':1' == '+' %}positive{% elif item.change|slice:':1' == '-' %}negative{% endif %}">({{ item.change }} / {{ item.change_percent }})</span>{% endif %}</span>{% endfor %}
+    </div>
+</div>
+{% endif %}

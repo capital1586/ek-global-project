@@ -1,0 +1,2968 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load tz %}
+{% load portfolio_tags %}
+
+{% block title %}
+<title>Portfolios | EK Global</title>
+{% endblock title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'core/styles/form_card.css' %}">
+<link rel="stylesheet" href="{% static 'portfolios/styles/portfolio_list.css' %}">
+<style>
+    :root {
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-color: #212529;
+        --text-muted: #6c757d;
+        --border-color: #dee2e6;
+        --hover-bg: #f8f9fa;
+        --primary-color: #0d6efd;
+        --secondary-color: #6c757d;
+        --success-color: #198754;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --info-color: #0dcaf0;
+        --shadow-color: rgba(0, 0, 0, 0.05);
+        --card-shadow: 0 0.125rem 0.25rem var(--shadow-color);
+        --hover-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .holdings-table {
+        background-color: var(--table-bg);
+        color: var(--text-light-custom);
+        border-collapse: separate; /* Allows for border-spacing and rounded corners on table */
+        border-spacing: 0;
+        /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */ /* Optional: subtle shadow for depth */
+        /* border-radius: 8px; */ /* Optional: rounded corners for the whole table */
+        /* overflow: hidden; */ /* Required if using border-radius on the table */
+    }
+    
+    /* --- Table Header --- */
+    .holdings-table thead {
+        background-color: var(--table-header-bg);
+    }
+    
+    .holdings-table th {
+        color: var(--text-primary-custom); /* Brighter color for header text */
+        font-weight: 600; /* Slightly bolder */
+        text-transform: uppercase; /* Professional touch */
+        font-size: 0.75rem; /* Smaller, cleaner header text */
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid var(--text-primary-custom); /* Prominent bottom border */
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    .holdings-table th .header-item {
+        color: var(--text-primary-custom); /* Ensures icon and text match */
+    }
+    
+    .holdings-table th .header-item i {
+        font-size: 0.9em; /* Slightly smaller icon relative to text */
+    }
+    
+    
+    /* --- Table Body & Rows --- */
+    .holdings-table tbody tr.data-row {
+        border-bottom: 1px solid var(--table-row-border-color);
+        transition: background-color 0.2s ease-in-out;
+        opacity: 0; /* For animation */
+        transform: translateY(10px); /* For animation */
+        animation: fadeInUp 0.4s ease-out forwards;
+    }
+    
+    .holdings-table tbody tr.data-row:last-child {
+        border-bottom: none;
+    }
+    
+    .holdings-table tbody tr.data-row:hover {
+        background-color: var(--row-hover-bg);
+    }
+    
+    .holdings-table td {
+        padding-top: 0.85rem;
+        padding-bottom: 0.85rem;
+        vertical-align: middle;
+    }
+    
+    /* --- Specific Data Cell Styling --- */
+    .client-id-main {
+        font-weight: 600;
+        color: var(--text-light-custom);
+        font-size: 0.9rem;
+    }
+    
+    .portfolio-id-sub {
+        font-size: 0.75rem;
+        color: var(--text-secondary-custom); /* Muted color for less important info */
+        font-family: 'Courier New', Courier, monospace; /* Monospace for IDs */
+    }
+    
+    .data-value {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: var(--text-light-custom);
+    }
+    
+    .data-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary-custom);
+    }
+    
+    .return-value {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .text-success-custom {
+        color: var(--text-success-custom-color) !important; /* Use custom success color */
+    }
+    
+    .text-danger-custom {
+        color: var(--text-danger-custom-color) !important; /* Use custom danger color */
+    }
+    
+    /* --- Action Button Styling --- */
+    .action-btn {
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.3rem 0.75rem;
+        border-radius: 4px;
+        border-color: var(--button-outline-color);
+        color: var(--button-outline-color);
+        transition: all 0.2s ease-in-out;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .action-btn:hover,
+    .action-btn:focus {
+        background-color: var(--button-hover-bg);
+        color: var(--button-hover-text);
+        border-color: var(--button-hover-bg);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .action-btn i {
+        font-size: 0.9em;
+    }
+    
+    /* --- Empty State Styling --- */
+    .empty-state-message {
+        color: var(--text-secondary-custom);
+        font-size: 1rem;
+    }
+    
+    .empty-state-message i {
+        color: var(--text-primary-custom); /* Use primary color for the icon */
+    }
+    
+    /* --- Fade-in Animation --- */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Adjust Bootstrap's default tooltip for dark theme if needed */
+    .tooltip-inner {
+      background-color: #000; /* Darker tooltip background */
+      color: #fff;
+      border: 1px solid var(--text-primary-custom);
+    }
+    .tooltip.bs-tooltip-top .tooltip-arrow::before,
+    .tooltip.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
+      border-top-color: var(--text-primary-custom); /* Match border */
+    }
+    .tooltip.bs-tooltip-bottom .tooltip-arrow::before,
+    .tooltip.bs-tooltip-auto[data-popper-placement^="bottom"] .tooltip-arrow::before {
+      border-bottom-color: var(--text-primary-custom);
+    }
+    .tooltip.bs-tooltip-start .tooltip-arrow::before,
+    .tooltip.bs-tooltip-auto[data-popper-placement^="left"] .tooltip-arrow::before {
+      border-left-color: var(--text-primary-custom);
+    }
+    .tooltip.bs-tooltip-end .tooltip-arrow::before,
+    .tooltip.bs-tooltip-auto[data-popper-placement^="right"] .tooltip-arrow::before {
+      border-right-color: var(--text-primary-custom);
+    }
+
+    [data-bs-theme="dark"] {
+        --bg-color: #212529;
+        --card-bg: #1e293b; /* Darker background for cards */
+        --text-color: #e9ecef;
+        --text-muted: #adb5bd;
+        --border-color: #495057;
+        --hover-bg: #2d3748; /* Darker background for hover states */
+        --primary-color: #0d6efd;
+        --secondary-color: #6c757d;
+        --success-color: #20c997;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --info-color: #0dcaf0;
+        --shadow-color: rgba(0, 0, 0, 0.25);
+        --card-shadow: 0 0.125rem 0.25rem var(--shadow-color);
+        --hover-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+        --table-bg: #1e2130;
+        --table-header-bg: #171923;
+        --table-row-border-color: #2d3748;
+        --row-hover-bg: rgba(45, 55, 72, 0.5);
+        --text-light-custom: #ffffff;
+        --text-primary-custom: #b35ef0;
+        --text-secondary-custom: #a0aec0;
+        --text-success-custom-color: #48bb78;
+        --text-danger-custom-color: #f56565;
+        --button-outline-color: #fff;
+        --button-hover-bg: #b35ef0;
+        --button-hover-text: #fff;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+    }
+
+    /* Card Styling */
+    .portfolio-card {
+        background-color: var(--card-bg);
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        color: var(--text-color);
+    }
+
+    .portfolio-card:hover {
+        box-shadow: var(--hover-shadow);
+    }
+
+    .portfolio-card .card-header {
+        background-color: var(--card-bg);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+    }
+
+    .portfolio-card .card-body {
+        padding: 1.25rem;
+    }
+
+    .portfolio-card .card-footer {
+        background-color: var(--card-bg);
+        border-top: 1px solid var(--border-color);
+        padding: 1rem;
+    }
+
+    /* Table Styling */
+    .portfolio-table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+    }
+
+    .portfolio-table th {
+        font-weight: 600;
+        border-bottom: 2px solid var(--border-color);
+        padding: 0.75rem;
+        text-align: left;
+        color: var(--text-muted);
+    }
+
+    .portfolio-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+    }
+
+    .portfolio-table tbody tr {
+        transition: background-color 0.2s ease;
+        animation: fadeIn 0.5s ease forwards;
+        opacity: 0;
+    }
+
+    .portfolio-table tbody tr:hover {
+        background-color: var(--hover-bg);
+    }
+
+    /* Button Styling */
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+    /* Tab Navigation */
+    .portfolio-tabs {
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .portfolio-tab-btn {
+        padding: 0.5rem 1rem;
+        margin-right: 0.25rem;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+
+    .portfolio-tab-btn:hover, .portfolio-tab-btn.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+    }
+    
+    /* Tab Content */
+    .portfolio-tab-container .portfolio-tab-content {
+        display: none;
+    }
+    
+    .portfolio-tab-container .portfolio-tab-content.active {
+        display: block;
+    }
+
+    /* Stock Symbol */
+    .stock-symbol {
+        display: flex;
+        align-items: center;
+    }
+
+    .stock-logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        margin-right: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    .stock-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: var(--text-color);
+    }
+
+    .stock-ticker {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+    }
+
+    /* Progress Bar */
+    .progress {
+        height: 6px;
+        background-color: var(--border-color);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        transition: width 0.6s ease;
+    }
+
+    /* Return Values */
+    .return-value {
+        font-weight: 600;
+    }
+
+    .return-value.positive {
+        color: var(--success-color);
+    }
+
+    .return-value.negative {
+        color: var(--danger-color);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* Insight Cards */
+    .insight-card {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        color: var(--text-color);
+    }
+
+    .insight-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .insight-icon {
+        width: 40px;
+        height: 40px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.5rem;
+        color: #fff;
+    }
+
+    /* Activity Feed */
+    .activity-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        color: #fff;
+    }
+
+    .activity-content h6 {
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--text-color);
+    }
+
+    .activity-content p {
+        margin-bottom: 0;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+    }
+
+    .activity-time {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        background-color: var(--card-bg);
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-state-text {
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
+    }
+
+    /* Allocation Chart */
+    .allocation-chart-container {
+        position: relative;
+        height: 180px;
+        margin-bottom: 1rem;
+    }
+
+    .chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-right: 1rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-color);
+    }
+
+    .legend-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+        margin-right: 0.5rem;
+    }
+
+    /* Form Controls */
+    .form-control, .form-select {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+        color: var(--text-color);
+    }
+
+    .form-control:focus, .form-select:focus {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+    }
+
+    /* Switch */
+    .form-switch .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    /* Refresh Button */
+    .refresh-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+        color: var(--primary-color);
+    }
+
+    /* Pagination */
+    .pagination .page-link {
+        color: var(--primary-color);
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #fff;
+    }
+
+    /* Modal */
+    .modal-content {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border-color: var(--border-color);
+    }
+
+    .modal-header {
+        border-bottom-color: var(--border-color);
+    }
+
+    .modal-footer {
+        border-top-color: var(--border-color);
+    }
+
+    /* Dropdown */
+    .dropdown-menu {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+    }
+
+    .dropdown-item {
+        color: var(--text-color);
+    }
+
+    .dropdown-item:hover {
+        background-color: var(--hover-bg);
+        color: var(--text-color);
+    }
+
+    /* Badges */
+    .badge {
+        font-weight: 500;
+    }
+
+    /* Tooltips */
+    .tooltip .tooltip-inner {
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 0.25rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .tooltip.bs-tooltip-top .tooltip-arrow::before {
+        border-top-color: rgba(0, 0, 0, 0.8);
+    }
+    
+    .tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+        border-bottom-color: rgba(0, 0, 0, 0.8);
+    }
+    
+    .tooltip.bs-tooltip-start .tooltip-arrow::before {
+        border-left-color: rgba(0, 0, 0, 0.8);
+    }
+    
+    .tooltip.bs-tooltip-end .tooltip-arrow::before {
+        border-right-color: rgba(0, 0, 0, 0.8);
+    }
+
+    /* Alerts */
+    .alert {
+        border-radius: 0.5rem;
+    }
+
+    /* Page Header */
+    .page-title {
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 767.98px) {
+        .portfolio-card {
+            margin-bottom: 1rem;
+        }
+        
+        .portfolio-tabs {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 0.5rem;
+        }
+        
+        .portfolio-tab-btn {
+            display: inline-block;
+        }
+    }
+    .modal-backdrop {
+        display: none !important;
+    }
+    .modal-content {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        box-shadow: var(--hover-shadow);
+        color: var(--text-color);
+    }
+    
+    .modal-header {
+        background-color: var(--card-bg); /* Changed from var(--hover-bg) */
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    
+    .modal-footer {
+        background-color: var(--card-bg); /* Changed from var(--hover-bg) */
+        border-top: 1px solid var(--border-color);
+        padding: 1rem;
+        border-radius: 0 0 0.5rem 0.5rem;
+    }
+    
+    .modal-title {
+        color: var(--text-color);
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+        background-color: var(--card-bg);
+    }
+    
+    .form-field {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-field label {
+        color: var(--text-color);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-input {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+    
+    .form-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .field-message {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    .submit-btn {
+        background-color: var(--primary-color);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease;
+        color: white;
+    }
+    
+    .submit-btn:hover {
+        background-color: #0b5ed7;
+        transform: translateY(-1px);
+        box-shadow: var(--hover-shadow);
+    }
+    
+    .btn-light {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+    }
+    
+    .btn-light:hover {
+        background-color: var(--border-color);
+    }
+
+    /* Tab styling */
+    .portfolio-tab-container .portfolio-tab-content {
+        display: none;
+    }
+    
+    .portfolio-tab-container .portfolio-tab-content.active {
+        display: block;
+    }
+
+    /* Add additional styling for the holdings table */
+    .hover-shadow:hover {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        background-color: rgba(247, 250, 255, 0.5);
+    }
+
+    /* Make sure the table takes full width */
+    .table-responsive {
+        width: 1080px;
+    }
+
+    .table {
+        table-layout: fixed;
+    }
+
+    /* Style headers for professional look */
+    .table thead th {
+        border-top: none;
+        border-bottom: 2px solid #e9ecef;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+    }
+
+    /* Text colors for units, per unit, etc. */
+    .text-primary {
+        color: #b35ef0 !important;
+    }
+
+    /* Animation for rows */
+    .fade-in-animation {
+        animation: fadeIn 0.5s ease-in-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Add additional styling for the holdings table */
+    .hover-shadow:hover {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        background-color: rgba(247, 250, 255, 0.5);
+    }
+
+    /* Make sure the table takes full width */
+    .table-responsive {
+        width: 100%;
+    }
+
+    .table {
+        table-layout: fixed;
+    }
+
+    /* Style headers for professional look */
+    .table thead th {
+        border-top: none;
+        border-bottom: 2px solid #e9ecef;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Text colors for units, per unit, etc. */
+    .text-purple {
+        color: #b35ef0 !important;
+    }
+
+    /* Animation for rows */
+    .fade-in-animation {
+        animation: fadeIn 0.5s ease-in-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Dark theme styling for the table */
+    .portfolio-table {
+        background-color: #1e2130;
+        color: white;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    /* Make sure the table takes full width */
+    .table-responsive {
+        width: 100%;
+    }
+
+    .table {
+        table-layout: fixed;
+    }
+
+    /* Style headers for professional look */
+    .table thead th {
+        border-top: none;
+        border-bottom: 1px solid #2d3748;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        color: #b35ef0;
+        background-color: #171923;
+    }
+
+    /* Text colors for units, per unit, etc. */
+    .text-purple {
+        color: #b35ef0 !important;
+    }
+
+    .text-primary {
+        color: #b35ef0 !important;
+    }
+
+    .text-success {
+        color: #48bb78 !important;
+    }
+
+    .text-danger {
+        color: #f56565 !important;
+    }
+
+    /* Style the add alert button to match screenshot */
+    .analytics-btn-square {
+        border-radius: 4px;
+        background-color: #3182ce;
+        border-color: #3182ce;
+        font-weight: 500;
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Animation for rows */
+    .fade-in-animation {
+        animation: fadeIn 0.5s ease-in-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hover effect for rows */
+    .table-hover tbody tr:hover {
+        background-color: rgba(45, 55, 72, 0.5) !important;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ...your existing head content... -->
+</head>
+<body>
+    <!-- Global notification function -->
+    <script>
+        // Global notification function that will be available to all scripts
+        window.showNotification = function(message, type = 'danger') {
+            let notificationContainer = document.getElementById('notification-container');
+            if (!notificationContainer) {
+                notificationContainer = document.createElement('div');
+                notificationContainer.id = 'notification-container';
+                notificationContainer.style.position = 'fixed';
+                notificationContainer.style.top = '20px';
+                notificationContainer.style.right = '20px';
+                notificationContainer.style.zIndex = '2000';
+                document.body.appendChild(notificationContainer);
+            }
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show shadow`;
+            alert.style.minWidth = '250px';
+            alert.innerHTML = `
+                <span>${message}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            notificationContainer.appendChild(alert);
+            setTimeout(() => {
+                alert.classList.remove('show');
+                alert.classList.add('hide');
+                setTimeout(() => alert.remove(), 500);
+            }, 4000);
+            
+            // Log to console as well
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+    </script>
+    
+    <!-- Global Notification Container -->
+    <div id="notification-container" class="position-fixed top-0 end-0 p-3" style="z-index: 2000;"></div>
+    
+    <!-- Rest of your body content -->
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <div>
+            <h1 class="page-title mb-1">Portfolios</h1>
+            <p class="text-secondary mb-0">Manage and track your investment portfolios</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#portfolioCreateModal">
+                <i class="fas fa-plus-circle me-2"></i> New Portfolio
+            </button>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#transactionsUploadModal">
+                <i class="fas fa-upload me-2"></i> Upload Transactions
+            </button>
+            <a href="{% url 'portfolios:transaction_compare' %}" class="btn btn-outline-primary">
+                <i class="fas fa-exchange-alt me-1"></i> Compare Transactions
+            </a>
+        </div>
+    </div>
+    
+    <!-- Portfolio List -->
+    {% timezone request.user.timezone %}
+    <div class="row">
+        {% if portfolios %}
+            {% for portfolio in portfolios %}
+            <div class="col-xl-4 col-lg-6 col-md-6 mb-4">
+                <div class="portfolio-card" style="border-radius: 1rem; overflow: hidden; background-color: var(--card-bg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); transition: all 0.3s ease; height: 100%;">
+                    <div class="portfolio-header" style="background-color: var(--hover-bg); border-bottom: 1px solid var(--border-color); padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                        <h5 class="portfolio-title" style="font-weight: 600; color: var(--text-color); margin-bottom: 0; max-width: 80%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ portfolio.name }}</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-link p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--text-muted); background: transparent; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" style="background-color: var(--card-bg); border: 1px solid var(--border-color); box-shadow: var(--hover-shadow); border-radius: 0.5rem;">
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#portfolio{{ portfolio.id }}EditModal" style="color: var(--text-color); padding: 0.5rem 1rem; transition: all 0.2s ease;">
+                                        <i class="fas fa-edit me-2"></i>Edit
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" style="border-color: var(--border-color);"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'portfolios:portfolio_delete' portfolio.id %}" style="color: var(--danger-color); padding: 0.5rem 1rem; transition: all 0.2s ease;">
+                                        <i class="fas fa-trash-alt me-2"></i>Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="portfolio-body" style="padding: 1.5rem;">
+                        <div class="portfolio-description" style="margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">
+                            {% if portfolio.description %}
+                                <div style="display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">{{ portfolio.description }}</div>
+                            {% else %}
+                                <span style="color: var(--text-muted); font-style: italic;">No description provided</span>
+                            {% endif %}
+                        </div>
+                        <div class="portfolio-stats" style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                            <div class="stat-item" style="text-align: center; flex: 1; padding: 0.5rem; border-radius: 0.5rem; transition: all 0.2s ease;">
+                                <div class="stat-value" style="font-size: 1.1rem; font-weight: 600; color: var(--text-color); margin-bottom: 0.25rem;">₹{{ portfolio.capital|intcomma }}</div>
+                                <div class="stat-label" style="color: var(--text-muted); font-size: 0.8rem;">Capital</div>
+                            </div>
+                            <div class="stat-item" style="text-align: center; flex: 1; padding: 0.5rem; border-radius: 0.5rem; transition: all 0.2s ease;">
+                                <div class="stat-value" style="font-size: 1.1rem; font-weight: 600; color: var(--text-color); margin-bottom: 0.25rem;">{{ portfolio.brokerage_percentage }}%</div>
+                                <div class="stat-label" style="color: var(--text-muted); font-size: 0.8rem;">Brokerage</div>
+                            </div>
+                            <div class="stat-item" style="text-align: center; flex: 1; padding: 0.5rem; border-radius: 0.5rem; transition: all 0.2s ease;">
+                                <div class="stat-value" style="font-size: 1.1rem; font-weight: 600; color: var(--text-color); margin-bottom: 0.25rem;">{{ portfolio.investments.count }}</div>
+                                <div class="stat-label" style="color: var(--text-muted); font-size: 0.8rem;">Investments</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-muted); font-size: 0.8rem;">Sector Allocation</span>
+                            </div>
+                            <div style="height: 6px; background-color: var(--border-color); border-radius: 3px; overflow: hidden; display: flex;">
+                                <div style="height: 100%; width: 35%; background-color: var(--primary-color);"></div>
+                                <div style="height: 100%; width: 25%; background-color: var(--success-color);"></div>
+                                <div style="height: 100%; width: 20%; background-color: var(--info-color);"></div>
+                                <div style="height: 100%; width: 15%; background-color: var(--warning-color);"></div>
+                                <div style="height: 100%; width: 5%; background-color: var(--danger-color);"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="portfolio-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-top: 1px solid var(--border-color); background-color: var(--hover-bg);">
+                        <div class="portfolio-date" style="color: var(--text-muted); font-size: 0.85rem;">
+                            <i class="far fa-clock me-1"></i>Updated {{ portfolio.updated_at|timesince }} ago
+                        </div>
+                        <a href="{% url 'portfolios:portfolio_detail' portfolio.id %}" class="btn btn-primary action-btn" style="background-color: var(--primary-color); border-color: var(--primary-color); font-size: 0.85rem; padding: 0.35rem 0.75rem; border-radius: 0.375rem; transition: all 0.2s ease;">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Portfolio Edit Modal -->
+            <div class="modal fade" id="portfolio{{ portfolio.id }}EditModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Portfolio</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form 
+                                action="{% url 'portfolios:portfolio_update' portfolio.id %}" 
+                                method="patch" 
+                                class="portfolio-edit-form"
+                                data-successURL="{% url 'portfolios:portfolio_list' %}"
+                            >
+                                {% csrf_token %}
+                
+                                <div class="form-fields">
+                                    <div class="form-field">
+                                        <label for="name">Portfolio Name</label>
+                                        <input 
+                                            type="text" 
+                                            class="form-input form-control" 
+                                            placeholder="Portfolio Name" 
+                                            name="name"
+                                            required
+                                            title="Edit the portfolio name."
+                                            value="{{ portfolio.name }}"
+                                        >
+                                        <small class="field-message"></small>
+                                    </div>
+            
+                                    <div class="form-field">
+                                        <label for="brokerage_percentage">Brokerage Percentage (%)</label>
+                                        <input 
+                                            type="number" 
+                                            class="form-input form-control" 
+                                            placeholder="Brokerage Percentage"
+                                            name="brokerage_percentage" 
+                                            min="0"
+                                            max="99.99"
+                                            step="0.01"
+                                            title="Update your default brokerage percentage."
+                                            value="{{ portfolio.brokerage_percentage }}"
+                                        >
+                                        <small class="field-message"></small>
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="cash_addition">Cash Addition (₹)</label>
+                                        <input 
+                                            type="number" 
+                                            class="form-input form-control" 
+                                            placeholder="Cash Addition (PKR)"
+                                            name="cash_addition" 
+                                            min="0"
+                                            step="0.01"
+                                            title="Add cash to your portfolio."
+                                            value="0.00"
+                                        >
+                                        <small class="field-message"></small>
+                                    </div>
+            
+                                    <div class="form-field">
+                                        <label for="description">Description</label>
+                                        <textarea 
+                                            class="form-input form-control" 
+                                            rows="5" 
+                                            placeholder="Description" 
+                                            name="description" 
+                                            title="Update the portfolio description."
+                                        >{{ portfolio.description }}</textarea>
+                                        <small class="field-message"></small>
+                                    </div>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary submit-btn">Save Changes</button>
+                                </div>
+                            </form>       
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="row justify-content-center my-5">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card portfolio-card text-center p-5 border-0 shadow-sm">
+                        <div class="mb-4">
+                            <i class="fas fa-folder-open text-primary fa-4x opacity-75"></i>
+                        </div>
+                        <h4 class="mb-3">You don't have any portfolios yet</h4>
+                        <p class="text-secondary mb-4">Create your first portfolio to start tracking your investments and analyzing performance.</p>
+                        <div class="d-grid gap-2 col-md-6 mx-auto">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#portfolioCreateModal">
+                                <i class="fas fa-plus-circle me-2"></i> Create Your First Portfolio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Demo Transactions Section -->
+    <div class="row mt-4 mb-5">
+        <div class="col-12">
+            <div class="card portfolio-transactions-card border-0 shadow-lg">
+                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-chart-line me-2 text-primary"></i>Portfolio ANALYTICS
+                        </h5>
+                        <small class="text-secondary">Last updated: {% now "F j, Y, g:i a" %}</small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-switch me-3">
+                            <input class="form-check-input" type="checkbox" id="autoUpdateSwitch" checked>
+                            <label class="form-check-label text-secondary" for="autoUpdateSwitch">Auto-update</label>
+                        </div>
+                        <button class="btn btn-sm btn-primary refresh-btn">
+                            <i class="fas fa-sync-alt me-1"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                        <!-- Notification Container -->
+                        <div id="notification-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+                        
+                    <div class="row g-0">
+                        <div class="col-lg-8">
+                            <!-- Navigation Tabs -->
+                            <div class="portfolio-tabs">
+                                <button class="portfolio-tab-btn active" data-tab="holdings-tab"><i class="fas fa-briefcase me-2"></i>Holdings</button>
+                                <button class="portfolio-tab-btn" data-tab="narratives-tab"><i class="fas fa-comment-alt me-2"></i>Narratives</button>
+                                <button class="portfolio-tab-btn" data-tab="news-tab"><i class="fas fa-newspaper me-2"></i>News</button>
+                                <button class="portfolio-tab-btn" data-tab="analysis-tab"><i class="fas fa-chart-line me-2"></i>Analysis</button>
+                                <button class="portfolio-tab-btn" data-tab="dividends-tab"><i class="fas fa-money-bill me-2"></i>Dividends</button>
+                            </div>
+                            
+                            <!-- Tab Content -->
+                            <div class="portfolio-tab-container">
+                                <!-- Holdings Tab -->
+                                <div class="portfolio-tab-content active" id="holdings-tab">
+                                    <!-- Holdings Summary Stats -->
+                                    <div class="p-3 mb-4" style="background-color: rgba(13, 110, 253, 0.05); border-radius: 8px;">
+                                        <div class="row g-4">
+                                            <div class="col-md-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="rounded-circle p-2 me-3" style="background-color: rgba(97, 97, 255, 0.15);">
+                                                        <i class="fas fa-chart-pie text-primary fs-4"></i>
+                                                        </div>
+                                                    <div>
+                                                        <div class="text-muted small">Total Holdings</div>
+                                                        <div class="fs-5 fw-bold">23</div>
+                                                        </div>
+                                                        </div>
+                                                        </div>
+                                            <div class="col-md-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="rounded-circle p-2 me-3" style="background-color: rgba(97, 97, 255, 0.15);">
+                                                        <i class="fas fa-money-bill-wave text-primary fs-4"></i>
+                                                        </div>
+                                                    <div>
+                                                        <div class="text-muted small">Market Value</div>
+                                                        <div class="fs-5 fw-bold">PKR3,845,560</div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="rounded-circle p-2 me-3" style="background-color: rgba(72, 187, 120, 0.15);">
+                                                        <i class="fas fa-arrow-trend-up text-success fs-4"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-muted small">Overall Growth</div>
+                                                        <div class="fs-5 fw-bold text-success">+12.4%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="rounded-circle p-2 me-3" style="background-color: rgba(97, 97, 255, 0.15);">
+                                                        <i class="fas fa-calendar-alt text-primary fs-4"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-muted small">Last Updated</div>
+                                                        <div class="fs-6 fw-semibold">May 17, 13:43</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Holdings Actions Row -->
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div class="position-relative" style="width: 250px;">
+                                            <input type="text" class="form-control ps-4" id="holdingsSearch" placeholder="Search holdings..." style="background-color: #1e2130; border-color: #2d3748;">
+                                            <i class="fas fa-search position-absolute text-muted" style="left: 12px; top: 50%; transform: translateY(-50%);"></i>
+                                        </div>
+                                        <div class="d-flex">
+                                            <button class="btn btn-sm btn-outline-primary px-3 me-2" style="background-color: transparent; border-color: #0d6efd; color: #0d6efd;">
+                                                <i class="fas fa-filter me-2"></i> FILTER
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary px-3 me-2" style="background-color: transparent; border-color: #0d6efd; color: #0d6efd;">
+                                                <i class="fas fa-file-export me-2"></i> EXPORT
+                                            </button>
+                                            <button class="btn btn-sm btn-primary px-3" style="background-color: #0d6efd; border-color: #0d6efd;">
+                                                <i class="fas fa-plus me-2"></i> ADD HOLDING
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Column Headers -->
+                                    <div class="d-flex align-items-center py-3 border-bottom mb-0" style="background-color: #171923; border-color: #2d3748 !important;">
+                                        <div class="col-3 ps-3">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-signature me-2 text-primary"></i>
+                                                <span class="fw-semibold text-primary">INVESTMENT</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-1 text-center">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-sort-amount-up me-2 text-primary"></i>
+                                                <span class="fw-semibold text-primary">QUANTITY</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-2 text-center">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-money-bill-wave me-2 text-primary"></i>
+                                                <span class="fw-semibold text-primary">AVG. COST</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-2 text-center">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-chart-line me-2 text-primary"></i>
+                                                <span class="fw-semibold text-primary">CURRENT PRICE</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-2 text-center">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-balance-scale me-2 text-primary"></i>
+                                                <span class="fw-semibold text-primary">TOTAL VALUE</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-1 text-center">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-exchange-alt me-2 text-primary"></i>
+                                                <span class="fw-semibold text-primary">RETURN</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-1 text-center">
+                                            <span class="fw-semibold text-primary">
+                                                <i class="fas fa-cog text-primary"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Holdings List -->
+                                    <div class="holdings-list">
+                                                {% for holding in holdings_data %}
+                                        <div class="holding-item py-3 border-bottom" style="border-color: #2d3748 !important;">
+                                            <div class="d-flex align-items-center">
+                                                <div class="col-3 ps-3">
+                                                    <div>
+                                                        <div class="fw-semibold text-white">{{ holding.client_id }}</div>
+                                                        <div class="small text-muted">ID: {{ holding.portfolio_id|slice:":16" }}</div>
+                                                        </div>
+                                                </div>
+                                                <div class="col-1 text-center">
+                                                    <div class="text-white">{{ holding.quantity }}</div>
+                                                    <div class="small text-muted">units</div>
+                                                </div>
+                                                <div class="col-2 text-center">
+                                                    <div class="text-white">PKR{{ holding.avg_cost|floatformat:2 }}</div>
+                                                    <div class="small text-muted">per unit</div>
+                                                </div>
+                                                <div class="col-2 text-center">
+                                                    <div class="text-white">PKR{{ holding.market_price|floatformat:2 }}</div>
+                                                    <div class="small text-muted">current</div>
+                                                </div>
+                                                <div class="col-2 text-center">
+                                                    <div class="text-white">PKR{{ holding.quantity|multiply:holding.market_price|floatformat:2 }}</div>
+                                                    <div class="small text-muted">total</div>
+                                                </div>
+                                                <div class="col-1 text-center">
+                                                    <div class="{% if holding.return_percentage >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                                            {% if holding.return_percentage >= 0 %}+{% endif %}{{ holding.return_percentage|floatformat:1 }}%
+                                                        </div>
+                                                </div>
+                                                <div class="col-1 text-end pe-3">
+                                                    <button class="btn btn-sm btn-primary" style="background-color: #0d6efd; border-color: #0d6efd;">
+                                                        ADD ALERT
+                                                        </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                                {% empty %}
+                                        <div class="text-center py-5">
+                                            <div class="mb-3">
+                                                <i class="fas fa-info-circle fa-3x text-muted"></i>
+                                                        </div>
+                                            <p class="mb-1 text-white">No holdings found in your portfolio</p>
+                                            <p class="small text-muted mb-3">Add investments to start tracking your portfolio performance</p>
+                                            <button class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i> Add Your First Investment
+                                            </button>
+                                        </div>
+                                                {% endfor %}
+                                    </div>
+                                    
+                                    <!-- Pagination -->
+                                    <div class="d-flex justify-content-between align-items-center pyADD ALERT-3">
+                                        <div class="small text-muted">Showing 1-10 of 23 holdings</div>
+                                        <nav aria-label="Holdings pagination">
+                                            <ul class="pagination pagination-sm mb-0">
+                                                <li class="page-item disabled">
+                                                    <a class="page-link" href="#" aria-label="Previous" style="background-color: #1e2130; border-color: #2d3748;">
+                                                        <i class="fas fa-chevron-left"></i>
+                                                    </a>
+                                                </li>
+                                                <li class="page-item active">
+                                                    <a class="page-link" href="#" style="background-color: #0d6efd; border-color: #0d6efd;">1</a>
+                                                </li>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="#" style="background-color: #1e2130; border-color: #2d3748; color: #fff;">2</a>
+                                                </li>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="#" style="background-color: #1e2130; border-color: #2d3748; color: #fff;">3</a>
+                                                </li>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="#" aria-label="Next" style="background-color: #1e2130; border-color: #2d3748;">
+                                                        <i class="fas fa-chevron-right"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                                
+                                <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                  // Initialize tooltips
+                                  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                                  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                                  });
+                                  
+                                  // Simple search functionality
+                                  const searchInput = document.getElementById('holdingsSearch');
+                                  if (searchInput) {
+                                    searchInput.addEventListener('input', function(e) {
+                                      const searchTerm = e.target.value.toLowerCase();
+                                      const holdingItems = document.querySelectorAll('.holding-item');
+                                      
+                                      holdingItems.forEach(item => {
+                                        const text = item.textContent.toLowerCase();
+                                        item.style.display = text.includes(searchTerm) ? '' : 'none';
+                                      });
+                                    });
+                                  }
+                                });
+                                </script>
+                                
+                                <!-- Narratives Tab -->
+                                <div class="portfolio-tab-content" id="narratives-tab">
+                                    <div class="p-4">
+                                        <div class="mb-4">
+                                            <h5 class="fw-bold mb-3">Recent Market Narratives</h5>
+                                            <p class="text-secondary mb-4">Stay informed with the latest market narratives affecting your portfolio.</p>
+                                        </div>
+                                        
+                                        <!-- Narrative Cards -->
+                                        <div class="row g-3">
+                                            <!-- Narrative 1 -->
+                                            <div class="col-md-6">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between mb-3">
+                                                            <span class="badge bg-primary">Tech Sector</span>
+                                                            <small class="text-secondary">2 days ago</small>
+                                                        </div>
+                                                        <h6 class="fw-bold mb-2">AI Advancements Boost Tech Stocks</h6>
+                                                        <p class="text-secondary small mb-3">Recent breakthroughs in artificial intelligence have driven significant gains in technology stocks, particularly benefiting Microsoft and Apple in your portfolio.</p>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="stock-icon me-2" style="width: 24px; height: 24px;">
+                                                                <img src="https://logo.clearbit.com/microsoft.com" alt="MSFT" class="company-logo" width="24" height="24"
+                                                                     onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;12&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;10&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>M</text></svg>'">
+                                                            </div>
+                                                            <span class="small me-2">MSFT</span>
+                                                            <span class="return-value positive small">+3.2%</span>
+                                                            <div class="stock-icon mx-2" style="width: 24px; height: 24px;">
+                                                                <img src="https://logo.clearbit.com/apple.com" alt="AAPL" class="company-logo" width="24" height="24"
+                                                                     onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;12&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;10&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>A</text></svg>'">
+                                                            </div>
+                                                            <span class="small me-2">AAPL</span>
+                                                            <span class="return-value positive small">+2.7%</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer bg-transparent">
+                                                        <a href="#" class="btn btn-sm btn-outline-primary">Read Analysis</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Narrative 2 -->
+                                            <div class="col-md-6">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between mb-3">
+                                                            <span class="badge bg-warning text-dark">Banking</span>
+                                                            <small class="text-secondary">4 days ago</small>
+                                                        </div>
+                                                        <h6 class="fw-bold mb-2">Federal Reserve Signals Rate Cuts</h6>
+                                                        <p class="text-secondary small mb-3">The Federal Reserve has indicated potential interest rate cuts in the coming months, positively affecting banking stocks like JPMorgan Chase in your portfolio.</p>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="stock-icon me-2" style="width: 24px; height: 24px;">
+                                                                <img src="https://logo.clearbit.com/jpmorganchase.com" alt="JPM" class="company-logo" width="24" height="24"
+                                                                     onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;12&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;10&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>J</text></svg>'">
+                                                            </div>
+                                                            <span class="small me-2">JPM</span>
+                                                            <span class="return-value positive small">+4.5%</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer bg-transparent">
+                                                        <a href="#" class="btn btn-sm btn-outline-primary">Read Analysis</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Narrative 3 -->
+                                            <div class="col-md-6">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between mb-3">
+                                                            <span class="badge bg-danger">EV Market</span>
+                                                            <small class="text-secondary">1 week ago</small>
+                                                        </div>
+                                                        <h6 class="fw-bold mb-2">Supply Chain Challenges for EV Manufacturers</h6>
+                                                        <p class="text-secondary small mb-3">Ongoing supply chain disruptions are creating challenges for electric vehicle manufacturers, impacting Tesla's production forecasts for the upcoming quarter.</p>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="stock-icon me-2" style="width: 24px; height: 24px;">
+                                                                <img src="https://logo.clearbit.com/tesla.com" alt="TSLA" class="company-logo" width="24" height="24"
+                                                                     onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;12&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;10&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>T</text></svg>'">
+                                                            </div>
+                                                            <span class="small me-2">TSLA</span>
+                                                            <span class="return-value negative small">-2.8%</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer bg-transparent">
+                                                        <a href="#" class="btn btn-sm btn-outline-primary">Read Analysis</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Narrative 4 -->
+                                            <div class="col-md-6">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between mb-3">
+                                                            <span class="badge bg-info">Market Trend</span>
+                                                            <small class="text-secondary">2 weeks ago</small>
+                                                        </div>
+                                                        <h6 class="fw-bold mb-2">Sector Rotation: Tech to Financials</h6>
+                                                        <p class="text-secondary small mb-3">Investors are increasingly shifting from technology to financial stocks, potentially affecting the balance of your portfolio in the coming months.</p>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="small me-2">Portfolio Impact:</span>
+                                                            <span class="return-value positive small">Moderate Positive</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer bg-transparent">
+                                                        <a href="#" class="btn btn-sm btn-outline-primary">Read Analysis</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Narrative Insights -->
+                                        <div class="mt-4 p-3 bg-light rounded-3">
+                                            <h6 class="fw-bold mb-3">Narrative Insights</h6>
+                                            <div class="row g-3">
+                                                <div class="col-md-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-arrow-trend-up text-success fs-4 me-3"></i>
+                                                        <div>
+                                                            <h6 class="small fw-bold mb-1">Positive Narratives</h6>
+                                                            <p class="small text-secondary mb-0">7 affecting your portfolio</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-arrow-trend-down text-danger fs-4 me-3"></i>
+                                                        <div>
+                                                            <h6 class="small fw-bold mb-1">Negative Narratives</h6>
+                                                            <p class="small text-secondary mb-0">3 affecting your portfolio</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-bullseye text-primary fs-4 me-3"></i>
+                                                        <div>
+                                                            <h6 class="small fw-bold mb-1">Narrative Alignment</h6>
+                                                            <p class="small text-secondary mb-0">70% with your strategy</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- News Tab -->
+                                <div class="portfolio-tab-content" id="news-tab">
+                                    <div class="p-4">
+                                        <div class="mb-4">
+                                            <h5 class="fw-bold mb-3">Financial News</h5>
+                                            <p class="text-secondary mb-4">Stay informed with the latest financial news affecting your portfolio stocks.</p>
+                                        </div>
+                                        
+                                        <!-- News filter options -->
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-outline-primary active" id="all-news-btn">All News</button>
+                                                <button type="button" class="btn btn-sm btn-outline-primary" id="portfolio-news-btn">Portfolio Related</button>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-secondary me-2">Auto-update:</span>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="news-auto-update">
+                                                </div>
+                                                <button class="btn btn-sm btn-primary ms-3" id="refresh-news-btn">
+                                                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- News cards container -->
+                                        <div class="row g-3" id="news-container">
+                                            <div class="col-12 text-center py-5">
+                                                <div class="alert alert-info">
+                                                    <i class="fas fa-info-circle me-2"></i> 
+                                                    <span>News is loading. If you encounter issues, please try refreshing the page.</span>
+                                                </div>
+                                                <div class="spinner-border text-primary mt-4" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                                <p class="text-secondary mt-3">Connecting to news service...</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Load more button -->
+                                        <div class="text-center mt-4">
+                                            <button class="btn btn-outline-primary" id="load-more-news-btn">
+                                                <i class="fas fa-plus me-2"></i> Load More News
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Analysis Tab -->
+                                <div class="portfolio-tab-content" id="analysis-tab">
+                                    <div class="p-4">
+                                        <!-- Performance Chart Card -->
+                                        <div class="card portfolio-card mb-4 border-0 shadow-sm">
+                                            <div class="card-header bg-transparent border-0">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h5 class="fw-bold mb-0">Portfolio Performance</h5>
+                                                        <p class="text-muted mb-0 small">Track your portfolio's performance over time</p>
+                                                    </div>
+                                                    <div class="btn-group btn-group-sm" role="group" id="timeRangeSelector">
+                                                        <button type="button" class="btn btn-outline-primary active" data-range="1m">1M</button>
+                                                        <button type="button" class="btn btn-outline-primary" data-range="3m">3M</button>
+                                                        <button type="button" class="btn btn-outline-primary" data-range="6m">6M</button>
+                                                        <button type="button" class="btn btn-outline-primary" data-range="1y">1Y</button>
+                                                        <button type="button" class="btn btn-outline-primary" data-range="all">All</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body pt-0">
+                                                <div class="chart-container" style="position: relative; height: 350px; width: 100%;">
+                                                    <canvas id="portfolioPerformanceChart"></canvas>
+                                                </div>
+                                                <div class="row mt-4 text-center">
+                                                    <div class="col-md-3">
+                                                        <div class="text-muted small">Starting Value</div>
+                                                        <div class="fw-bold">PKR 2,845,000</div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="text-muted small">Current Value</div>
+                                                        <div class="fw-bold">PKR 3,845,560</div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="text-muted small">Total Return</div>
+                                                        <div class="fw-bold text-success">+PKR 1,000,560</div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="text-muted small">Growth Rate</div>
+                                                        <div class="fw-bold text-success">+35.17%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Additional Analysis Sections from the original layout -->
+                                        <div class="mb-4">
+                                            <h5 class="fw-bold mb-3">Portfolio Analysis</h5>
+                                            <p class="text-secondary mb-4">Comprehensive analysis of your portfolio's performance, valuation, and risk metrics.</p>
+                                        </div>
+                                        
+                                        <!-- Key Metrics Overview -->
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-md-3">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <h6 class="small fw-bold mb-0">Total Return</h6>
+                                                            <i class="fas fa-chart-line text-primary"></i>
+                                                        </div>
+                                                        <h4 class="return-value positive mb-0">+23.5%</h4>
+                                                        <small class="text-secondary">vs. S&P 500 +18.2%</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <h6 class="small fw-bold mb-0">Volatility</h6>
+                                                            <i class="fas fa-chart-bar text-primary"></i>
+                                                        </div>
+                                                        <h4 class="mb-0">1.2</h4>
+                                                        <small class="text-secondary">Beta (1Y)</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <h6 class="small fw-bold mb-0">Sharpe Ratio</h6>
+                                                            <i class="fas fa-balance-scale text-primary"></i>
+                                                        </div>
+                                                        <h4 class="mb-0">1.8</h4>
+                                                        <small class="text-secondary">Above Average</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <h6 class="small fw-bold mb-0">Avg. P/E Ratio</h6>
+                                                            <i class="fas fa-calculator text-primary"></i>
+                                                        </div>
+                                                        <h4 class="mb-0">22.4</h4>
+                                                        <small class="text-secondary">vs. Industry 24.7</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Performance Charts -->
+                                        {% comment %} <div class="row g-3 mb-4">
+                                            <div class="col-md-6">
+                                                <div class="card portfolio-card">
+                                                    <div class="card-header bg-transparent">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="fw-bold mb-0">Performance vs. Benchmark</h6>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <button class="btn btn-outline-secondary active">1Y</button>
+                                                                <button class="btn btn-outline-secondary">3Y</button>
+                                                                <button class="btn btn-outline-secondary">5Y</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="performance-chart" style="height: 250px;">
+                                                            <canvas id="performanceChart"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card portfolio-card">
+                                                    <div class="card-header bg-transparent">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="fw-bold mb-0">Sector Allocation</h6>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                                    <i class="fas fa-filter me-1"></i> View
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                    <li><a class="dropdown-item" href="#">By Sector</a></li>
+                                                                    <li><a class="dropdown-item" href="#">By Industry</a></li>
+                                                                    <li><a class="dropdown-item" href="#">By Geography</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="allocation-chart" style="height: 250px;">
+                                                            <canvas id="sectorAllocationChart"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> {% endcomment %}
+                                        
+                                        <!-- Risk Analysis -->
+                                        <div class="card portfolio-card mb-4">
+                                            <div class="card-header bg-transparent">
+                                                <h6 class="fw-bold mb-0">Risk Analysis</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <div class="risk-metric-card p-3 border rounded mb-3">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div>
+                                                                    <h6 class="small fw-bold mb-1">Diversification Score</h6>
+                                                                    <p class="small text-secondary mb-0">Measures how well your portfolio is diversified across sectors and assets</p>
+                                                                </div>
+                                                                <div class="text-end">
+                                                                    <h5 class="mb-0">7.2/10</h5>
+                                                                    <span class="badge bg-success">Good</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="risk-metric-card p-3 border rounded">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div>
+                                                                    <h6 class="small fw-bold mb-1">Concentration Risk</h6>
+                                                                    <p class="small text-secondary mb-0">Measures overexposure to specific sectors or individual stocks</p>
+                                                                </div>
+                                                                <div class="text-end">
+                                                                    <h5 class="mb-0">Medium</h5>
+                                                                    <span class="badge bg-warning text-dark">Caution</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="risk-metric-card p-3 border rounded mb-3">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div>
+                                                                    <h6 class="small fw-bold mb-1">Downside Protection</h6>
+                                                                    <p class="small text-secondary mb-0">How well your portfolio might perform during market downturns</p>
+                                                                </div>
+                                                                <div class="text-end">
+                                                                    <h5 class="mb-0">6.5/10</h5>
+                                                                    <span class="badge bg-success">Good</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="risk-metric-card p-3 border rounded">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div>
+                                                                    <h6 class="small fw-bold mb-1">Liquidity Risk</h6>
+                                                                    <p class="small text-secondary mb-0">Assesses how easily you can sell your holdings if needed</p>
+                                                                </div>
+                                                                <div class="text-end">
+                                                                    <h5 class="mb-0">Low</h5>
+                                                                    <span class="badge bg-success">Excellent</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Valuation Metrics -->
+                                        <div class="card portfolio-card">
+                                            <div class="card-header bg-transparent">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h6 class="fw-bold mb-0">Valuation Metrics</h6>
+                                                    <button class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-download me-1"></i> Export Report
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="card-body p-0">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover mb-0 align-middle">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Metric</th>
+                                                                <th>Your Portfolio</th>
+                                                                <th>Benchmark</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Price-to-Earnings (P/E)</td>
+                                                                <td>22.4</td>
+                                                                <td>24.7</td>
+                                                                <td><span class="badge bg-success">Undervalued</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Price-to-Book (P/B)</td>
+                                                                <td>3.2</td>
+                                                                <td>3.5</td>
+                                                                <td><span class="badge bg-success">Undervalued</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Price-to-Sales (P/S)</td>
+                                                                <td>2.8</td>
+                                                                <td>2.4</td>
+                                                                <td><span class="badge bg-warning text-dark">Fair Value</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>EV/EBITDA</td>
+                                                                <td>12.5</td>
+                                                                <td>13.2</td>
+                                                                <td><span class="badge bg-success">Undervalued</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>PEG Ratio</td>
+                                                                <td>1.8</td>
+                                                                <td>2.1</td>
+                                                                <td><span class="badge bg-success">Undervalued</span></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Dividends Tab -->
+                                <div class="portfolio-tab-content" id="dividends-tab">
+                                    <div class="p-4">
+                                        <div class="mb-4">
+                                            <h5 class="fw-bold mb-3">Dividend Analysis</h5>
+                                            <p class="text-secondary mb-4">Track your dividend income, yield, and growth across your portfolio.</p>
+                                        </div>
+                                        
+                                        <!-- Dividend Summary Cards -->
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-md-3">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <h6 class="small fw-bold mb-0">Annual Income</h6>
+                                                            <i class="fas fa-money-bill-wave text-success"></i>
+                                                        </div>
+                                                        <h4 class="mb-0">$2,845</h4>
+                                                        <small class="text-success">+12.4% YoY</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <h6 class="small fw-bold mb-0">Dividend Yield</h6>
+                                                            <i class="fas fa-percentage text-success"></i>
+                                                        </div>
+                                                        <h4 class="mb-0">2.8%</h4>
+                                                        <small class="text-secondary">vs. S&P 500 1.5%</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <h6 class="small fw-bold mb-0">Payout Ratio</h6>
+                                                            <i class="fas fa-chart-pie text-primary"></i>
+                                                        </div>
+                                                        <h4 class="mb-0">42%</h4>
+                                                        <small class="text-secondary">Sustainable</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="card h-100 portfolio-card">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <h6 class="small fw-bold mb-0">Growth Rate</h6>
+                                                            <i class="fas fa-chart-line text-primary"></i>
+                                                        </div>
+                                                        <h4 class="mb-0">8.2%</h4>
+                                                        <small class="text-secondary">5-Year CAGR</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Dividend Calendar -->
+                                        <div class="card portfolio-card mb-4">
+                                            <div class="card-header bg-transparent">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h6 class="fw-bold mb-0">Dividend Calendar</h6>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-secondary active">Month</button>
+                                                        <button class="btn btn-outline-secondary">Quarter</button>
+                                                        <button class="btn btn-outline-secondary">Year</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body p-0">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover mb-0 align-middle">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Stock</th>
+                                                                <th>Ex-Dividend Date</th>
+                                                                <th>Payment Date</th>
+                                                                <th>Amount</th>
+                                                                <th>Yield</th>
+                                                                <th>Income</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="stock-icon me-2" style="width: 28px; height: 28px;">
+                                                                            <img src="https://logo.clearbit.com/jpmorganchase.com" alt="JPM" class="company-logo" width="28" height="28"
+                                                                                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;28&quot; height=&quot;28&quot; viewBox=&quot;0 0 28 28&quot;><circle cx=&quot;14&quot; cy=&quot;14&quot; r=&quot;14&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>J</text></svg>'">
+                                                                        </div>
+                                                                        <div>
+                                                                            <div class="fw-bold">JPM</div>
+                                                                            <small class="text-secondary">JPMorgan Chase</small>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>Apr 5, 2025</td>
+                                                                <td>Apr 30, 2025</td>
+                                                                <td>$1.15</td>
+                                                                <td>2.8%</td>
+                                                                <td>$115.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="stock-icon me-2" style="width: 28px; height: 28px;">
+                                                                            <img src="https://logo.clearbit.com/microsoft.com" alt="MSFT" class="company-logo" width="28" height="28"
+                                                                                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;28&quot; height=&quot;28&quot; viewBox=&quot;0 0 28 28&quot;><circle cx=&quot;14&quot; cy=&quot;14&quot; r=&quot;14&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>M</text></svg>'">
+                                                                        </div>
+                                                                        <div>
+                                                                            <div class="fw-bold">MSFT</div>
+                                                                            <small class="text-secondary">Microsoft Corp</small>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>May 15, 2025</td>
+                                                                <td>Jun 10, 2025</td>
+                                                                <td>$0.75</td>
+                                                                <td>0.8%</td>
+                                                                <td>$75.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="stock-icon me-2" style="width: 28px; height: 28px;">
+                                                                            <img src="https://logo.clearbit.com/apple.com" alt="AAPL" class="company-logo" width="28" height="28"
+                                                                                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;28&quot; height=&quot;28&quot; viewBox=&quot;0 0 28 28&quot;><circle cx=&quot;14&quot; cy=&quot;14&quot; r=&quot;14&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>A</text></svg>'">
+                                                                        </div>
+                                                                        <div>
+                                                                            <div class="fw-bold">AAPL</div>
+                                                                            <small class="text-secondary">Apple Inc</small>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>May 8, 2025</td>
+                                                                <td>May 15, 2025</td>
+                                                                <td>$0.25</td>
+                                                                <td>0.5%</td>
+                                                                <td>$50.00</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Dividend Charts -->
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-md-6">
+                                                <div class="card portfolio-card">
+                                                    <div class="card-header bg-transparent">
+                                                        <h6 class="fw-bold mb-0">Dividend Income Projection</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="dividend-chart" style="height: 250px;">
+                                                            <canvas id="dividendProjectionChart"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card portfolio-card">
+                                                    <div class="card-header bg-transparent">
+                                                        <h6 class="fw-bold mb-0">Dividend Contribution by Stock</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="dividend-chart" style="height: 250px;">
+                                                            <canvas id="dividendContributionChart"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Dividend Growth Analysis -->
+                                        <div class="card portfolio-card">
+                                            <div class="card-header bg-transparent">
+                                                <h6 class="fw-bold mb-0">Dividend Growth Analysis</h6>
+                                            </div>
+                                            <div class="card-body p-0">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover mb-0 align-middle">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Stock</th>
+                                                                <th>Current Yield</th>
+                                                                <th>5-Year Growth</th>
+                                                                <th>Consecutive Years</th>
+                                                                <th>Payout Ratio</th>
+                                                                <th>Quality Score</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="stock-icon me-2" style="width: 28px; height: 28px;">
+                                                                            <img src="https://logo.clearbit.com/jpmorganchase.com" alt="JPM" class="company-logo" width="28" height="28"
+                                                                                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;28&quot; height=&quot;28&quot; viewBox=&quot;0 0 28 28&quot;><circle cx=&quot;14&quot; cy=&quot;14&quot; r=&quot;14&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>J</text></svg>'">
+                                                                        </div>
+                                                                        <span>JPM</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>2.8%</td>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <span class="me-2">10.2%</span>
+                                                                        <i class="fas fa-arrow-up text-success"></i>
+                                                                    </div>
+                                                                </td>
+                                                                <td>12</td>
+                                                                <td>35%</td>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                                                                            <div class="progress-bar bg-success" role="progressbar" style="width: 85%"></div>
+                                                                        </div>
+                                                                        <span>8.5</span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="stock-icon me-2" style="width: 28px; height: 28px;">
+                                                                            <img src="https://logo.clearbit.com/microsoft.com" alt="MSFT" class="company-logo" width="28" height="28"
+                                                                                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;28&quot; height=&quot;28&quot; viewBox=&quot;0 0 28 28&quot;><circle cx=&quot;14&quot; cy=&quot;14&quot; r=&quot;14&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>M</text></svg>'">
+                                                                        </div>
+                                                                        <span>MSFT</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>0.8%</td>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <span class="me-2">12.5%</span>
+                                                                        <i class="fas fa-arrow-up text-success"></i>
+                                                                    </div>
+                                                                </td>
+                                                                <td>18</td>
+                                                                <td>25%</td>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                                                                            <div class="progress-bar bg-success" role="progressbar" style="width: 92%"></div>
+                                                                        </div>
+                                                                        <span>9.2</span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="stock-icon me-2" style="width: 28px; height: 28px;">
+                                                                            <img src="https://logo.clearbit.com/apple.com" alt="AAPL" class="company-logo" width="28" height="28"
+                                                                                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;28&quot; height=&quot;28&quot; viewBox=&quot;0 0 28 28&quot;><circle cx=&quot;14&quot; cy=&quot;14&quot; r=&quot;14&quot; fill=&quot;%23718096&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; font-weight=&quot;bold&quot; fill=&quot;white&quot;>A</text></svg>'">
+                                                                        </div>
+                                                                        <span>AAPL</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>0.5%</td>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <span class="me-2">7.8%</span>
+                                                                        <i class="fas fa-arrow-up text-success"></i>
+                                                                    </div>
+                                                                </td>
+                                                                <td>11</td>
+                                                                <td>15%</td>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                                                                            <div class="progress-bar bg-success" role="progressbar" style="width: 78%"></div>
+                                                                        </div>
+                                                                        <span>7.8</span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 portfolio-sidebar ps-lg-4">
+                                <!-- Portfolio Allocation -->
+                               
+                                
+                                <!-- Recent Activity -->
+                                <div class="p-4 border-top">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold mb-0">Recent Activity</h6>
+                                        <a href="#" class="text-primary small">View All</a>
+                                    </div>
+                                    
+                                    <div class="recent-activity">
+                                        <div class="activity-item d-flex align-items-center py-2">
+                                            <div class="activity-icon text-success">
+                                                <i class="fas fa-arrow-circle-down"></i>
+                                            </div>
+                                            <div class="activity-content ms-2">
+                                                <div class="fw-bold">Bought AAPL</div>
+                                                <div class="small text-secondary">Purchased 5 shares at $193.73</div>
+                                                <div class="small text-muted">2 days ago</div>
+                                            </div>
+                                        </div>
+                                        <div class="activity-item d-flex align-items-center py-2">
+                                            <div class="activity-icon text-danger">
+                                                <i class="fas fa-arrow-circle-up"></i>
+                                            </div>
+                                            <div class="activity-content ms-2">
+                                                <div class="fw-bold">Sold TSLA</div>
+                                                <div class="small text-secondary">Sold 2 shares at $245.17</div>
+                                                <div class="small text-muted">4 days ago</div>
+                                            </div>
+                                        </div>
+                                        <div class="activity-item d-flex align-items-center py-2">
+                                            <div class="activity-icon text-info">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                            </div>
+                                            <div class="activity-content ms-2">
+                                                <div class="fw-bold">Dividend Received</div>
+                                                <div class="small text-secondary">JPM dividend $1.45 per share</div>
+                                                <div class="small text-muted">1 week ago</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Portfolio Insights -->
+                                <div class="p-4 border-top">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold mb-0">Portfolio Insights</h6>
+                                        <button class="btn btn-sm btn-primary">
+                                            <i class="fas fa-sync-alt me-1"></i> Report
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="portfolio-insights">
+                                        <div class="insight-card pulse-animation" style="animation-delay: 0.1s">
+                                            <div class="d-flex align-items-start">
+                                                <div class="insight-icon text-warning">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold mb-1">Concentration Risk</div>
+                                                    <p class="mb-0 small">Technology sector represents 35% of your portfolio. Consider diversifying to reduce risk.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="insight-card pulse-animation" style="animation-delay: 0.3s">
+                                            <div class="d-flex align-items-start">
+                                                <div class="insight-icon text-info">
+                                                    <i class="fas fa-lightbulb"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold mb-1">Dividend Opportunity</div>
+                                                    <p class="mb-0 small">Adding more dividend stocks could increase your portfolio income by approximately 9%.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="insight-card pulse-animation" style="animation-delay: 0.5s">
+                                            <div class="d-flex align-items-start">
+                                                <div class="insight-icon text-success">
+                                                    <i class="fas fa-chart-line"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold mb-1">Performance Trend</div>
+                                                    <p class="mb-0 small">Your portfolio has outperformed the S&P 500 by 3.2% over the last 12 months.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Sidebar -->
+            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav aria-label="Portfolio pagination">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    {% if num == page_obj.number %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endtimezone %}
+</div>
+
+<!-- Portfolio Create Modal -->
+<div class="modal fade" id="portfolioCreateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Portfolio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'portfolios:portfolio_create' %}" method="post" id="portfolio-create-form">
+                    {% csrf_token %}
+
+                    <div class="form-fields">
+                        <div class="form-field">
+                            <label for="name">Portfolio Name</label>
+                            <input 
+                                type="text" 
+                                class="form-input form-control" 
+                                placeholder="Portfolio Name" 
+                                name="name"
+                                required
+                                title="Enter the portfolio name."
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="capital">Capital ($)</label>
+                            <input 
+                                type="number" 
+                                class="form-input form-control" 
+                                placeholder="Cash amount (PKR)" 
+                                name="capital"
+                                required
+                                title="Portfolio cash amount."
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="brokerage_percentage">Brokerage Percentage (%)</label>
+                            <input 
+                                type="number" 
+                                class="form-input form-control" 
+                                placeholder="Brokerage Percentage"
+                                name="brokerage_percentage" 
+                                min="0"
+                                max="99.99"
+                                step="0.01"
+                                value="0.15"
+                                title="Enter your default brokerage percentage."
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="description">Description (Optional)</label>
+                            <textarea 
+                                class="form-input form-control" 
+                                rows="5" 
+                                placeholder="Description" 
+                                name="description" 
+                                title="Give a short description of the portfolio."
+                            ></textarea>
+                            <small class="field-message"></small>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary submit-btn">Create Portfolio</button>
+                    </div>
+                </form>       
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transactions Upload Modal -->
+<div class="modal fade" id="transactionsUploadModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Transactions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2">Upload Transaction Files</h6>
+                    <p class="text-muted mb-1">
+                        You can upload either a CSV file or an Excel file containing your transactions.
+                    </p>
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-info-circle me-1"></i> Make sure your file follows the required format.
+                    </p>
+                    <div class="d-flex align-items-center mb-3">
+                        <a href="{% url 'portfolios:transactions_upload_template_download' %}" download class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-download me-1"></i> Download Template
+                        </a>
+                    </div>
+                </div>
+                
+                <form action="{% url 'portfolios:portfolio_list' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+    
+                    <div class="form-field">
+                        <label for="transactions_file">Select File</label>
+                        <input 
+                            name="transactions_file" 
+                            type="file" 
+                            class="form-input form-control" 
+                            accept=".csv,.xlsx"
+                            required
+                        >
+                        <small class="field-message text-muted">Supported file types: CSV, Excel (.xlsx)</small>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary submit-btn">
+                            <i class="fas fa-upload me-1"></i> Upload
+                        </button>
+                    </div>
+                </form>       
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Analytics Modal -->
+    <div class="modal fade" id="analyticsModal" tabindex="-1" aria-labelledby="analyticsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow">
+            <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="analyticsModalLabel">
+                        <i class="fas fa-bell me-2"></i> Configure Stock Alert
+                    </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="analytics-form">
+                    <div class="mb-3">
+                            <label for="symbolInput" class="form-label">Stock Symbol</label>
+                            <input type="text" class="form-control" id="symbolInput" placeholder="e.g. AAPL" required>
+                                </div>
+                        <div class="mb-3">
+                            <label for="clientIdInput" class="form-label">Client ID</label>
+                            <input type="text" class="form-control" id="clientIdInput" placeholder="e.g. CL-001">
+                            </div>
+                    <div class="mb-3">
+                        <label for="conditionSelect" class="form-label">Alert Condition</label>
+                            <select class="form-select" id="conditionSelect" required>
+                                <option value="" selected disabled>Select alert condition</option>
+                            <option value="price_down_10">Price down by 10% from recent high</option>
+                            <option value="price_up_10">Price up by 10% from recent low</option>
+                            <option value="volume_spike">Volume spike (2x average)</option>
+                            <option value="rsi_overbought">RSI Overbought (>70)</option>
+                            <option value="rsi_oversold">RSI Oversold (<30)</option>
+                            <option value="custom">Custom condition</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="customConditionWrapper" style="display: none;">
+                        <label for="customConditionInput" class="form-label">Custom Condition</label>
+                            <input type="text" class="form-control" id="customConditionInput" placeholder="e.g. Price > $150">
+                        </div>
+                        <div class="mb-3">
+                        <label class="form-label">Alert Frequency</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="alertFrequency" id="oneTimeAlert" value="oneTime" checked>
+                                    <label class="form-check-label" for="oneTimeAlert">One-time</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="alertFrequency" id="repeatAlert" value="repeat">
+                                    <label class="form-check-label" for="repeatAlert">Repeating</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="alertFrequency" id="continuousAlert" value="continuous">
+                                    <label class="form-check-label" for="continuousAlert">Continuous</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                        <label class="form-label">Notification Methods</label>
+                            <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="soundNotificationCheck" checked>
+                                <label class="form-check-label" for="soundNotificationCheck">
+                                    <i class="fas fa-volume-up me-2"></i> Sound Notification
+                                    </label>
+                                </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="emailNotificationCheck">
+                                <label class="form-check-label" for="emailNotificationCheck">
+                                    <i class="fas fa-envelope me-2"></i> Email Notification
+                                    </label>
+                                </div>
+                            <div id="emailDetailsContainer" style="display: none;" class="mt-2 ps-4">
+                                <input type="email" class="form-control" id="notificationEmail" placeholder="Your email address">
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="pushNotificationCheck">
+                                <label class="form-check-label" for="pushNotificationCheck">
+                                    <i class="fas fa-bell me-2"></i> Push Notification
+                                    </label>
+                                </div>
+                            </div>
+                    </form>
+                        </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="addMoreAlertsBtn">
+                        <i class="fas fa-plus-circle me-1"></i> Add More
+                    </button>
+                            <button type="button" class="btn btn-primary" id="saveAnalyticsBtn">
+                                <i class="fas fa-save me-1"></i> Save Alert
+                            </button>
+                        </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Analytics Modal -->
+<div class="modal fade" id="activeAnalyticsModal" tabindex="-1" aria-labelledby="activeAnalyticsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content shadow">
+            <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="activeAnalyticsModalLabel">
+                        <i class="fas fa-chart-line me-2"></i> Active Stock Alerts
+                    </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+                <div class="modal-body p-0">
+                <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                            <tr>
+                                    <th>Client ID</th>
+                                    <th>Stock</th>
+                                <th>Condition</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activeAnalyticsTableBody">
+                            <!-- Active analytics will be loaded here -->
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-primary" id="createNewAlertBtn">
+                        <i class="fas fa-plus me-1"></i> Create New Alert
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notification toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-primary text-white">
+            <i class="fas fa-bell me-2"></i>
+            <strong class="me-auto">Alert Notification</strong>
+            <small id="toastTime">Just now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastBody">
+            Alert condition triggered!
+        </div>
+    </div>
+</div>
+
+<!-- Company Selection Modal -->
+<div class="modal fade" id="companySelectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Company</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="companySearchInput" placeholder="Search by symbol or name...">
+                    </div>
+                </div>
+                
+                <!-- Companies container -->
+                <div id="companiesContainer" class="companies-container mt-3">
+                    <!-- Transactions will be loaded here dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Company Selection Modal -->
+<div class="modal fade" id="companySelectionModal" tabindex="-1" aria-labelledby="companySelectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="companySelectionModalLabel">Select Transaction for Alert</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Search bar -->
+                <div class="search-container mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="companySearchInput" class="form-control" placeholder="Search by company symbol or name...">
+                    </div>
+                </div>
+                
+                <!-- Companies container -->
+                <div id="companiesContainer" class="companies-container">
+                    <!-- Transactions will be loaded here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="{% static 'core/scripts/formCard.js' %}"></script>
+<script src="{% static 'portfolios/scripts/portfolioCreate.js' %}"></script>
+<script src="{% static 'portfolios/scripts/portfolioEdit.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'portfolios/scripts/test.js' %}"></script>
+<script src="{% static 'portfolios/scripts/portfolioAnalytics.js' %}"></script>
+<script src="{% static 'portfolios/scripts/portfolioNews.js' %}"></script>
+<script src="{% static 'portfolios/scripts/portfolioTabs.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // Define API URLs for JavaScript
+        window.apiUrls = {
+            newsApi: "{% url 'portfolios:portfolio_news_api' %}"
+        };
+        
+        // Ensure news links point to news_detail page
+        const newsContainer = document.getElementById('news-container');
+        if (newsContainer) {
+            // Create a mutation observer to watch for changes to the news container
+            const observer = new MutationObserver(function(mutations) {
+                // Look for any "Read full article" or similar links inside news items
+                const articleLinks = newsContainer.querySelectorAll('a.btn-link, a.read-more, a:contains("Read full article")');
+                
+                articleLinks.forEach(link => {
+                    // Check if this link should be modified
+                    if (link.innerText.includes('Read') && link.getAttribute('href') === '#') {
+                        // Get the news ID from the data attribute or nearest parent with news ID
+                        const newsItem = link.closest('[data-news-id]');
+                        if (newsItem) {
+                            const newsId = newsItem.getAttribute('data-news-id');
+                            if (newsId) {
+                                // Update the link to point to the news detail page
+                                link.setAttribute('href', "{% url 'news:news_list' %}" + 'news_detail/' + newsId + '/');
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Start observing the news container for changes
+            observer.observe(newsContainer, { childList: true, subtree: true });
+        }
+        
+        // Portfolio Performance Chart
+        const portfolioChartCtx = document.getElementById('portfolioPerformanceChart');
+        if (portfolioChartCtx) {
+            // Generate sample data
+            const generateData = (count, start, trend) => {
+                const data = [];
+                let value = start;
+                
+                for (let i = 0; i < count; i++) {
+                    // Add some randomness to the trend
+                    const randomFactor = (Math.random() - 0.5) * 0.5;
+                    value = value * (1 + trend * 0.01 + randomFactor * 0.01);
+                    data.push(value);
+                }
+                
+                return data;
+            };
+            
+            // Generate dates for the last year
+            const generateDates = (count) => {
+                const dates = [];
+                const now = new Date();
+                
+                for (let i = count - 1; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(now.getDate() - i * (365 / count));
+                    dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                }
+                
+                return dates;
+            };
+            
+            const dataPoints = 60;
+            const dates = generateDates(dataPoints);
+            const portfolioData = generateData(dataPoints, 2845000, 0.5); // Trending up overall
+            const benchmarkData = generateData(dataPoints, 2845000, 0.3); // Trending up but slower
+            
+            // Create gradient for the portfolio line
+            const ctx = portfolioChartCtx.getContext('2d');
+            const gradientFill = ctx.createLinearGradient(0, 0, 0, 300);
+            gradientFill.addColorStop(0, 'rgba(13, 110, 253, 0.2)');
+            gradientFill.addColorStop(1, 'rgba(13, 110, 253, 0)');
+            
+            // Create the chart
+            const portfolioChart = new Chart(portfolioChartCtx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Your Portfolio',
+                            data: portfolioData,
+                            borderColor: '#0d6efd',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#0d6efd',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 1,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#0d6efd',
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            backgroundColor: gradientFill
+                        },
+                        {
+                            label: 'Benchmark (S&P 500)',
+                            data: benchmarkData,
+                            borderColor: '#6c757d',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#6c757d',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 1,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#6c757d',
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 2,
+                            tension: 0.4,
+                            borderDash: [5, 5],
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#e9ecef',
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(30, 33, 48, 0.9)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#e9ecef',
+                            borderColor: '#2d3748',
+                            borderWidth: 1,
+                            padding: 12,
+                            bodySpacing: 8,
+                            titleFont: {
+                                size: 13,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('en-US', { 
+                                            style: 'currency', 
+                                            currency: 'PKR',
+                                            maximumFractionDigits: 0,
+                                            notation: 'compact'
+                                        }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#adb5bd',
+                                font: {
+                                    size: 10
+                                },
+                                maxRotation: 0,
+                                maxTicksLimit: 10
+                            }
+                        },
+                        y: {
+                            position: 'right',
+                            grid: {
+                                color: 'rgba(73, 80, 87, 0.2)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#adb5bd',
+                                font: {
+                                    size: 10
+                                },
+                                padding: 10,
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('en-US', { 
+                                        style: 'currency', 
+                                        currency: 'PKR',
+                                        maximumFractionDigits: 0,
+                                        notation: 'compact'
+                                    }).format(value);
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: false
+                    },
+                    animation: {
+                        duration: 1000
+                    }
+                }
+            });
+            
+            // Handle time range selector
+            const timeRangeButtons = document.querySelectorAll('#timeRangeSelector button');
+            timeRangeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update button states
+                    timeRangeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Get the selected range
+                    const range = this.getAttribute('data-range');
+                    
+                    // Update chart data based on range
+                    let newDataPoints;
+                    switch(range) {
+                        case '1m':
+                            newDataPoints = 30;
+                            break;
+                        case '3m':
+                            newDataPoints = 90;
+                            break;
+                        case '6m':
+                            newDataPoints = 180;
+                            break;
+                        case '1y':
+                            newDataPoints = 365;
+                            break;
+                        case 'all':
+                            newDataPoints = dataPoints;
+                            break;
+                        default:
+                            newDataPoints = 30;
+                    }
+                    
+                    // Slice the data to show only the selected range
+                    const slicePoint = Math.max(0, dataPoints - newDataPoints);
+                    portfolioChart.data.labels = dates.slice(slicePoint);
+                    portfolioChart.data.datasets[0].data = portfolioData.slice(slicePoint);
+                    portfolioChart.data.datasets[1].data = benchmarkData.slice(slicePoint);
+                    
+                    // Update the chart
+                    portfolioChart.update();
+                });
+            });
+        }
+    });
+</script>
+{% endblock scripts %}
+
+<!-- Add script references at the bottom of the page, before the closing body tag -->
+{% block extra_scripts %}
+    <!-- Load notification script FIRST - this must come before any other scripts -->
+    <script src="{% static 'portfolios/scripts/notifications.js' %}"></script>
+    
+    <!-- Then load the analytics scripts -->
+    <script src="{% static 'portfolios/scripts/portfolioAnalytics.js' %}"></script>
+{% endblock %}

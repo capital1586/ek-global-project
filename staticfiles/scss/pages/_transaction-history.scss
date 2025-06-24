@@ -1,0 +1,35 @@
+
+.nav.nav-tabs.trans-tab{
+    border-bottom: transparent;
+    .nav-link{
+        font-size: 1rem ;
+        font-weight: 500;
+        padding: 0.5rem 0.4rem;
+        margin-right: 0.625rem;
+    }
+  .nav-link.active {
+        border-bottom-width: 4px;
+    }
+}
+.dashboard-select.dark{
+    background-color:var(--bs-card-bg);
+   @include respond('phone-land'){
+       margin-top: 1rem;
+   }
+}
+.img-history{
+    width: 3.125rem;
+    height: 3.125rem;
+    object-fit: cover;
+}
+
+.downlod-pdf {
+    @include respond("phone-land"){
+        margin-top: 1rem;
+    }
+}
+.filter{
+    @include respond("phone-land"){
+        margin-top: 1rem;
+    }
+}

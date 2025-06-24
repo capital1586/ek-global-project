@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Alert{% endblock %}
+
+{% block styles %}
+<style>
+    .delete-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    
+    .alert-info {
+        margin-bottom: 1.5rem;
+    }
+    
+    .alert-details {
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .alert-detail-item {
+        margin-bottom: 0.5rem;
+    }
+    
+    .alert-detail-label {
+        font-weight: 600;
+        color: #6c757d;
+    }
+    
+    .alert-detail-value {
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <!-- Page Title -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">
+                    <i class="fas fa-trash me-2 text-danger"></i> 
+                    Delete Alert
+                </h1>
+                <a href="{% url 'Alerts:alert_list' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Alerts
+                </a>
+            </div>
+            
+            <!-- Delete Confirmation -->
+            <div class="card delete-card">
+                <div class="card-header bg-danger text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Confirm Deletion
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone. All data associated with this alert will be permanently deleted.
+                    </div>
+                    
+                    <div class="alert-details">
+                        <h5 class="mb-3">Alert Details</h5>
+                        
+                        <div class="alert-detail-item">
+                            <span class="alert-detail-label">Title:</span>
+                            <span class="alert-detail-value">{{ object.title }}</span>
+                        </div>
+                        
+                        <div class="alert-detail-item">
+                            <span class="alert-detail-label">Symbol:</span>
+                            <span class="alert-detail-value">{{ object.symbol }}</span>
+                        </div>
+                        
+                        <div class="alert-detail-item">
+                            <span class="alert-detail-label">Condition:</span>
+                            <span class="alert-detail-value">{{ object.get_condition_type_display }}</span>
+                        </div>
+                        
+                        <div class="alert-detail-item">
+                            <span class="alert-detail-label">Status:</span>
+                            <span class="alert-detail-value badge {% if object.status == 'active' %}bg-success{% elif object.status == 'triggered' %}bg-warning{% elif object.status == 'completed' %}bg-secondary{% else %}bg-danger{% endif %}">
+                                {{ object.get_status_display }}
+                            </span>
+                        </div>
+                        
+                        <div class="alert-detail-item">
+                            <span class="alert-detail-label">Created:</span>
+                            <span class="alert-detail-value">{{ object.created_at|date:"F j, Y, g:i a" }}</span>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'Alerts:alert_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-1"></i> Confirm Delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

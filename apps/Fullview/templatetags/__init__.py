@@ -1,0 +1,3 @@
+"""
+Templatetags package initialization
+""" 

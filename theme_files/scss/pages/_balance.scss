@@ -1,0 +1,289 @@
+// -----------------------
+// ***** Balance-page*****
+// ------------------------
+
+.wallet{
+    position: relative;
+    //z-index: 1;
+    overflow: hidden;
+    .send{
+        width: 3.125rem;
+        height: 3.125rem;
+        border-radius: $radius;
+        text-align: center;
+        line-height: 3.125rem; 
+        background-color: $bg-light;
+		transition-duration: 2s;
+		position: relative;
+		z-index: 111111;
+		&:hover{
+			transform: translateY(-10px);
+		}
+    }
+    .wallet-info{
+        width: 60%;
+		h4{
+			font-size:24px;
+			@include custommq($max: 112.5rem) {
+				font-size:18px;
+			}
+			@include custommq($max: 93.75rem) {
+				font-size:16px;
+			}
+			@include respond ('laptop'){
+				font-size:14px;
+			}
+		}
+		@include custommq($max: 93.75rem) {
+			width:50%;
+		}
+		@include respond ('laptop'){
+			span{
+				font-size:0.75rem;
+			}
+		}
+		@include custommq($max: 81.25rem) {
+			width:90%;	
+		}
+		@include respond ('tab-land'){
+			width:56%;
+		}
+    }
+    &::before{
+        content: '';
+        display: block;
+        background: #B659FF;
+        position: absolute;
+        top: 0;
+        left: 60%;
+        width: 5.25rem;
+        height: 100%;
+        z-index: -1;
+        border-radius: 130px;
+        filter: blur(65px);
+
+    }
+    // &::after{
+    //     content: '';
+    //     display: block;
+    //     background-color: #B659FF;
+    //     position: absolute;
+    //     top: 0;
+    //     left: 0%;
+    //     width: 5.25rem;
+    //     height: 100%;
+    //     z-index: -1;
+    //     border-radius: 130px;
+    //     filter: blur(65px);
+
+    // }
+}
+
+    .value-data{ 
+        padding-right: 3rem;
+        span{
+            display: block;
+        }
+        .value{
+            color: $white;
+        } 
+    }
+    .boxs{
+        position: absolute;
+        top: 40%;
+        left: 40%;
+        width: 100%;
+        height: 100%;
+        .box{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            border-radius: 50%;
+            border: 1px solid $white;
+            opacity: 0.1;
+        }
+        .box.one{
+            width: 15.625rem;
+            height: 15.625rem;
+        }
+        .box.two{
+            width: 11.25rem;
+            height: 11.25rem;
+        }
+        .box.three{
+            width: 8.125rem;
+            height: 8.125rem;
+        }
+        .box.four{
+            width: 4.875rem;
+            height: 4.875rem;
+        }
+    }
+
+
+//   ------use-data-table--  
+
+.user-data-table{
+    .accordion-body-text {
+        display: flex; 
+        justify-content: space-between;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        flex-wrap: wrap;
+        span{
+            color: $white;
+            font-size: 1rem;
+        }
+        .info {
+            display: flex;
+            align-items: center;
+            background-color: $bg-light;
+            border-radius: $radius;
+            padding: 1rem;
+            p{
+                color: $white;
+            }
+            
+        }
+    }
+}
+
+
+.accordion.style-1{
+    .accordion-item{
+		padding: 0.5rem 0;
+        border-bottom: 1px solid $bg-light;
+        border-radius: 0;
+		&:last-child{
+			border:0;
+			.accordion-body-text{
+				border-radius:0 0 $radius $radius; 
+				padding-bottom: 25px;
+			}
+		}
+    }
+    .accordion-header {
+        border: 0;
+        display: flex;
+        flex-flow: wrap;
+        align-items: center;
+        justify-content: space-between;
+        -webkit-transition: all 0.2s;
+        -ms-transition: all 0.2s;
+        transition: all 0.2s;
+        border-radius: 1rem 1rem 0 0;
+        padding: 1rem 5.0625rem 1rem 2.0625rem;
+        span{
+            color: $white;
+            @include respond ('phone'){
+                margin: 0.625rem 0;
+            }
+        }
+        .accordion-header-indicator {
+            width: 1.875rem;
+            height: 1.875rem;
+            right: 1.625rem;
+            text-align: center;
+            line-height: 1.875rem;
+            border-radius: $border-radius;
+            background-color: $bg-light;
+            color: $primary;
+        }
+        &::before{
+            content: '';
+            display: block;
+            background-color: $bg-light;
+            position: absolute;
+            top: 0;
+            left: 1%;
+            width: 98%;
+            height: 100%;
+            @include transitionMedium;
+            opacity: 0;
+            border-radius: $border-radius;
+        }
+        &:hover::before{
+            opacity: 1;
+        }
+      
+    }
+
+    .profile-image {
+        width: 3.125rem;
+        height: 3.125rem;
+        img{
+            width: 100%;
+            height: 100%;
+            border-radius: $radius;
+        }
+    }
+    .user-info {
+        padding: 0 1.5rem;
+        h6{
+            a{
+                color: $white;
+            }
+        }
+    }
+    .btn{
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        @include respond('tab-land'){
+            margin-top: 0.5rem;
+        }
+    }
+
+}  
+
+.nav.nav-tabs{
+    border-color: $bg-light;
+    .nav-link.underline{
+        border: none;
+        color: $white;
+        position: relative;
+        &::before{
+            content: '';
+            display: block;
+            background-color: $primary;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            @include transitionMedium;
+        }
+    }
+    .nav-link.underline.active{
+        color: $primary;
+        background-color: transparent;
+       &::before{
+           content: '';
+           width: 100%;
+       }
+        
+    }
+}
+
+// ---weekly-summary----
+.application span{
+    color: $white;
+} 
+
+// ------Invoices Sent-----
+.student{
+    .price {
+        font-size: 1rem;
+        font-weight: 500;
+        a{
+        color: $primary;
+        }
+    }
+}
+
+ 
+.user-data-table .accordion-item span{
+    @include respond('tab-land'){
+    margin:  0.5rem;
+    }
+}

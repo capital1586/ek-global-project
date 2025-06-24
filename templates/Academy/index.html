@@ -1,0 +1,502 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Academy | EK Global Capital</title>
+{% endblock title %}
+
+{% block stylesheets %}
+<style>
+    /* Academy-specific styles */
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{% static "images/academy-hero.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0;
+        color: white;
+        text-align: center;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: white;
+    }
+    
+    .hero-section p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 30px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .course-card {
+        transition: transform 0.3s ease;
+        height: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+    }
+    
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .course-image {
+        height: 180px;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .video-card {
+        transition: transform 0.3s ease;
+        height: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+    }
+    
+    .video-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .video-thumbnail {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+    }
+    
+    .video-thumbnail img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .play-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60px;
+        height: 60px;
+        background: rgba(30, 136, 229, 0.8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        z-index: 1;
+    }
+    
+    .benefit-card {
+        text-align: center;
+        padding: 30px 20px;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+        height: 100%;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+    }
+    
+    .benefit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .benefit-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: var(--primary);
+    }
+    
+    .section-title {
+        position: relative;
+        margin-bottom: 40px;
+        padding-bottom: 15px;
+        text-align: center;
+    }
+    
+    .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+    }
+    
+    .news-card {
+        transition: transform 0.3s ease;
+        height: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+    }
+    
+    .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .news-image {
+        height: 180px;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .learning-outcome {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .learning-outcome i {
+        color: var(--success);
+        margin-right: 10px;
+    }
+    
+    .section-padding {
+        padding: 60px 0;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 2rem;
+        }
+        
+        .hero-section p {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="hero-section">
+                <h1>EK Global Capital Academy</h1>
+                <p>Empower your financial journey with expert insights, comprehensive courses, and real-time market analysis.</p>
+                <a href="#courses" class="btn btn-primary btn-lg">Explore Courses</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Courses Section -->
+    <div class="row section-padding" id="courses">
+        <div class="col-12">
+            <h2 class="section-title">Our Courses</h2>
+        </div>
+        
+        {% if courses %}
+            {% for course in courses %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('{% if course.image %}{{ course.image }}{% else %}{% static 'images/course-default.jpg' %}{% endif %}');"></div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        <p class="card-text">{{ course.description|truncatechars:100 }}</p>
+                        
+                        <!-- Learning Outcomes -->
+                        <div class="mb-3">
+                            <h6>Learning Outcomes:</h6>
+                            {% for outcome in course.learning_outcomes.all|slice:":3" %}
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>{{ outcome.outcome }}</span>
+                            </div>
+                            {% endfor %}
+                            {% if course.learning_outcomes.count > 3 %}
+                            <div class="text-primary">+ {{ course.learning_outcomes.count|add:"-3" }} more outcomes</div>
+                            {% endif %}
+                        </div>
+                        
+                        <a href="{% url 'academy:course_detail' course.id %}" class="btn btn-primary">View Course</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Placeholder courses when none are available -->
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('{% static 'images/course-default.jpg' %}');"></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Technical Analysis Fundamentals</h5>
+                        <p class="card-text">Learn the foundations of technical analysis and chart patterns to make informed trading decisions.</p>
+                        <div class="mb-3">
+                            <h6>Learning Outcomes:</h6>
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Understand chart patterns</span>
+                            </div>
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Apply technical indicators</span>
+                            </div>
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Analyze market trends</span>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-primary">Coming Soon</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('{% static 'images/course-default.jpg' %}');"></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Fundamental Analysis Masterclass</h5>
+                        <p class="card-text">Master the art of evaluating stocks based on financials, industry trends, and economic factors.</p>
+                        <div class="mb-3">
+                            <h6>Learning Outcomes:</h6>
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Read financial statements</span>
+                            </div>
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Evaluate company performance</span>
+                            </div>
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Assess industry potential</span>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-primary">Coming Soon</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('{% static 'images/course-default.jpg' %}');"></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Risk Management Strategies</h5>
+                        <p class="card-text">Develop effective risk management techniques to protect your portfolio in all market conditions.</p>
+                        <div class="mb-3">
+                            <h6>Learning Outcomes:</h6>
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Set appropriate stop losses</span>
+                            </div>
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Calculate position sizing</span>
+                            </div>
+                            <div class="learning-outcome">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Diversify efficiently</span>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-primary">Coming Soon</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Featured Videos Section -->
+    <div class="row section-padding">
+        <div class="col-12">
+            <h2 class="section-title">Latest Videos</h2>
+        </div>
+        
+        {% if youtube_videos %}
+            {% for video in youtube_videos|slice:":6" %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <img src="{{ video.thumbnail }}" alt="{{ video.title }}">
+                        <a href="https://www.youtube.com/watch?v={{ video.id }}" target="_blank" class="play-btn">
+                            <i class="fa fa-play"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ video.title|truncatechars:60 }}</h5>
+                        <p class="card-text">{{ video.description|truncatechars:100 }}</p>
+                        <a href="https://www.youtube.com/watch?v={{ video.id }}" target="_blank" class="btn btn-primary">Watch Video</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% elif featured_videos %}
+            {% for video in featured_videos %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/hqdefault.jpg" alt="{{ video.title }}">
+                        <a href="{{ video.youtube_url }}" target="_blank" class="play-btn">
+                            <i class="fa fa-play"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ video.title|truncatechars:60 }}</h5>
+                        <p class="card-text">{{ video.description|truncatechars:100 }}</p>
+                        <a href="{{ video.youtube_url }}" target="_blank" class="btn btn-primary">Watch Video</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Placeholder videos when none are available -->
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <p>Videos from EK Global Capital's YouTube channel will appear here. Check back soon for educational content or <a href="https://www.youtube.com/@ekglobalcapital4400" target="_blank">visit our YouTube channel</a>.</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        <div class="col-12 text-center mt-4">
+            <a href="https://www.youtube.com/@ekglobalcapital4400" target="_blank" class="btn btn-outline-primary">View All Videos on YouTube</a>
+        </div>
+    </div>
+    
+    <!-- Benefits Section -->
+    <div class="row section-padding bg-light py-5" style="background: rgba(0,0,0,0.05) !important; border-radius: 10px;">
+        <div class="col-12">
+            <h2 class="section-title">Benefits of Our Academy</h2>
+        </div>
+        
+        {% if benefits %}
+            {% for benefit in benefits %}
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="{{ benefit.icon|default:'fas fa-graduation-cap' }}"></i>
+                    </div>
+                    <h4>{{ benefit.title }}</h4>
+                    <p>{{ benefit.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Default benefits -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h4>Expert Instructors</h4>
+                    <p>Learn from industry professionals with years of experience in financial markets and trading.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <h4>Practical Learning</h4>
+                    <p>Apply concepts with real-world examples and case studies from actual market scenarios.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>Market Insights</h4>
+                    <p>Stay updated with current market trends and analysis from our team of researchers.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>Community Support</h4>
+                    <p>Connect with fellow traders and investors to share ideas and strategies.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Latest News Section -->
+    <div class="row section-padding">
+        <div class="col-12">
+            <h2 class="section-title">Latest Financial News</h2>
+        </div>
+        
+        {% if news %}
+            {% for article in news %}
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="news-card">
+                    {% if article.image_url %}
+                    <div class="news-image" style="background-image: url('{{ article.image_url }}');"></div>
+                    {% else %}
+                    <div class="news-image" style="background-image: url('{% static 'images/news-default.jpg' %}');"></div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ article.title|truncatechars:60 }}</h5>
+                        <p class="card-text text-muted small">{{ article.source }} • {{ article.published_date|date:"M d, Y" }}</p>
+                        <p class="card-text">{{ article.content|truncatechars:100 }}</p>
+                        <a href="{{ article.url }}" target="_blank" class="btn btn-outline-primary btn-sm">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Placeholder news when none are available -->
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <p>The latest financial news will appear here. Check back soon for updates.</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        <div class="col-12 text-center mt-4">
+            <a href="{% url 'news:news_list' %}" class="btn btn-outline-primary">View All News</a>
+        </div>
+    </div>
+    
+    <!-- Call to Action -->
+    <div class="row section-padding">
+        <div class="col-12 text-center">
+            <div class="card p-5" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border-radius: 10px;">
+                <h2 class="text-white">Ready to Start Your Learning Journey?</h2>
+                <p class="text-white mb-4">Explore our comprehensive courses and take your trading skills to the next level.</p>
+                <a href="#courses" class="btn btn-light btn-lg">Browse Courses</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

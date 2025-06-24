@@ -1,0 +1,72 @@
+{% comment %} news/templates/news/partials/news_card_list.html {% endcomment %}
+{% load static %} {# Required for the static template tag used for placeholder images #}
+
+<article class="news-item">
+    {# Link the image container to the detail page using the model's get_absolute_url method #}
+    <a href="{{ item.get_absolute_url }}" class="news-image-link" aria-label="Read more about {{ item.headline|truncatechars:50 }}">
+        <div class="news-image-container">
+             <img src="{% if item.image_url %}{{ item.image_url }}{% else %}{% static 'images/news-placeholder.jpg' %}{% endif %}"
+                  alt="" {# Alt text is often decorative here as headline is linked below #}
+                  class="news-image"
+                  loading="lazy"
+                  onerror="this.onerror=null; this.src='{% static 'images/news-placeholder.jpg' %}'">
+        </div>
+    </a>
+    <div class="news-content">
+        {# Display category tags, linking back to the filtered list view #}
+        {# Only show tags for specific card types if desired #}
+        {% if item.category_list and card_type != 'small_breaking' %}
+        <div class="news-tags" style="margin-bottom: 0.5rem;">
+            {% for cat in item.category_list|slice:":2" %} {# Show max 2 categories for brevity #}
+                 {# Ensure the URL name 'news_list' matches your news/urls.py #}
+                 <a href="{% url 'news:news_list' %}?category={{ cat|urlencode }}" class="news-tag">{{ cat }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {# Display the headline, linking to the detail page #}
+        <h3 class="news-title">
+            <a href="{{ item.get_absolute_url }}">{{ item.headline|safe|truncatechars:80 }}</a>
+        </h3>
+
+        {# Display meta information like date and author #}
+        <div class="news-meta">
+             <span class="news-date"><i class="far fa-calendar-alt"></i> {% if item.news_date %}{{ item.news_date|date:"M d, Y" }}{% else %}N/A{% endif %}</span>
+            {# Conditionally show author for certain card types #}
+            {% if item.author_name and card_type != 'small_breaking' %}<span class="news-author"><i class="far fa-user"></i> {{ item.author_name|truncatechars:20 }}</span>{% endif %}
+        </div>
+
+        {# Display the description for standard grid cards or large featured cards #}
+        {% if card_type == 'large' or card_type == 'grid' %}
+        <p class="news-description">{{ item.description|safe|truncatewords_html:20 }}</p>
+        {% endif %}
+
+        {# Display the footer with source and Read More link only for standard grid cards #}
+        {% if card_type == 'grid' %}
+            <div class="news-footer">
+                 <div class="news-source">
+                     {% if item.source_domain %}
+                         {# Link to the original source if available #}
+                         <a href="{{ item.news_link|default:'#' }}" target="_blank" rel="noopener noreferrer nofollow" title="Original source: {{ item.source_domain }}">
+                            {{ item.source_domain|truncatechars:25 }} {% if item.news_link %}<i class="fas fa-external-link-alt fa-xs"></i>{% endif %}
+                         </a>
+                    {% else %}
+                         {# Fallback if no source domain is known #}
+                         <span class="text-muted">Source N/A</span>
+                    {% endif %}
+                </div>
+                 {# Explicit Read More link pointing to the detail page #}
+                 <a href="{{ item.get_absolute_url }}" class="read-more-link" style="font-size: 0.8rem; font-weight:500;">Read More &raquo;</a>
+            </div>
+        {% endif %}
+
+        {# Display a styled "Read More" button only for the large featured card #}
+        {% if card_type == 'large' %}
+             <div style="margin-top: 1rem;">
+                 {# Link points to the detail page #}
+                 <a href="{{ item.get_absolute_url }}" class="section-view-all" style="font-size:0.9rem;">Read More <i class="fas fa-arrow-right fa-xs"></i></a>
+             </div>
+         {% endif %}
+
+    </div> {# End news-content #}
+</article> {# End news-item #}

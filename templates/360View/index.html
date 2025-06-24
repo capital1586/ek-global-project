@@ -1,0 +1,2363 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+{% block title %}
+<title>AlphAIQ - 360° Stock View | {{ company_info.Symbol }}</title>
+{% endblock title %}
+
+{% block stylesheets %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<style>
+    /* Core styles */
+    .card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        margin-bottom: 20px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .card-header {
+        position: relative;
+        padding: 15px 20px;
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent);
+        border-bottom: 1px solid var(--border-color);
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .card-header:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -1px;
+        height: 3px;
+        width: 50px;
+        background: var(--primary);
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+    
+    /* Data visualization elements */
+    .stock-price {
+        font-size: 24px;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .change-up {
+        color: var(--success);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .change-down {
+        color: var(--danger);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .radar-chart-container, .pie-chart-container {
+        height: 250px;
+        width: 100%;
+        margin: 10px 0;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+    }
+    
+    /* Company info and metrics */
+    .company-info-row {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+    }
+    
+    .company-info-row:before {
+        content: '';
+        position: absolute;
+        left: -20px;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--primary);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .company-info-row:hover:before {
+        opacity: 1;
+        left: 0;
+    }
+    
+    .info-label {
+        flex: 0 0 120px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    
+    .info-value {
+        flex-grow: 1;
+        font-weight: 500;
+    }
+    
+    /* Performance table */
+    .performance-table td, .performance-table th {
+        border-top: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 15px;
+        vertical-align: middle;
+    }
+    
+    .performance-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* News items */
+    .news-item {
+        padding: 15px;
+        border-bottom: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+    
+    .news-item:hover {
+        background: rgba(0, 0, 0, 0.1);
+    }
+    
+    .news-date {
+        color: var(--text-muted);
+        font-size: 12px;
+    }
+    
+    .news-title {
+        font-weight: 600;
+        margin: 8px 0;
+        color: var(--text-color);
+    }
+    
+    /* Competitor cards */
+    .competitor-card {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        margin-bottom: 10px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+    
+    .competitor-card:hover {
+        transform: translateY(-3px);
+        background: rgba(0, 0, 0, 0.15);
+        border-color: var(--primary);
+    }
+    
+    .competitor-logo {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary);
+        border-radius: 50%;
+        margin-right: 15px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .competitor-info {
+        flex-grow: 1;
+    }
+    
+    .competitor-name {
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+    
+    .competitor-symbol {
+        color: var(--text-muted);
+        font-size: 12px;
+    }
+    
+    /* Rating badges */
+    .rating-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+        display: inline-block;
+        margin-top: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .rating-moderate {
+        background-color: #ffa726;
+        color: #000;
+    }
+    
+    .rating-low {
+        background-color: #4caf50;
+        color: #fff;
+    }
+    
+    .rating-high {
+        background-color: #f44336;
+        color: #fff;
+    }
+    
+    .rating-very-high {
+        background-color: #d32f2f;
+        color: #fff;
+    }
+    
+    /* Stock title and header */
+    .stock-title {
+        position: relative;
+        font-size: 24px;
+        font-weight: 600;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .stock-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 2px;
+        background: var(--primary);
+    }
+    
+    .stock-subtitle {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    
+    /* Buttons and controls */
+    .btn-watchlist {
+        background-color: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        border-radius: 20px;
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-watchlist:hover {
+        background-color: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Comparison controls */
+    .comparison-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .comparison-controls .btn {
+        border-radius: 20px;
+        font-size: 12px;
+        padding: 5px 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .comparison-controls .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .comparison-controls .btn.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    
+    /* Progress indicators */
+    .animated-progress {
+        position: relative;
+        height: 6px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 8px 0;
+        overflow: hidden;
+    }
+    
+    .animated-progress span {
+        position: absolute;
+        height: 100%;
+        border-radius: 10px;
+        background: var(--primary);
+        transition: width 0.8s ease;
+    }
+    
+    /* Compare company selector */
+    .compare-selector {
+        margin-bottom: 25px;
+    }
+    
+    .compare-option {
+        display: inline-block;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .compare-option input[type="checkbox"] {
+        display: none;
+    }
+    
+    .compare-option label {
+        display: flex;
+        align-items: center;
+        padding: 5px 12px;
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 13px;
+        background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .compare-option label:hover {
+        background: rgba(0, 0, 0, 0.3);
+    }
+    
+    .compare-option label span {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 8px;
+        color: white;
+        text-align: center;
+        line-height: 20px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    
+    .compare-option input[type="checkbox"]:checked + label {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+    
+    /* Time period selector */
+    .time-period-selector {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 30px;
+        padding: 5px;
+        display: inline-flex;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .time-period-selector button {
+        background-color: transparent;
+        border: none;
+        color: var(--text-muted);
+        padding: 5px 15px;
+        cursor: pointer;
+        border-radius: 20px;
+        font-size: 13px;
+        transition: all 0.3s ease;
+        margin: 0 2px;
+    }
+    
+    .time-period-selector button:hover {
+        color: var(--text-color);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .time-period-selector button.active {
+        background-color: var(--primary);
+        color: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Responsive grid */
+    .data-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    @media (max-width: 992px) {
+        .data-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .data-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* View toggles */
+    .toggle-section {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: -35px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .toggle-view {
+        background: var(--card-bg);
+        padding: 5px;
+        border-radius: 20px;
+        display: inline-flex;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border-color);
+    }
+    
+    .toggle-view button {
+        background: transparent;
+        border: none;
+        padding: 5px 15px;
+        border-radius: 15px;
+        color: var(--text-muted);
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .toggle-view button.active {
+        background: var(--primary);
+        color: white;
+    }
+    
+    /* Custom badges */
+    .badge-custom {
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Tooltip styling */
+    .tooltip-custom {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        padding: 10px 15px;
+        font-size: 13px;
+        max-width: 200px;
+    }
+    
+    /* Highlight sections */
+    .data-highlight {
+        position: relative;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 3px solid var(--primary);
+    }
+    
+    /* Analysis list items */
+    .analysis-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .analysis-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .analysis-icon {
+        flex: 0 0 30px;
+        height: 30px;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .analysis-text {
+        flex-grow: 1;
+    }
+    
+    /* Tab styling */
+    .nav-tabs {
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .nav-tabs .nav-link {
+        color: var(--text-muted);
+        border: none;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        padding: 8px 15px;
+        margin-right: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        color: var(--text-color);
+        border-color: transparent;
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: var(--primary);
+        background: transparent;
+        border-bottom: 2px solid var(--primary);
+    }
+    
+    /* QUANTRA GLOBAL View styles */
+    .radar-chart-container {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .metric-group {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .metric-group:hover {
+        background: rgba(0, 0, 0, 0.1);
+        transform: translateX(5px);
+    }
+    
+    .metric-group .progress {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .metric-group .progress-bar {
+        transition: width 1s ease;
+        border-radius: 10px;
+    }
+    
+    .components {
+        padding-left: 10px;
+        border-left: 2px solid rgba(0, 198, 255, 0.3);
+        margin-top: 10px;
+    }
+    
+    .components .small {
+        padding: 4px 0;
+        opacity: 0.8;
+        transition: all 0.3s ease;
+    }
+    
+    .components .small:hover {
+        opacity: 1;
+        transform: translateX(5px);
+    }
+    
+    /* Rating badge styles */
+    .badge.bg-a {
+        background-color: #28a745 !important;
+    }
+    
+    .badge.bg-b {
+        background-color: #17a2b8 !important;
+    }
+    
+    .badge.bg-c {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+    }
+    
+    .badge.bg-d {
+        background-color: #fd7e14 !important;
+    }
+    
+    .badge.bg-e {
+        background-color: #dc3545 !important;
+    }
+    
+    /* Rating text styles */
+    .text-a {
+        color: #28a745 !important;
+    }
+    
+    .text-b {
+        color: #17a2b8 !important;
+    }
+    
+    .text-c {
+        color: #ffc107 !important;
+    }
+    
+    .text-d {
+        color: #fd7e14 !important;
+    }
+    
+    .text-e {
+        color: #dc3545 !important;
+    }
+    
+    /* Existing styles continue below */
+    .metric-card {
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        background: rgba(0,0,0,0.03) !important;
+    }
+    
+    .score-badge {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .component-item {
+        transition: all 0.2s ease;
+    }
+    
+    .component-item:hover {
+        background: rgba(0,0,0,0.02);
+        padding-left: 5px;
+    }
+    
+    .mini-progress {
+        transition: all 0.3s ease;
+    }
+    
+    .component-item:hover .mini-progress {
+        width: 60px;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header with Breadcrumbs -->
+    <div class="row page-titles">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'Fullview:companies_list' %}">Companies</a></li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">{{ company_info.Symbol }}</a></li>
+        </ol>
+    </div>
+
+    <!-- Page Header with Stock Info -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="main-header">
+                <div class="stock-title">
+                    <span class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px; margin-right: 10px;">
+                        {{ company_info.Symbol|slice:":1" }}
+                    </span>
+                    {{ company_info.CompanyName }}
+                    <span class="badge bg-primary ms-2">{{ company_info.Symbol }}</span>
+                </div>
+            </div>
+            <p class="stock-subtitle">
+                One of the leading producers in the {{ company_info.Industry }} industry
+            </p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <button class="btn btn-watchlist">
+                <i class="far fa-star me-1"></i> Add to watchlist
+            </button>
+            <div class="btn-group ms-2">
+                <button class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-ellipsis-h"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Metrics Row -->
+    <div class="row">
+        <!-- Last Price Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Last Price</div>
+                <div class="card-body text-center py-4">
+                    <div class="stock-price">
+                        {% if latest_stock %}
+                            {{ latest_stock.Last }}
+                            <i class="fas fa-rupee-sign ms-1" style="font-size: 18px;"></i>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                    <div class="{% if latest_stock.PctChange > 0 %}change-up{% else %}change-down{% endif %} mt-2 justify-content-center">
+                        {% if latest_stock %}
+                            {% if latest_stock.PctChange > 0 %}
+                                <i class="fas fa-caret-up"></i>
+                            {% else %}
+                                <i class="fas fa-caret-down"></i>
+                            {% endif %}
+                            <span>{{ latest_stock.Change|floatformat:4 }} ({{ latest_stock.PctChange }}%)</span>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Change Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Change</div>
+                <div class="card-body text-center py-4">
+                    <div class="{% if latest_stock.PctChange > 0 %}change-up{% else %}change-down{% endif %} justify-content-center">
+                        {% if latest_stock %}
+                            <div class="display-4 mb-2">
+                                {% if latest_stock.PctChange > 0 %}
+                                    <i class="fas fa-arrow-up"></i>
+                                {% else %}
+                                    <i class="fas fa-arrow-down"></i>
+                                {% endif %}
+                            </div>
+                            <div class="h3">{{ latest_stock.PctChange }}%</div>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Market Cap Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Market Cap</div>
+                <div class="card-body text-center py-4">
+                    <div class="stock-price">
+                        {% if latest_stock %}
+                            6.7 B
+                            <i class="fas fa-rupee-sign ms-1" style="font-size: 18px;"></i>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                    <div class="text-muted mt-2">
+                        <small>Updated today</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analysis and View Row -->
+    <div class="row mt-4">
+        <!-- Positives/Negatives Column -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Company Analysis</div>
+                <div class="card-body">
+                    <h6 class="text-success mb-3 d-flex align-items-center">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Positives
+                    </h6>
+                    {% for signal in company_analysis.positives %}
+                    <div class="analysis-item">
+                        <div class="analysis-icon bg-success bg-opacity-10">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                        <div class="analysis-text">
+                            <div class="fw-bold">{{ signal.title }}</div>
+                            <div class="text-muted small">{{ signal.description }}</div>
+                            <div class="text-muted smaller mt-1">
+                                <i class="far fa-calendar-alt me-1"></i>
+                                {{ signal.date }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <h6 class="text-danger mb-3 mt-4 d-flex align-items-center">
+                        <i class="fas fa-minus-circle me-2"></i>
+                        Negatives
+                    </h6>
+                    {% for signal in company_analysis.negatives %}
+                    <div class="analysis-item">
+                        <div class="analysis-icon bg-danger bg-opacity-10">
+                            <i class="fas fa-times-circle text-danger"></i>
+                        </div>
+                        <div class="analysis-text">
+                            <div class="fw-bold">{{ signal.title }}</div>
+                            <div class="text-muted small">{{ signal.description }}</div>
+                            <div class="text-muted smaller mt-1">
+                                <i class="far fa-calendar-alt me-1"></i>
+                                {{ signal.date }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <button class="btn btn-sm btn-outline-secondary mt-3" data-bs-toggle="modal" data-bs-target="#analysisModal">
+                        <i class="fas fa-eye me-1"></i> View More
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AlphAIQ View Column -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    AlphAIQ View 
+                    <i class="fas fa-info-circle text-info"></i>
+                </div>
+                <div class="card-body">
+                    <div class="radar-chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                    <div class="text-center mt-3">
+                        <div class="badge bg-primary badge-custom">Fundamentals: {{ alphaiq_view.Fundamentals|floatformat:0 }}/100</div>
+                        <div class="badge bg-info badge-custom">Technicals: {{ alphaiq_view.Technicals|floatformat:0 }}/100</div>
+                        <div class="badge bg-success badge-custom">Valuation: {{ alphaiq_view.Valuation|floatformat:0 }}/100</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Corporate Action Column -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Corporate Action
+                    <i class="fas fa-info-circle text-info"></i>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="corporateActionTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="dividends-tab" data-bs-toggle="tab" data-bs-target="#dividends" type="button" role="tab">
+                                <i class="fas fa-coins me-1"></i> Dividends
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">
+                                <i class="fas fa-calendar-alt me-1"></i> Events
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3" id="corporateActionTabContent">
+                        <div class="tab-pane fade show active" id="dividends" role="tabpanel">
+                            <table class="table table-sm table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Shares</th>
+                                        <th>EPS</th>
+                                        <th>Dividends</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Friday</td>
+                                        <td>1.64k</td>
+                                        <td>0.75</td>
+                                        <td class="text-success">1.50 SAR</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thursday</td>
+                                        <td>1.44k</td>
+                                        <td>0.75</td>
+                                        <td class="text-success">1.50 SAR</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Wednesday</td>
+                                        <td>1.23k</td>
+                                        <td>0.75</td>
+                                        <td class="text-success">1.50 SAR</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tuesday</td>
+                                        <td>1.44k</td>
+                                        <td>0.75</td>
+                                        <td class="text-success">1.50 SAR</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Monday</td>
+                                        <td>1.64k</td>
+                                        <td>0.75</td>
+                                        <td class="text-success">1.50 SAR</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="events" role="tabpanel">
+                            <div class="data-highlight p-3">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-primary badge-custom me-3">Upcoming</span>
+                                    <div>
+                                        <strong>Earnings Call:</strong> Apr 15, 2025
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-info badge-custom me-3">Annual</span>
+                                    <div>
+                                        <strong>Annual Meeting:</strong> Jun 10, 2025
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-success badge-custom me-3">Dividend</span>
+                                    <div>
+                                        <strong>Ex-Dividend Date:</strong> Mar 28, 2025
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Portfolio and Performance Row -->
+    <div class="row mt-4">
+        <!-- Portfolio Breakdown Column -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    Portfolio Breakdown
+                    <i class="fas fa-info-circle text-info" data-bs-toggle="tooltip" title="Current portfolio allocation and distribution"></i>
+                </div>
+                <div class="card-body">
+                    <div class="pie-chart-container">
+                        <canvas id="portfolioChart"></canvas>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">This Stock</span>
+                            <span class="text-primary">{{ portfolio_breakdown.ThisStock|floatformat:1 }}%</span>
+                        </div>
+                        <div class="animated-progress">
+                            <span style="width: {{ portfolio_breakdown.ThisStock }}%;"></span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-2 mt-3">
+                            <span class="text-muted">Other Stocks</span>
+                            <span class="text-info">{{ portfolio_breakdown.OtherStocks|floatformat:1 }}%</span>
+                        </div>
+                        <div class="animated-progress">
+                            <span style="width: {{ portfolio_breakdown.OtherStocks }}%; background: var(--info);"></span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-2 mt-3">
+                            <span class="text-muted">Cash</span>
+                            <span class="text-success">{{ portfolio_breakdown.Cash|floatformat:1 }}%</span>
+                        </div>
+                        <div class="animated-progress">
+                            <span style="width: {{ portfolio_breakdown.Cash }}%; background: var(--success);"></span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-2 mt-3">
+                            <span class="text-muted">Bonds</span>
+                            <span class="text-warning">{{ portfolio_breakdown.Bonds|floatformat:1 }}%</span>
+                        </div>
+                        <div class="animated-progress">
+                            <span style="width: {{ portfolio_breakdown.Bonds }}%; background: var(--warning);"></span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-sm btn-outline-secondary mt-3" data-bs-toggle="modal" data-bs-target="#portfolioModal">
+                        <i class="fas fa-chart-pie me-1"></i> View Portfolio Details
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Performance Column -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Performance
+                    <i class="fas fa-info-circle text-info" data-bs-toggle="tooltip" title="Stock performance across different time periods"></i>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm performance-table">
+                        <tbody>
+                            <tr>
+                                <td>Daily</td>
+                                <td class="{% if performance.Daily > 0 %}change-up{% else %}change-down{% endif %}">
+                                    {{ performance.Daily|floatformat:2 }}%
+                                    {% if performance.Daily > 0 %}
+                                        <i class="fas fa-caret-up"></i>
+                                    {% else %}
+                                        <i class="fas fa-caret-down"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1 Week</td>
+                                <td class="{% if performance.Weekly > 0 %}change-up{% else %}change-down{% endif %}">
+                                    {{ performance.Weekly|floatformat:2 }}%
+                                    {% if performance.Weekly > 0 %}
+                                        <i class="fas fa-caret-up"></i>
+                                    {% else %}
+                                        <i class="fas fa-caret-down"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1 Month</td>
+                                <td class="{% if performance.Monthly > 0 %}change-up{% else %}change-down{% endif %}">
+                                    {{ performance.Monthly|floatformat:2 }}%
+                                    {% if performance.Monthly > 0 %}
+                                        <i class="fas fa-caret-up"></i>
+                                    {% else %}
+                                        <i class="fas fa-caret-down"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3 Month</td>
+                                <td class="{% if performance.Quarterly > 0 %}change-up{% else %}change-down{% endif %}">
+                                    {{ performance.Quarterly|floatformat:2 }}%
+                                    {% if performance.Quarterly > 0 %}
+                                        <i class="fas fa-caret-up"></i>
+                                    {% else %}
+                                        <i class="fas fa-caret-down"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>6 Month</td>
+                                <td class="{% if performance.SixMonth > 0 %}change-up{% else %}change-down{% endif %}">
+                                    {{ performance.SixMonth|floatformat:2 }}%
+                                    {% if performance.SixMonth > 0 %}
+                                        <i class="fas fa-caret-up"></i>
+                                    {% else %}
+                                        <i class="fas fa-caret-down"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1 Year</td>
+                                <td class="{% if performance.Yearly > 0 %}change-up{% else %}change-down{% endif %}">
+                                    {{ performance.Yearly|floatformat:2 }}%
+                                    {% if performance.Yearly > 0 %}
+                                        <i class="fas fa-caret-up"></i>
+                                    {% else %}
+                                        <i class="fas fa-caret-down"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>YTD</td>
+                                <td class="{% if performance.YTD > 0 %}change-up{% else %}change-down{% endif %}">
+                                    {{ performance.YTD|floatformat:1 }}%
+                                    {% if performance.YTD > 0 %}
+                                        <i class="fas fa-caret-up"></i>
+                                    {% else %}
+                                        <i class="fas fa-caret-down"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Traded Value and Rating Column -->
+        <div class="col-md-5">
+            <div class="row">
+                <!-- Traded Value -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Traded Value
+                            <i class="fas fa-info-circle text-info"></i>
+                        </div>
+                        <div class="card-body text-center py-4">
+                            <div class="stock-price">5.31B</div>
+                            <i class="fas fa-rupee-sign" style="font-size: 18px;"></i>
+                            <div class="mt-2 text-muted">
+                                <small>Last 30 days</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AlphAIQ Rating -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            AlphAIQ Rating
+                            <i class="fas fa-info-circle text-info"></i>
+                        </div>
+                        <div class="card-body text-center py-4">
+                            <div class="display-4 fw-bold">B</div>
+                            <div class="mt-2 text-muted">
+                                <small>Overall Performance</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Company Risk -->
+            <div class="card">
+                <div class="card-header">
+                    Company Risk
+                    <i class="fas fa-info-circle text-info" data-bs-toggle="tooltip" title="Overall risk assessment based on market volatility, beta, and other factors"></i>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">Risk Assessment</h4>
+                        <div class="rating-badge {% if risk_metrics.score == 'Low' %}rating-low{% elif risk_metrics.score == 'Moderate' %}rating-moderate{% elif risk_metrics.score == 'High' %}rating-high{% else %}rating-very-high{% endif %}">
+                            {{ risk_metrics.score }}
+                        </div>
+                    </div>
+                    
+                    <div class="data-highlight mt-3">
+                        <i class="fas fa-info-circle text-info me-2"></i>
+                        <span class="text-muted">Risk Factors:</span>
+                        <ul class="list-unstyled mt-2 mb-0">
+                            {% for factor in risk_metrics.factors %}
+                            <li class="mb-2">
+                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                {{ factor }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Market Volatility</span>
+                            <span>{{ risk_metrics.volatility }}</span>
+                        </div>
+                        <div class="animated-progress">
+                            <span style="width: {% if risk_metrics.volatility == 'Low' %}30{% elif risk_metrics.volatility == 'Medium' %}60{% else %}90{% endif %}%; background: {% if risk_metrics.volatility == 'Low' %}var(--success){% elif risk_metrics.volatility == 'Medium' %}var(--warning){% else %}var(--danger){% endif %};"></span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-2 mt-3">
+                            <span class="text-muted">Beta</span>
+                            <span>{{ risk_metrics.beta }}</span>
+                        </div>
+                        <div class="animated-progress">
+                            <span style="width: {{ risk_metrics.beta|add:50 }}%;"></span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-sm btn-outline-secondary mt-3" data-bs-toggle="modal" data-bs-target="#riskModal">
+                        <i class="fas fa-chart-line me-1"></i> View Detailed Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Comparison and News Row -->
+    <div class="row mt-4">
+        <!-- Stock Comparison Column -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <span>Stock Comparison</span>
+                    <div class="toggle-section" style="margin-top: 0; margin-bottom: 0;">
+                        <div class="toggle-view">
+                            <button class="active" data-view="chart"><i class="fas fa-chart-line me-1"></i> Chart</button>
+                            <button data-view="table"><i class="fas fa-table me-1"></i> Table</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p>Compare {{ company_info.Symbol }} with other companies</p>
+                        
+                        <!-- Company selector for comparison -->
+                        <div class="compare-selector">
+                            <form id="compareForm">
+                                <div class="compare-option">
+                                    <input type="checkbox" id="compare_{{ company_info.Symbol }}" name="compare_symbols" 
+                                           value="{{ company_info.Symbol }}" checked disabled>
+                                    <label for="compare_{{ company_info.Symbol }}">
+                                        <span style="background-color: rgba(0, 198, 255, 0.8);">
+                                            {{ company_info.Symbol|slice:":1" }}
+                                        </span>
+                                        {{ company_info.Symbol }}
+                                    </label>
+                                </div>
+                                {% for competitor in competitors %}
+                                <div class="compare-option">
+                                    <input type="checkbox" id="compare_{{ competitor.Symbol }}" name="compare_symbols" 
+                                           value="{{ competitor.Symbol }}" {% if forloop.counter <= 2 %}checked{% endif %}>
+                                    <label for="compare_{{ competitor.Symbol }}">
+                                        <span style="background-color: 
+                                            {% if forloop.counter == 0 %}rgba(40, 167, 69, 0.8)
+                                            {% elif forloop.counter == 1 %}rgba(220, 53, 69, 0.8)
+                                            {% elif forloop.counter == 2 %}rgba(255, 193, 7, 0.8)
+                                            {% else %}rgba(111, 66, 193, 0.8){% endif %};">
+                                            {{ competitor.Symbol|slice:":1" }}
+                                        </span>
+                                        {{ competitor.Symbol }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                                <button type="button" id="updateCompare" class="btn btn-sm btn-primary mt-2">
+                                    <i class="fas fa-sync-alt me-1"></i> Update Comparison
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div class="time-period-selector">
+                            <button class="active" data-period="1D">1D</button>
+                            <button data-period="1W">1W</button>
+                            <button data-period="1M">1M</button>
+                            <button data-period="3M">3M</button>
+                            <button data-period="6M">6M</button>
+                            <button data-period="1Y">1Y</button>
+                            <button data-period="ALL">All</button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="height: 300px;">
+                            <canvas id="stockComparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- News Column -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Latest News
+                    <i class="fas fa-info-circle text-info"></i>
+                </div>
+                <div class="card-body p-0">
+                    {% if news %}
+                        {% for news_item in news %}
+                            <div class="news-item p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div>
+                                        <i class="far fa-calendar-alt text-info me-1"></i>
+                                        <span class="news-date">{{ news_item.NewsDate|date:"M d, Y" }}</span>
+                                    </div>
+                                    <span class="badge bg-dark badge-custom">{{ news_item.Categories }}</span>
+                                </div>
+                                <h6 class="news-title">{{ news_item.Headline }}</h6>
+                                <p class="mb-2 text-muted">{{ news_item.Description }}</p>
+                                {% if news_item.id %}
+                                    <a href="{% url 'news:news_detail' news_item.id %}" class="btn btn-sm btn-link text-info ps-0">
+                                        <i class="fas fa-angle-right me-1"></i> Read More
+                                    </a>
+                                {% else %}
+                                    <a href="#" class="btn btn-sm btn-link text-info ps-0 disabled">
+                                        <i class="fas fa-angle-right me-1"></i> Read More
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="p-4 text-center">
+                            <i class="fas fa-newspaper fa-2x text-muted mb-3"></i>
+                            <p>No news available at the moment</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Competitors and Overview Row -->
+    <div class="row mt-4">
+        <!-- Competitors Column -->
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header">Competitors</div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for competitor in competitors %}
+                            <div class="col-md-6 mb-3">
+                                <div class="competitor-card">
+                                    <div class="competitor-logo">
+                                        <span class="text-white">{{ competitor.Symbol|slice:":1" }}</span>
+                                    </div>
+                                    <div class="competitor-info">
+                                        <div class="competitor-name">{{ competitor.Name }}</div>
+                                        <div class="competitor-symbol">{{ competitor.Symbol }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Overview Column -->
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header">Overview</div>
+                <div class="card-body">
+                    <p>{{ company_info.CompanyName }} is one of the world's largest {{ company_info.Industry|lower }} producers. Its majority-owned by Pakistani investors and a backbone of the country's economy. With vast reserves and significant production capacity, it remains a pivotal player in global {{ company_info.Industry|lower }}, also known as the "{{ company_info.CompanyName }}". It is one of the largest integrated energy and chemicals enterprises. It plays a pivotal role in meeting worldwide {{ company_info.Industry|lower }} demand. The Pakistani government retains a majority stake, though Aramco made financial history by partially listing on the stock exchange in 2019. Its operations range from crude oil and natural gas exploration to the production of reserves.</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="company-info-row">
+                                <div class="info-label">Founded by</div>
+                                <div class="info-value">{{ company_info.Symbol }}</div>
+                            </div>
+                            <div class="company-info-row">
+                                <div class="info-label">Founded</div>
+                                <div class="info-value">{{ company_info.Founded }}</div>
+                            </div>
+                            <div class="company-info-row">
+                                <div class="info-label">Head Office</div>
+                                <div class="info-value">{{ company_info.HeadOffice }}</div>
+                            </div>
+                            <div class="company-info-row">
+                                <div class="info-label">CEO</div>
+                                <div class="info-value">{{ company_info.CEO }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="company-info-row">
+                                <div class="info-label">Employees</div>
+                                <div class="info-value">{{ company_info.Employees }}</div>
+                            </div>
+                            <div class="company-info-row">
+                                <div class="info-label">Industry</div>
+                                <div class="info-value">{{ company_info.Industry }}</div>
+                            </div>
+                            <div class="company-info-row">
+                                <div class="info-label">Revenue</div>
+                                <div class="info-value">{{ company_info.Revenue }}</div>
+                            </div>
+                            <div class="company-info-row">
+                                <div class="info-label">Website</div>
+                                <div class="info-value">{{ company_info.Website }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="row mt-4">
+        <!-- Investor Stats -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Investor Statistics
+                </div>
+                <div class="card-body px-0 py-0">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="ps-3">Market Cap</td>
+                                    <td class="text-end pe-3">${{ financial_info.MarketCap|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">P/E Ratio</td>
+                                    <td class="text-end pe-3">{{ financial_info.PERatio|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">EPS</td>
+                                    <td class="text-end pe-3">${{ financial_info.EPS|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">Dividend Yield</td>
+                                    <td class="text-end pe-3">{{ financial_info.DividendYield|floatformat:2 }}%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">52 Week High</td>
+                                    <td class="text-end pe-3">${{ stock_data.week52High|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">52 Week Low</td>
+                                    <td class="text-end pe-3">${{ stock_data.week52Low|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">Avg Volume</td>
+                                    <td class="text-end pe-3">{{ stock_data.avgVolume|floatformat:0 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">Beta</td>
+                                    <td class="text-end pe-3">{{ financial_info.Beta|floatformat:2 }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Market Information -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Market Information
+                </div>
+                <div class="card-body px-0 py-0">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="ps-3">Exchange</td>
+                                    <td class="text-end pe-3">{{ company_info.Exchange }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">Currency</td>
+                                    <td class="text-end pe-3">{{ company_info.Currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">Industry</td>
+                                    <td class="text-end pe-3">{{ company_info.Industry }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">Sector</td>
+                                    <td class="text-end pe-3">{{ company_info.Sector }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">IPO Date</td>
+                                    <td class="text-end pe-3">{{ company_info.IPODate }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">Fiscal Year End</td>
+                                    <td class="text-end pe-3">{{ company_info.FiscalYearEnd }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">Employees</td>
+                                    <td class="text-end pe-3">{{ company_info.FullTimeEmployees|intcomma }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3">Country</td>
+                                    <td class="text-end pe-3">{{ company_info.Country }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Price Targets -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Analyst Price Targets
+                </div>
+                <div class="card-body">
+                    <div class="price-target-chart mb-3">
+                        <canvas id="priceTargetChart" style="height: 140px;"></canvas>
+                    </div>
+                    <div class="price-target-summary">
+                        <div class="row">
+                            <div class="col-4 text-center">
+                                <h6 class="mb-0">${{ analyst_data.lowTarget|floatformat:2 }}</h6>
+                                <small class="text-muted">Low</small>
+                            </div>
+                            <div class="col-4 text-center">
+                                <h6 class="mb-0">${{ analyst_data.meanTarget|floatformat:2 }}</h6>
+                                <small class="text-muted">Average</small>
+                            </div>
+                            <div class="col-4 text-center">
+                                <h6 class="mb-0">${{ analyst_data.highTarget|floatformat:2 }}</h6>
+                                <small class="text-muted">High</small>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="analyst-ratings">
+                        <h6 class="small mb-2">Analyst Recommendations</h6>
+                        <div class="progress" style="height: 24px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {{ analyst_data.buyPercentage }}%">
+                                Buy ({{ analyst_data.buyCount }})
+                            </div>
+                            <div class="progress-bar bg-warning" role="progressbar" 
+                                 style="width: {{ analyst_data.holdPercentage }}%">
+                                Hold ({{ analyst_data.holdCount }})
+                            </div>
+                            <div class="progress-bar bg-danger" role="progressbar" 
+                                 style="width: {{ analyst_data.sellPercentage }}%">
+                                Sell ({{ analyst_data.sellCount }})
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Analysis Modal -->
+<div class="modal fade" id="analysisModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detailed Company Analysis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success mb-3">Positive Signals</h6>
+                        {% for signal in company_analysis.positives %}
+                        <div class="analysis-item">
+                            <div class="analysis-icon bg-success bg-opacity-10">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                            <div class="analysis-text">
+                                <div class="fw-bold">{{ signal.title }}</div>
+                                <div class="text-muted">{{ signal.description }}</div>
+                                <div class="text-muted small mt-1">
+                                    <i class="far fa-calendar-alt me-1"></i>
+                                    {{ signal.date }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-danger mb-3">Negative Signals</h6>
+                        {% for signal in company_analysis.negatives %}
+                        <div class="analysis-item">
+                            <div class="analysis-icon bg-danger bg-opacity-10">
+                                <i class="fas fa-times-circle text-danger"></i>
+                            </div>
+                            <div class="analysis-text">
+                                <div class="fw-bold">{{ signal.title }}</div>
+                                <div class="text-muted">{{ signal.description }}</div>
+                                <div class="text-muted small mt-1">
+                                    <i class="far fa-calendar-alt me-1"></i>
+                                    {{ signal.date }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Risk Analysis Modal -->
+<div class="modal fade" id="riskModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detailed Risk Analysis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Risk Score: {{ risk_metrics.score }}</h6>
+                                <p class="text-muted">The overall risk assessment is based on multiple factors including market volatility, beta, and industry-specific risks.</p>
+                                <div class="progress" style="height: 25px;">
+                                    <div class="progress-bar {% if risk_metrics.score == 'Low' %}bg-success{% elif risk_metrics.score == 'Moderate' %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         style="width: {% if risk_metrics.score == 'Low' %}33{% elif risk_metrics.score == 'Moderate' %}66{% else %}100{% endif %}%;">
+                                        {{ risk_metrics.score }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Market Volatility</h6>
+                                <p class="text-muted">Current volatility level: {{ risk_metrics.volatility }}</p>
+                                <div class="progress" style="height: 25px;">
+                                    <div class="progress-bar {% if risk_metrics.volatility == 'Low' %}bg-success{% elif risk_metrics.volatility == 'Medium' %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         style="width: {% if risk_metrics.volatility == 'Low' %}33{% elif risk_metrics.volatility == 'Medium' %}66{% else %}100{% endif %}%;">
+                                        {{ risk_metrics.volatility }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Risk Factors</h6>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Factor</th>
+                                        <th>Impact</th>
+                                        <th>Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for factor in risk_metrics.factors %}
+                                    <tr>
+                                        <td>{{ factor }}</td>
+                                        <td>
+                                            <span class="badge {% cycle 'bg-warning' 'bg-danger' 'bg-info' %}">
+                                                {% cycle 'Medium' 'High' 'Low' %}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <i class="fas {% cycle 'fa-arrow-up text-danger' 'fa-arrow-right text-warning' 'fa-arrow-down text-success' %}"></i>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QUANTRA GLOBAL View Section -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-0">QUANTRA GLOBAL View™</h5>
+            <small class="text-muted">Comprehensive Market Analysis</small>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <span class="badge bg-{{ rating_grade|lower }} px-3 py-2" style="font-size: 1.2em;">
+                    <i class="fas fa-chart-line me-2"></i>{{ rating_grade }}
+                </span>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quantraModal">
+                <i class="fas fa-expand-alt"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Main Rating Display -->
+        <div class="text-center mb-4">
+            <div class="display-6 fw-bold text-{{ rating_grade|lower }}">{{ rating_grade }}</div>
+            <p class="text-muted mb-0">{{ rating_description }}</p>
+        </div>
+
+        <!-- Radar Chart -->
+        <div class="radar-chart-container mb-4 p-3" style="height: 300px; background: rgba(0,0,0,0.02); border-radius: 15px;">
+            <canvas id="quantraRadarChart"></canvas>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="row g-3">
+            {% for metric, data in quantra_metrics.items %}
+            <div class="col-md-6">
+                <div class="metric-card p-3" style="background: rgba(0,0,0,0.02); border-radius: 10px; transition: all 0.3s ease;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">{{ metric }}</h6>
+                        <div class="score-badge" style="background: linear-gradient(45deg, #2193b0, #6dd5ed); color: white; padding: 4px 12px; border-radius: 20px;">
+                            {{ data.score|floatformat:0 }}/100
+                        </div>
+                    </div>
+                    <div class="progress mb-3" style="height: 8px; background: rgba(0,0,0,0.1);">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: {{ data.score }}%; background: linear-gradient(45deg, #2193b0, #6dd5ed);" 
+                             aria-valuenow="{{ data.score }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="components">
+                        {% for component, value in data.components.items %}
+                        <div class="component-item d-flex justify-content-between align-items-center py-1">
+                            <span class="text-muted small">{{ component|cut:"_"|title }}</span>
+                            <div class="d-flex align-items-center">
+                                <div class="mini-progress me-2" style="width: 50px; height: 4px; background: rgba(0,0,0,0.1); border-radius: 2px;">
+                                    <div style="width: {{ value }}%; height: 100%; background: linear-gradient(45deg, #2193b0, #6dd5ed); border-radius: 2px;"></div>
+                                </div>
+                                <span class="small fw-bold">{{ value|floatformat:0 }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-4">
+            <button class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#quantraModal">
+                <i class="fas fa-chart-line me-1"></i> Detailed Analysis
+            </button>
+            <button class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-download me-1"></i> Export Report
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Add this to your JavaScript section -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // QUANTRA GLOBAL View Enhanced Radar Chart
+    const quantraCtx = document.getElementById('quantraRadarChart').getContext('2d');
+    new Chart(quantraCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Fundamentals', 'Technicals', 'Valuation', 'Dividends', 'Outlook'],
+            datasets: [{
+                label: 'QUANTRA Rating',
+                data: [
+                    {{ quantra_metrics.Fundamentals.score|default:0 }}, 
+                    {{ quantra_metrics.Technicals.score|default:0 }}, 
+                    {{ quantra_metrics.Valuation.score|default:0 }}, 
+                    {{ quantra_metrics.Dividends.score|default:0 }}, 
+                    {{ quantra_metrics.Outlook.score|default:0 }}
+                ],
+                backgroundColor: 'rgba(33, 147, 176, 0.2)',
+                borderColor: '#2193b0',
+                pointBackgroundColor: '#6dd5ed',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: '#2193b0',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    pointLabels: {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        backdropColor: 'transparent',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        stepSize: 20,
+                        max: 100,
+                        min: 0,
+                        font: {
+                            size: 10
+                        },
+                        backdropPadding: 2
+                    },
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    padding: 12,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return `Score: ${context.raw}/100`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Add hover effects to metric cards
+    const metricCards = document.querySelectorAll('.metric-card');
+    metricCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+});
+</script>
+
+<!-- Add these styles to your CSS section -->
+<style>
+    .metric-card {
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        background: rgba(0,0,0,0.03) !important;
+    }
+    
+    .score-badge {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .component-item {
+        transition: all 0.2s ease;
+    }
+    
+    .component-item:hover {
+        background: rgba(0,0,0,0.02);
+        padding-left: 5px;
+    }
+    
+    .mini-progress {
+        transition: all 0.3s ease;
+    }
+    
+    .component-item:hover .mini-progress {
+        width: 60px;
+    }
+</style>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JavaScript for Charts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Radar Chart - AlphAIQ View
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        const radarChart = new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Fundamentals', 'Technicals', 'Valuation', 'Dividends', 'Outlook'],
+                datasets: [{
+                    label: 'AlphAIQ Rating',
+                    data: [{{ alphaiq_view.Fundamentals }}, {{ alphaiq_view.Technicals }}, {{ alphaiq_view.Valuation }}, {{ alphaiq_view.Dividends }}, {{ alphaiq_view.Outlook }}],
+                    backgroundColor: 'rgba(0, 198, 255, 0.2)',
+                    borderColor: 'rgba(0, 198, 255, 1)',
+                    pointBackgroundColor: 'rgba(0, 198, 255, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(0, 198, 255, 1)'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        pointLabels: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        },
+                        ticks: {
+                            backdropColor: 'transparent',
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // Portfolio Breakdown Pie Chart
+        const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
+        const portfolioChart = new Chart(portfolioCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['This Stock', 'Other Stocks', 'Cash', 'Bonds'],
+                datasets: [{
+                    data: [{{ portfolio_breakdown.ThisStock }}, {{ portfolio_breakdown.OtherStocks }}, {{ portfolio_breakdown.Cash }}, {{ portfolio_breakdown.Bonds }}],
+                    backgroundColor: [
+                        'rgba(0, 198, 255, 0.8)',
+                        'rgba(0, 123, 255, 0.8)',
+                        'rgba(108, 117, 125, 0.8)',
+                        'rgba(40, 167, 69, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(0, 198, 255, 1)',
+                        'rgba(0, 123, 255, 1)',
+                        'rgba(108, 117, 125, 1)',
+                        'rgba(40, 167, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            padding: 10,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Stock Comparison Line Chart with dynamic company selection
+        let comparisonData = {
+            labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+            datasets: [
+                {
+                    label: '{{ company_info.Symbol }}',
+                    data: [14000, 14100, 14200, 14050, 14500, 14300, 14400],
+                    borderColor: 'rgba(0, 198, 255, 1)',
+                    backgroundColor: 'rgba(0, 198, 255, 0.1)',
+                    pointBackgroundColor: 'rgba(0, 198, 255, 1)',
+                    tension: 0.4,
+                    borderWidth: 3,
+                    fill: true
+                },
+                {
+                    label: '{{ competitors.0.Symbol }}',
+                    data: [14050, 14200, 14000, 14100, 14300, 14250, 14350],
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    pointBackgroundColor: 'rgba(40, 167, 69, 1)',
+                    tension: 0.4,
+                    borderWidth: 3,
+                    fill: true
+                },
+                {
+                    label: '{{ competitors.1.Symbol }}',
+                    data: [13900, 14050, 14150, 14200, 14100, 14300, 14250],
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    pointBackgroundColor: 'rgba(220, 53, 69, 1)',
+                    tension: 0.4,
+                    borderWidth: 3,
+                    fill: true
+                }
+            ]
+        };
+        
+        // Generate dataset for comparison chart
+        const generateDataset = (symbol, index) => {
+            const colors = [
+                {border: 'rgba(0, 198, 255, 1)', background: 'rgba(0, 198, 255, 0.1)'},
+                {border: 'rgba(40, 167, 69, 1)', background: 'rgba(40, 167, 69, 0.1)'},
+                {border: 'rgba(220, 53, 69, 1)', background: 'rgba(220, 53, 69, 0.1)'},
+                {border: 'rgba(255, 193, 7, 1)', background: 'rgba(255, 193, 7, 0.1)'},
+                {border: 'rgba(111, 66, 193, 1)', background: 'rgba(111, 66, 193, 0.1)'}
+            ];
+            
+            // Generate some random but consistent data
+            const baseValue = 14000 + (index * 100);
+            const data = [];
+            for (let i = 0; i < 7; i++) {
+                // Use symbol as seed for pseudo-random but consistent data
+                const hash = symbol.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+                const variance = Math.sin(i + hash) * 300;
+                data.push(baseValue + variance);
+            }
+            
+            const colorIndex = index % colors.length;
+            return {
+                label: symbol,
+                data: data,
+                borderColor: colors[colorIndex].border,
+                backgroundColor: colors[colorIndex].background,
+                pointBackgroundColor: colors[colorIndex].border,
+                tension: 0.4,
+                borderWidth: 3,
+                fill: true
+            };
+        };
+        
+        // Initialize the comparison chart
+        const comparisonCtx = document.getElementById('stockComparisonChart').getContext('2d');
+        const comparisonChart = new Chart(comparisonCtx, {
+            type: 'line',
+            data: comparisonData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            padding: 10,
+                            font: {
+                                size: 12
+                            },
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                        titleColor: 'rgba(255, 255, 255, 0.9)',
+                        bodyColor: 'rgba(255, 255, 255, 0.9)',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
+                        boxPadding: 5
+                    }
+                }
+            }
+        });
+        
+        // Handle comparison company selection
+        const updateCompareBtn = document.getElementById('updateCompare');
+        updateCompareBtn.addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('input[name="compare_symbols"]:checked');
+            const selectedSymbols = Array.from(checkboxes).map(cb => cb.value);
+            
+            // Always include the main company
+            if (!selectedSymbols.includes('{{ company_info.Symbol }}')) {
+                selectedSymbols.unshift('{{ company_info.Symbol }}');
+            }
+            
+            // Limit to 5 companies for better visibility
+            const limitedSymbols = selectedSymbols.slice(0, 5);
+            
+            // Generate new datasets based on selection
+            const newDatasets = limitedSymbols.map((symbol, index) => {
+                if (symbol === '{{ company_info.Symbol }}') {
+                    return comparisonData.datasets[0]; // Use the main company's dataset
+                } else {
+                    return generateDataset(symbol, index);
+                }
+            });
+            
+            // Update chart with new data
+            comparisonChart.data.datasets = newDatasets;
+            comparisonChart.update();
+        });
+        
+        // Time period selector
+        const periodButtons = document.querySelectorAll('.time-period-selector button');
+        periodButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                periodButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Update time periods based on selection
+                const period = this.getAttribute('data-period');
+                let labels;
+                
+                switch(period) {
+                    case '1D':
+                        labels = ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+                        break;
+                    case '1W':
+                        labels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                        break;
+                    case '1M':
+                        labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+                        break;
+                    case '3M':
+                        labels = ['Jan', 'Feb', 'Mar'];
+                        break;
+                    case '6M':
+                        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                        break;
+                    case '1Y':
+                        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        break;
+                    case 'ALL':
+                        labels = ['2020', '2021', '2022', '2023', '2024', '2025'];
+                        break;
+                }
+                
+                // Update chart labels
+                comparisonChart.data.labels = labels;
+                
+                // Generate new data for each dataset based on time period
+                comparisonChart.data.datasets.forEach((dataset, index) => {
+                    const symbol = dataset.label;
+                    dataset.data = [];
+                    
+                    // Generate new data points based on label length
+                    const hash = symbol.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+                    const baseValue = 14000 + (index * 100);
+                    
+                    for (let i = 0; i < labels.length; i++) {
+                        const variance = Math.sin(i + hash * (labels.length / 7)) * 300;
+                        dataset.data.push(baseValue + variance);
+                    }
+                });
+                
+                comparisonChart.update();
+            });
+        });
+        
+        // Price Target Chart
+        const priceTargetCtx = document.getElementById('priceTargetChart').getContext('2d');
+        const priceTargetChart = new Chart(priceTargetCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Current', 'Low', 'Average', 'High'],
+                datasets: [{
+                    label: 'Price',
+                    data: [
+                        {{ latest_stock.Last|default:"0" }}, 
+                        {{ analyst_data.lowTarget|default:"0" }}, 
+                        {{ analyst_data.meanTarget|default:"0" }}, 
+                        {{ analyst_data.highTarget|default:"0" }}
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 255, 255, 0.6)',
+                        'rgba(220, 53, 69, 0.6)',
+                        'rgba(255, 193, 7, 0.6)',
+                        'rgba(40, 167, 69, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 255, 255, 1)',
+                        'rgba(220, 53, 69, 1)',
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(40, 167, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                        titleColor: 'rgba(255, 255, 255, 0.9)',
+                        bodyColor: 'rgba(255, 255, 255, 0.9)',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
+                        boxPadding: 5
+                    }
+                }
+            }
+        });
+        
+        // Toggle view buttons
+        const viewButtons = document.querySelectorAll('.toggle-view button');
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons in this toggle
+                const parentToggle = this.closest('.toggle-view');
+                parentToggle.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Implement view change functionality if needed
+                const view = this.getAttribute('data-view');
+                // Update content based on selected view
+            });
+        });
+    });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Radar Chart Configuration
+    const radarConfig = {
+        type: 'radar',
+        data: {
+            labels: ['Fundamentals', 'Technicals', 'Valuation', 'Dividends', 'Outlook'],
+            datasets: [{
+                label: 'QUANTRA GLOBAL Rating',
+                data: [
+                    {{ alphaiq_view.Fundamentals }},
+                    {{ alphaiq_view.Technicals }},
+                    {{ alphaiq_view.Valuation }},
+                    {{ alphaiq_view.Dividends }},
+                    {{ alphaiq_view.Outlook }}
+                ],
+                backgroundColor: 'rgba(0, 198, 255, 0.2)',
+                borderColor: 'rgba(0, 198, 255, 1)',
+                pointBackgroundColor: 'rgba(0, 198, 255, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(0, 198, 255, 1)',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            scales: {
+                r: {
+                    angleLines: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    pointLabels: {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        backdropColor: 'transparent',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        stepSize: 20,
+                        max: 100,
+                        min: 0
+                    },
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    padding: 12,
+                    displayColors: false
+                }
+            }
+        }
+    };
+    
+    // Initialize main radar chart
+    const radarCtx = document.getElementById('radarChart').getContext('2d');
+    const radarChart = new Chart(radarCtx, radarConfig);
+    
+    // Initialize modal radar chart
+    const radarModalCtx = document.getElementById('radarChartModal').getContext('2d');
+    const radarModalChart = new Chart(radarModalCtx, radarConfig);
+});
+</script>
+{% endblock content %}

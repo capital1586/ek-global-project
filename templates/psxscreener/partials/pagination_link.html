@@ -1,0 +1,3 @@
+<a class="page-link" href="?page={{ page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" {% if label %}aria-label="{{ label }}" title="{{ label }}"{% endif %} data-bs-toggle="tooltip" data-bs-placement="top" {% if not label and page_number %}title="Page {{ page_number }}"{% endif %}>
+    {% if icon %}<i class="{{ icon }}"></i>{% if label %} <span class="d-none d-md-inline">{{ label }}</span>{% endif %}{% else %}{{ page_number }}{% endif %}
+</a>

@@ -1,0 +1,394 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>{{ course.title }} | Academy | EK Global Capital</title>
+{% endblock title %}
+
+{% block stylesheets %}
+<style>
+    .course-header {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{% if course.image %}{{ course.image }}{% else %}{% static "images/course-default.jpg" %}{% endif %}');
+        background-size: cover;
+        background-position: center;
+        padding: 80px 0;
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    
+    .course-info {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 30px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+    
+    .learning-outcome {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        background: var(--card-bg);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+    }
+    
+    .learning-outcome i {
+        color: var(--success);
+        margin-right: 15px;
+        margin-top: 2px;
+    }
+    
+    .video-card {
+        transition: transform 0.3s ease;
+        height: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        margin-bottom: 20px;
+    }
+    
+    .video-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .video-thumbnail {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+    }
+    
+    .video-thumbnail img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .play-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60px;
+        height: 60px;
+        background: rgba(30, 136, 229, 0.8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        z-index: 1;
+    }
+    
+    .section-title {
+        position: relative;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+    }
+    
+    .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+    }
+    
+    #course-videos.active {
+        border-bottom: 3px solid var(--primary);
+    }
+    
+    #course-outcomes.active {
+        border-bottom: 3px solid var(--primary);
+    }
+    
+    .tab-container {
+        display: none;
+    }
+    
+    .tab-container.active {
+        display: block;
+    }
+    
+    .tabs-nav {
+        display: flex;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .tab-btn {
+        padding: 15px 25px;
+        background: transparent;
+        border: none;
+        font-weight: 500;
+        color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .tab-btn.active {
+        color: var(--primary);
+        border-bottom: 3px solid var(--primary);
+    }
+    
+    .tab-btn:hover {
+        color: var(--primary);
+    }
+    
+    .video-list-item {
+        border-bottom: 1px solid var(--border-color);
+        padding: 15px 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .video-list-item:last-child {
+        border-bottom: none;
+    }
+    
+    .video-number {
+        width: 30px;
+        height: 30px;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+    
+    .video-list-thumbnail {
+        width: 120px;
+        height: 68px;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+    
+    .video-list-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .video-list-info {
+        flex-grow: 1;
+    }
+    
+    .video-list-info h5 {
+        margin: 0 0 5px 0;
+        font-size: 1rem;
+    }
+    
+    .video-list-info p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+    }
+    
+    .video-list-play {
+        margin-left: 15px;
+        flex-shrink: 0;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Course Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="course-header">
+                <div class="container">
+                    <h1>{{ course.title }}</h1>
+                    <p class="mb-0">Last updated: {{ course.updated_at|date:"F d, Y" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Course Tabs -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="videos">Course Videos</button>
+                <button class="tab-btn" data-tab="outcomes">Learning Outcomes</button>
+                <button class="tab-btn" data-tab="description">Course Description</button>
+            </div>
+            
+            <!-- Videos Tab -->
+            <div class="tab-container active" id="videos-tab">
+                <div class="section-title">
+                    <h3>Course Videos</h3>
+                </div>
+                
+                {% if videos %}
+                    <div class="featured-video mb-4">
+                        <div class="video-thumbnail">
+                            <img src="https://img.youtube.com/vi/{{ videos.0.youtube_id }}/maxresdefault.jpg" alt="{{ videos.0.title }}">
+                            <a href="{{ videos.0.youtube_url }}" target="_blank" class="play-btn">
+                                <i class="fa fa-play"></i>
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <h4>{{ videos.0.title }}</h4>
+                            <p>{{ videos.0.description }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="video-list">
+                        {% for video in videos %}
+                        <div class="video-list-item">
+                            <div class="video-number">{{ forloop.counter }}</div>
+                            <div class="video-list-thumbnail">
+                                <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/mqdefault.jpg" alt="{{ video.title }}">
+                            </div>
+                            <div class="video-list-info">
+                                <h5>{{ video.title }}</h5>
+                                <p>Duration: <span class="text-muted">Coming soon</span></p>
+                            </div>
+                            <div class="video-list-play">
+                                <a href="{{ video.youtube_url }}" target="_blank" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-play"></i> Watch
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <p>No videos have been added to this course yet. Please check back later.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Learning Outcomes Tab -->
+            <div class="tab-container" id="outcomes-tab">
+                <div class="section-title">
+                    <h3>Learning Outcomes</h3>
+                </div>
+                
+                {% if learning_outcomes %}
+                    <div class="outcomes-list">
+                        {% for outcome in learning_outcomes %}
+                        <div class="learning-outcome">
+                            <i class="fa fa-check-circle"></i>
+                            <div>
+                                <strong>{{ outcome.outcome }}</strong>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <p>No learning outcomes have been defined for this course yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Course Description Tab -->
+            <div class="tab-container" id="description-tab">
+                <div class="section-title">
+                    <h3>Course Description</h3>
+                </div>
+                
+                <div class="course-info">
+                    {% if course.description %}
+                        {{ course.description|linebreaks }}
+                    {% else %}
+                        <p>No detailed description available for this course.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Course Sidebar -->
+            <div class="course-info">
+                <h4>About This Course</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="fas fa-calendar-alt text-primary me-2"></i> Created: {{ course.created_at|date:"F d, Y" }}
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-video text-primary me-2"></i> Videos: {{ videos|length }}
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-list-check text-primary me-2"></i> Learning Outcomes: {{ learning_outcomes|length }}
+                    </li>
+                </ul>
+                
+                <hr>
+                
+                <h4>What You'll Learn</h4>
+                {% if learning_outcomes %}
+                    <ul class="mb-4">
+                        {% for outcome in learning_outcomes|slice:":5" %}
+                        <li class="mb-2">{{ outcome.outcome }}</li>
+                        {% endfor %}
+                        {% if learning_outcomes|length > 5 %}
+                        <li class="text-primary">+ {{ learning_outcomes|length|add:"-5" }} more outcomes</li>
+                        {% endif %}
+                    </ul>
+                {% else %}
+                    <p>Learning outcomes will be listed here.</p>
+                {% endif %}
+                
+                <div class="d-grid gap-2">
+                    {% if videos %}
+                    <a href="{{ videos.0.youtube_url }}" target="_blank" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play-circle me-2"></i> Start Learning
+                    </a>
+                    {% else %}
+                    <button class="btn btn-primary btn-lg" disabled>
+                        <i class="fas fa-play-circle me-2"></i> Coming Soon
+                    </button>
+                    {% endif %}
+                    
+                    <a href="{% url 'academy:index' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i> Back to Academy
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab functionality
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContainers = document.querySelectorAll('.tab-container');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Remove active class from all buttons and containers
+                tabBtns.forEach(btn => btn.classList.remove('active'));
+                tabContainers.forEach(container => container.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding container
+                this.classList.add('active');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %} 
