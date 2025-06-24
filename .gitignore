@@ -161,7 +161,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-ta-lib*
 rates_data.json
 .env.development
 .env.production
